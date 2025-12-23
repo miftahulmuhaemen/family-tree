@@ -1,0 +1,16 @@
+name = "family-tree-worker"
+main = "worker.js"
+compatibility_date = "2024-12-23"
+
+# R2 Bucket Binding
+# This connects the variable 'BUCKET' in code to your real R2 bucket.
+# You don't need Access Keys/Secret Keys because this runs inside Cloudflare.
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "familytree"
+
+# Environment Variables (Non-Secret)
+[vars]
+# ALLOWED_ORIGIN = "https://your-domain.com" # Optional: Limit CORS
+
+# Note: Secrets like AUTH_TOKEN should be set via `wrangler secret put AUTH_TOKEN`
