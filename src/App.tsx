@@ -5,6 +5,7 @@ import FamilyTree from './components/FamilyTree';
 import { EditorSidebar } from './components/EditorSidebar';
 
 import { ShareSuccessModal } from './components/ShareSuccessModal';
+import { NotFound } from './components/NotFound';
 
 const queryClient = new QueryClient();
 
@@ -215,6 +216,10 @@ function App() {
   const toggleDarkMode = () => {
     setIsDarkMode(curr => !curr);
   };
+
+  if (!isLoading && !treeData && errorMsg === "Failed to load configuration") {
+    return <NotFound />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

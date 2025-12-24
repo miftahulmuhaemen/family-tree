@@ -1,248 +1,245 @@
 people:
   # Generasi 1
-  - id: "1_male_1"
+  - id: "raden_soedirman"
     name: "Raden Soedirman"
     gender: "male"
     birthDate: "1930-05-12"
-    deceased: true
-    photo_link: "https://placehold.co/100"
+    deceased:
+      status: true
+      date: "2010-10-10"
+      place: "Makam Pahlawan Kusuma Negara"
     address:
       - address: "Yogyakarta, Indonesia"
         gmap_link: "https://maps.google.com/?q=Yogyakarta"
     phone_number:
-      number: "0811223344"
-      is_whatsapp_number: false
+      - number: "0811223344"
+        is_whatsapp_number: false
     short_bio: "Pensiunan Guru, mencintai wayang kulit."
-  - id: "1_female_1"
+    additionals:
+      hobi: "Mendengarkan Gending Jawa setiap sore sambil minum teh tubruk kental manis."
+  - id: "siti_hartini"
     name: "Siti Hartini"
     gender: "female"
     birthDate: "1935-08-17"
     deceased: true
-    photo_link: "https://placehold.co/100"
     address: []
-    phone_number:
-      number: ""
-      is_whatsapp_number: false
+    phone_number: []
     short_bio: "Ibu rumah tangga yang gemar memasak gudeg."
   
   # Kakek Mertua Rina
-  - id: "1_male_sastro"
+  - id: "mbah_sastro"
     name: "Mbah Sastro"
     gender: "male"
     birthDate: "1928-02-02"
     deceased: true
-    photo_link: "https://placehold.co/100"
     address: []
-    phone_number: null
+    phone_number: []
     short_bio: "Petani tembakau."
 
   # Generasi 2
-  - id: "2_male_1"
+  - id: "budi_santoso"
     name: "Budi Santoso"
     gender: "male"
     birthDate: "1960-03-10"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address:
       - address: "Jakarta Selatan, Indonesia"
         gmap_link: "https://maps.google.com/?q=Jakarta+Selatan"
     phone_number:
-      number: "0812345678"
-      is_whatsapp_number: true
+      - number: "0812345678"
+        is_whatsapp_number: true
+      - number: "0217654321"
+        is_whatsapp_number: false
     short_bio: "Wiraswasta, hobi memancing."
-  - id: "2_female_1"
+    additionals:
+        pekerjaan: "Wiraswasta"
+  - id: "sri_wahyuni"
     name: "Sri Wahyuni"
     gender: "female"
     birthDate: "1965-06-25"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address:
       - address: "Jakarta Selatan, Indonesia"
         gmap_link: "https://maps.google.com/?q=Jakarta+Selatan"
     phone_number:
-      number: "0812987654"
-      is_whatsapp_number: true
+      - number: "0812987654"
+        is_whatsapp_number: true
     short_bio: "Mantan perawat, aktif di kegiatan sosial."
-  - id: "2_male_2"
+  - id: "agus_pratama"
     name: "Agus Pratama"
     gender: "male"
     birthDate: "1962-11-20"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address:
       - address: "Surabaya, Indonesia"
         gmap_link: "https://maps.google.com/?q=Surabaya"
     phone_number:
-      number: "081355556666"
-      is_whatsapp_number: true
+      - number: "081355556666"
+        is_whatsapp_number: true
     short_bio: "Dosen Teknik Sipil."
   
   # Mertua Rina
-  - id: "2_male_herman"
+  - id: "pak_herman"
     name: "Pak Herman"
     gender: "male"
     birthDate: "1961-05-05"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address: []
-    phone_number: null
+    phone_number: []
     short_bio: "Pensiunan Pegawai Bank."
 
   # Generasi 3
-  - id: "3_male_1"
+  - id: "eko_prasetyo"
     name: "Eko Prasetyo"
     gender: "male"
     birthDate: "1990-01-15"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address:
       - address: "Bandung, Indonesia"
         gmap_link: "https://maps.google.com/?q=Bandung"
     phone_number:
-      number: "08567890123"
-      is_whatsapp_number: true
+      - number: "08567890123"
+        is_whatsapp_number: true
     short_bio: "Software Engineer di startup unicorn."
-  - id: "3_female_1"
+  - id: "dewi_lestari"
     name: "Dewi Lestari"
     gender: "female"
     birthDate: "1992-04-20"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address:
       - address: "Bandung, Indonesia"
         gmap_link: "https://maps.google.com/?q=Bandung"
     phone_number:
-      number: "081700009999"
-      is_whatsapp_number: true
+      - number: "081700009999"
+        is_whatsapp_number: true
     short_bio: "Desainer Grafis Freelance."
-  - id: "3_female_2"
+  - id: "rina_indah"
     name: "Rina Indah"
     gender: "female"
     birthDate: "1995-09-09"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address:
       - address: "Denpasar, Bali"
         gmap_link: "https://maps.google.com/?q=Denpasar"
     phone_number:
-      number: "081988887777"
-      is_whatsapp_number: true
+      - number: "081988887777"
+        is_whatsapp_number: true
     short_bio: "Instruktur Yoga."
   
   # Suami & Ipar Rina
-  - id: "3_male_dika"
+  - id: "dika_mahendra"
     name: "Dika Mahendra"
     gender: "male"
     birthDate: "1993-03-03"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address: []
-    phone_number: null
+    phone_number: []
     short_bio: "Chef."
-  - id: "3_female_sari"
+  - id: "sari_mahendra"
     name: "Sari Mahendra"
     gender: "female"
     birthDate: "1998-08-08"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address: []
-    phone_number: null
+    phone_number: []
     short_bio: "Mahasiswa."
 
   # Generasi 4 (Anak-anak Eko & Dewi)
-  - id: "4_male_1"
+  - id: "rizky_ramadhan"
     name: "Rizky Ramadhan"
     gender: "male"
     birthDate: "2018-05-20"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address: []
-    phone_number:
-      number: ""
-      is_whatsapp_number: false
+    phone_number: []
     short_bio: "Suka bermain bola."
-  - id: "4_female_1"
+  - id: "alya_zahra"
     name: "Alya Zahra"
     gender: "female"
     birthDate: "2020-02-14"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address: []
-    phone_number:
-      number: ""
-      is_whatsapp_number: false
+    phone_number: []
     short_bio: "Suka bernyanyi."
   
   # Anak Rina & Dika
-  - id: "4_female_rini"
+  - id: "rini_kecil"
     name: "Rini Kecil"
     gender: "female"
     birthDate: "2023-01-01"
     deceased: false
-    photo_link: "https://placehold.co/100"
     address: []
-    phone_number: null
+    phone_number: []
     short_bio: "Bayi lucu."
 
 relationships:
   # Gen 2 -> Gen 1 (Child -> Parent)
   - type: "parent"
-    from: "2_male_1"
-    to: "1_male_1"
+    from: "budi_santoso"
+    to: "raden_soedirman"
   - type: "parent"
-    from: "2_male_1"
-    to: "1_female_1"
+    from: "budi_santoso"
+    to: "siti_hartini"
   - type: "parent"
-    from: "2_male_2"
-    to: "1_male_1"
+    from: "agus_pratama"
+    to: "raden_soedirman"
   - type: "parent"
-    from: "2_male_2"
-    to: "1_female_1"
+    from: "agus_pratama"
+    to: "siti_hartini"
 
   # Gen 3 -> Gen 2
   - type: "parent"
-    from: "3_male_1"
-    to: "2_male_1"
+    from: "eko_prasetyo"
+    to: "budi_santoso"
   - type: "parent"
-    from: "3_male_1"
-    to: "2_female_1"
+    from: "eko_prasetyo"
+    to: "sri_wahyuni"
   - type: "parent"
-    from: "3_female_2"
-    to: "2_male_2" # Anak Agus
+    from: "rina_indah"
+    to: "budi_santoso" 
+  - type: "parent"
+    from: "rina_indah"
+    to: "sri_wahyuni"
+  - type: "parent"
+    from: "dewi_lestari"
+    to: "agus_pratama" # Anak Agus
   
-  # Gen 4 -> Gen 3
+  # Gen 4 -> Gen 3 (Eko & Dewi: Note: In original file Dewi was paired with Eko as wife? No, relationship structure in original YAML seemed to imply Eko & Dewi are siblings or partners? 
+  # Wait, looking at original relationships:
+  # 4_male_1 (Rizky) -> 3_male_1 (Eko) AND 3_female_1 (Dewi)
+  # So Eko & Dewi are parents of Rizky & Alya.
   - type: "parent"
-    from: "4_male_1"
-    to: "3_male_1"
+    from: "rizky_ramadhan"
+    to: "eko_prasetyo"
   - type: "parent"
-    from: "4_male_1"
-    to: "3_female_1"
+    from: "rizky_ramadhan"
+    to: "dewi_lestari"
   - type: "parent"
-    from: "4_female_1"
-    to: "3_male_1"
+    from: "alya_zahra"
+    to: "eko_prasetyo"
   - type: "parent"
-    from: "4_female_1"
-    to: "3_female_1"
+    from: "alya_zahra"
+    to: "dewi_lestari"
 
   # Rina's Family (For In-Law Testing)
-  # Rina (3_female_2) + Dika (Husband) -> Rini (Child)
+  # Rina (rina_indah) + Dika (Husband) -> Rini (Child)
   - type: "parent"
-    from: "4_female_rini"
-    to: "3_female_2"
+    from: "rini_kecil"
+    to: "rina_indah"
   - type: "parent"
-    from: "4_female_rini"
-    to: "3_male_dika"
+    from: "rini_kecil"
+    to: "dika_mahendra"
   
   # Dika's Family (In-Laws to Rina)
   # Dika -> Pak Herman (Father) -> Mbah Sastro (Grandfather)
   - type: "parent"
-    from: "3_male_dika"
-    to: "2_male_herman"
+    from: "dika_mahendra"
+    to: "pak_herman"
   - type: "parent"
-    from: "2_male_herman"
-    to: "1_male_sastro"
+    from: "pak_herman"
+    to: "mbah_sastro"
   
   # Dika's Sibling (Ipar to Rina)
   - type: "parent"
-    from: "3_female_sari"
-    to: "2_male_herman"
+    from: "sari_mahendra"
+    to: "pak_herman"

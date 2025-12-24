@@ -12,22 +12,31 @@ export type PhoneNumber = {
   is_whatsapp_number: boolean;
 };
 
+export type DeceasedInfo = {
+  status: boolean;
+  date?: string;
+  place?: string;
+};
+
 export type PersonData = {
-  label: string;
+  label: string; // name
+  name: string; // full name (needed for drawer)
   gender: 'male' | 'female';
   birthDate?: string;
-  photo_link?: string;
   address?: Address[];
-  phone_number?: PhoneNumber;
+  phone_number?: PhoneNumber[];
   short_bio?: string;
   relationshipLabel?: string;
-  deceased?: boolean;
+  deceased?: boolean | DeceasedInfo;
+  additionals?: Record<string, string>;
 };
 
 export type PersonNode = Node<PersonData>;
 
-export default function PersonNode({ data }: NodeProps<PersonNode>) {
-  const { label, gender, relationshipLabel, photo_link, address, phone_number, short_bio, birthDate, deceased } = data;
+export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
+  const { label, gender, relationshipLabel, birthDate, deceased } = data;
+
+  const isDeceased = typeof deceased === 'boolean' ? deceased : deceased?.status;
 
   const getAge = (birthDateString?: string) => {
     if (!birthDateString) return null;
@@ -53,81 +62,47 @@ export default function PersonNode({ data }: NodeProps<PersonNode>) {
       
       <Card 
         className={cn(
-          "w-full shadow-md border-2 h-[280px]",
-          gender === 'male' ? "border-blue-200 bg-blue-50/50" : "border-pink-200 bg-pink-50/50",
-          relationshipLabel ? "ring-2 ring-primary ring-offset-2" : "",
-          deceased && "grayscale opacity-90 border-gray-300 bg-gray-50"
+          "w-full h-[120px] transition-all duration-300 ease-in-out border-2 flex flex-col justify-center items-center shadow-md hover:shadow-lg",
+          // Base styles & Colors
+          gender === 'male' 
+            ? "bg-blue-100 border-blue-300" 
+            : "bg-pink-100 border-pink-300",
+            
+          // Selection styles: Scale and Shadow only (No ring)
+          selected 
+            ? "shadow-2xl scale-110 z-20" 
+            : "hover:scale-105", // Only scale on hover if not selected
+            
+           // Deceased styling override
+          isDeceased && "opacity-90 grayscale bg-gray-100 border-gray-300"
         )}
       >
-        <CardHeader className="p-3 pb-0">
+        <CardHeader className="p-0 text-center w-full">
            {relationshipLabel && (
-            <div className="text-xs font-bold text-primary uppercase tracking-wider mb-1">
+            <div className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-0.5">
               {relationshipLabel}
             </div>
           )}
-          <CardTitle className="text-sm font-semibold text-center truncate" title={label}>
+          <CardTitle 
+            className={cn("text-lg font-bold truncate leading-tight text-gray-900 px-2", isDeceased && "text-gray-600")} 
+            title={label}
+          >
             {label} 
-            {deceased && <span className="ml-1 text-xs text-muted-foreground font-normal">(Alm.)</span>}
           </CardTitle>
+          {isDeceased && <span className="text-xs text-gray-500 font-normal block -mt-0.5">(Alm.)</span>}
         </CardHeader>
-        <CardContent className="p-3 pt-2 text-center text-xs space-y-2">
-            {photo_link ? (
-                 <img src={photo_link} alt={label} className={cn(
-                     "w-16 h-16 rounded-full mx-auto object-cover border border-muted",
-                     deceased && "grayscale"
-                 )} />
-            ) : (
-                <div className="w-16 h-16 rounded-full mx-auto bg-muted flex items-center justify-center text-muted-foreground">
-                    No Photo
-                </div>
-            )}
-            
-            <div className="text-muted-foreground capitalize font-medium">
-                {deceased ? 'Meninggal Dunia' : (age !== null ? `Kelahiran ${new Date(birthDate!).getFullYear()}, Umur ${age} Tahun` : 'Umur tidak diketahui')}
-            </div>
-
-            {short_bio ? (
-              <div className="text-muted-foreground line-clamp-2 italic min-h-[2.5rem]" title={short_bio}>
-                "{short_bio}"
-              </div>
-            ) : (
-              <div className="text-muted-foreground italic min-h-[2.5rem]">Tidak ada</div>
-            )}
-
-            <div className="flex items-center justify-center gap-1">
-              {phone_number && phone_number.number ? (
-                phone_number.is_whatsapp_number ? (
-                  <a 
-                    href={`https://wa.me/${phone_number.number.replace(/^0/, '62').replace(/\D/g, '')}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-green-600 hover:underline font-semibold"
-                    title="Chat via WhatsApp"
-                  >
-                    📞 <span className="underline decoration-dotted">{phone_number.number}</span> (WA)
-                  </a>
+        
+        <CardContent className="p-0 pt-1 text-center text-sm w-full">
+            <div className="text-gray-700 font-medium">
+                {isDeceased ? (
+                    <span className="text-gray-600 text-xs">Meninggal Dunia</span>
                 ) : (
-                  <span>📞 {phone_number.number}</span>
-                )
-              ) : (
-                <span className="text-muted-foreground">📞 Tidak ada</span>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              {address && address.length > 0 ? (
-                address.map((addr, idx) => (
-                  <div key={idx} className="truncate">
-                    <a href={addr.gmap_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center justify-center gap-1">
-                      📍 <span className="truncate max-w-[150px]">{addr.address}</span>
-                    </a>
-                  </div>
-                ))
-              ) : (
-                <div className="text-muted-foreground flex items-center justify-center gap-1">
-                  📍 Tidak ada
-                </div>
-              )}
+                    age !== null ? (
+                        <span>{age} Tahun</span>
+                    ) : (
+                        <span className="italic text-xs">Umur tidak diketahui</span>
+                    )
+                )}
             </div>
         </CardContent>
       </Card>

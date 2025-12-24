@@ -7,15 +7,17 @@ import {
   type Node, 
   MiniMap,
   useViewport,
-  ReactFlowProvider
+  ReactFlowProvider,
+  useReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import PersonNode from './PersonNode';
+import PersonNode, { type PersonData } from './PersonNode';
+import DetailDrawer from './DetailDrawer';
 import { getLayoutedElements } from '../utils/layout';
 import { calculateRelationship } from '../utils/kinship';
 
 const NODE_WIDTH = 256;
-const NODE_HEIGHT = 280;
+const NODE_HEIGHT = 120; // Reduced from 280 to match new minimal card size
 
 // Custom SVG lines component that draws family connections
 function FamilyLines({ nodes, unions }: { 
@@ -23,43 +25,8 @@ function FamilyLines({ nodes, unions }: {
   unions: { parents: string[], children: string[] }[] 
 }) {
   const viewport = useViewport();
-  const [nodeHeights, setNodeHeights] = useState<Record<string, number>>({});
-  
-  // Measure actual node heights from DOM
-  useEffect(() => {
-    const measureHeights = () => {
-      const heights: Record<string, number> = {};
-      nodes.forEach(node => {
-        const el = document.querySelector(`[data-id="${node.id}"]`);
-        if (el) {
-          heights[node.id] = el.getBoundingClientRect().height / viewport.zoom;
-        }
-      });
-      setNodeHeights(heights);
-    };
-    
-    // Measure after a short delay to ensure nodes are rendered
-    const timer = setTimeout(measureHeights, 100);
-    return () => clearTimeout(timer);
-  }, [nodes, viewport.zoom]);
   
   if (nodes.length === 0) return null;
-
-  // Group nodes by Y position (same Y = same generation)
-  const generationMap: Record<number, Node[]> = {};
-  nodes.forEach(node => {
-    const y = Math.round(node.position?.y || 0);
-    if (!generationMap[y]) generationMap[y] = [];
-    generationMap[y].push(node);
-  });
-
-  // Calculate max height per generation
-  const genMaxHeight: Record<number, number> = {};
-  Object.entries(generationMap).forEach(([yStr, genNodes]) => {
-    const y = parseInt(yStr);
-    const maxH = Math.max(...genNodes.map(n => nodeHeights[n.id] || NODE_HEIGHT));
-    genMaxHeight[y] = maxH;
-  });
 
   const paths: string[] = [];
 
@@ -76,15 +43,11 @@ function FamilyLines({ nodes, unions }: {
 
     if (parentNodes.length === 0 || childNodes.length === 0) return;
 
-    // Get the generation Y for parents (they should be at the same Y)
-    const parentY = Math.round(parentNodes[0].position?.y || 0);
-    const parentGenHeight = genMaxHeight[parentY] || NODE_HEIGHT;
-
     // Calculate connection points
-    // Parent: bottom center of node (using generation's max height)
+    // Parent: bottom center of node (using fixed NODE_HEIGHT)
     const parentBottoms = parentNodes.map(n => ({
       x: (n.position?.x || 0) + NODE_WIDTH / 2,
-      y: (n.position?.y || 0) + parentGenHeight
+      y: (n.position?.y || 0) + NODE_HEIGHT
     }));
 
     // Child: top center of node
@@ -126,7 +89,8 @@ function FamilyLines({ nodes, unions }: {
         width: '100%',
         height: '100%',
         pointerEvents: 'none',
-        overflow: 'visible'
+        overflow: 'visible',
+        zIndex: 0
       }}
     >
       <g transform={`translate(${viewport.x}, ${viewport.y}) scale(${viewport.zoom})`}>
@@ -134,7 +98,7 @@ function FamilyLines({ nodes, unions }: {
           <path
             key={i}
             d={d}
-            stroke="#888"
+            stroke="#94a3b8" // slate-400
             strokeWidth={2 / viewport.zoom}
             fill="none"
           />
@@ -153,6 +117,7 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [povId, setPovId] = useState<string | null>(null);
   const [unions, setUnions] = useState<{ parents: string[], children: string[] }[]>([]);
+  const { setCenter } = useReactFlow();
 
   const nodeTypes = useMemo(() => ({ person: PersonNode }), []);
 
@@ -164,10 +129,7 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
     const childToParents: Record<string, string[]> = {};
     
     // Validate structure (basic check)
-    if (!Array.isArray(familyData.relationships) || !Array.isArray(familyData.people)) {
-        console.error("Invalid family data structure");
-        return;
-    }
+    if (!familyData.relationships || !familyData.people) return;
     
     familyData.relationships.forEach((r: any) => {
       if (r.type === 'parent') {
@@ -215,11 +177,13 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
 
     // Layout with ELK
     getLayoutedElements({ nodes: peopleNodes, edges: layoutEdges }).then(({ nodes: layoutedNodes }) => {
+      // Restore POV if exists
       setNodes(layoutedNodes.map((n) => {
         const person = familyData.people.find((p: any) => p.id === n.id);
         return {
           ...n,
           type: 'person',
+          selected: n.id === povId, // Sync selection
           data: { 
             ...person,
             label: person?.name
@@ -228,17 +192,17 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
       }));
     });
 
-  }, [familyData, setNodes]);
+  }, [familyData, setNodes]); // Removed povId from dependency to avoid re-layouting on click, but wait, re-layouting isn't needed on selection.
 
 
-
-  // Update POV relationships when povId changes
+  // Update POV relationships and Selection when povId changes
   useEffect(() => {
     if (!familyData) return;
 
     if (!povId) {
       setNodes((nds) => nds.map((node) => ({
         ...node,
+        selected: false,
         data: { ...node.data, relationshipLabel: undefined }
       })));
       return;
@@ -253,46 +217,76 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
       );
       return {
         ...node,
+        selected: node.id === povId, // Ensure selected state is controlled by povId
         data: {
           ...node.data,
           relationshipLabel: relationship || undefined
         }
       };
     }));
-  }, [povId, familyData, setNodes]);
+  }, [povId, familyData, setNodes]); // This runs when povId changes (click)
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-    setPovId(node.id);
-  }, []);
+    setPovId(node.id); // This will trigger the effect above to update selected state and relationships
+    
+    // Center the node
+    // We need to account for node width/height to center it perfectly
+    // Assuming node width ~256 (NODE_WIDTH). height is variable but let's assume it's roughly centered.
+    // setCenter accepts x, y, options.
+    const x = node.position.x + (node.measured?.width ?? NODE_WIDTH) / 2;
+    const y = node.position.y + (node.measured?.height ?? NODE_HEIGHT) / 2;
+    
+    setCenter(x, y, { zoom: 1.2, duration: 800 });
+  }, [setCenter]);
 
   const onPaneClick = useCallback(() => {
     setPovId(null);
   }, []);
 
+  const closeDrawer = () => setPovId(null);
+
+  const selectedPerson = useMemo(() => {
+      if (!povId || !familyData) return null;
+      return familyData.people.find((p: any) => p.id === povId) || null;
+  }, [povId, familyData]);
+
+
   if (isLoading) return <div className="flex items-center justify-center h-full">Loading Family Tree...</div>;
   if (!familyData) return null;
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <ReactFlow
         nodes={nodes}
-        edges={[]} // No edges - we draw lines manually
+        edges={[]} 
         onNodesChange={onNodesChange}
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
+        // fitView // removed to avoid jump on initial load if we want manual control, but useful for first load.
+        // Actually, let's keep fitView but we might need to be careful with it overriding our setCenter?
+        // fitView is an initial prop.
         fitView
         nodesConnectable={false}
-        nodesDraggable={false}
+        nodesDraggable={false} // Maybe allow drag? User didn't specify.
         panOnScroll
-        selectionOnDrag
+        selectionOnDrag={false}
         panOnDrag={[1, 2]}
+        maxZoom={4}
+        minZoom={0.1}
       >
         <FamilyLines nodes={nodes} unions={unions} />
         <Background />
         <Controls />
         <MiniMap className="hidden md:block" />
       </ReactFlow>
+
+      {/* Detail Drawer */}
+      <DetailDrawer 
+        isOpen={!!povId} 
+        onClose={closeDrawer} 
+        person={selectedPerson as PersonData | null} 
+      />
     </div>
   );
 }
