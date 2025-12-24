@@ -67,8 +67,8 @@ export default {
            return new Response('Storage limit reached (100 objects). Clean up unused files.', { status: 507, headers: corsHeaders });
         }
 
-        // Generate Short ID
-        const id = Math.random().toString(36).substring(2, 8);
+        // Generate UUID
+        const id = crypto.randomUUID();
 
         // Generate Edit Token (Secret Key)
         const editToken = crypto.randomUUID().replace(/-/g, '');
