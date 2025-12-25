@@ -28,8 +28,49 @@ export default {
       const id = url.pathname.slice(1); // Remove leading slash
       if (!id) return new Response('Missing ID', { status: 400, headers: corsHeaders });
 
+      // --- Rate Limiting Pre-Check ---
+      // We check if the IP is already blocked before doing anything.
+      // We ONLY track failed attempts, but if they are blocked, we block everything.
+      
+      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+      // Hash IP only (ignoring User-Agent to prevent bypass by switching browsers)
+      const msgBuffer = new TextEncoder().encode(ip);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      const clientHash = hashHex.substring(0, 12); 
+
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const rateLimitKey = `ratelimit:${today}:${clientHash}`;
+
+      try {
+        const currentCountStr = await env.FAMILYTREE_RATE_LIMITER.get(rateLimitKey);
+        const currentCount = parseInt(currentCountStr, 10) || 0;
+
+        if (currentCount >= 5) {
+          return new Response('Rate limit exceeded (Too many failed attempts today).', { status: 429, headers: corsHeaders });
+        }
+      } catch (e) {
+        console.error('Rate limit read error:', e);
+      }
+      // -------------------------------
+
       const object = await env.BUCKET.get(id);
+      
       if (object === null) {
+        // --- Record Failed Attempt ---
+        try {
+           const currentCountStr = await env.FAMILYTREE_RATE_LIMITER.get(rateLimitKey);
+           const currentCount = parseInt(currentCountStr, 10) || 0;
+           
+           await env.FAMILYTREE_RATE_LIMITER.put(rateLimitKey, (currentCount + 1).toString(), {
+             expirationTtl: 86400 
+           });
+        } catch(e) {
+          console.error('Rate limit write error:', e);
+        }
+        // -----------------------------
+        
         return new Response('Config not found', { status: 404, headers: corsHeaders });
       }
 

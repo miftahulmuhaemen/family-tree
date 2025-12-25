@@ -9,6 +9,10 @@ compatibility_date = "2024-12-23"
 binding = "BUCKET"
 bucket_name = "familytree"
 
+[[kv_namespaces]]
+binding = "FAMILYTREE_RATE_LIMITER"
+id = "d082926ed33a46d2be3796dfbb054a03"
+
 # Environment Variables (Non-Secret)
 [vars]
 # ALLOWED_ORIGIN = "https://your-domain.com" # Optional: Limit CORS
