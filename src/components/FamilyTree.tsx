@@ -20,63 +20,91 @@ const NODE_WIDTH = 256;
 const NODE_HEIGHT = 120; // Reduced from 280 to match new minimal card size
 
 // Custom SVG lines component that draws family connections
-function FamilyLines({ nodes, unions }: { 
+function FamilyLines({ nodes, unions, relationships }: { 
   nodes: Node[], 
-  unions: { parents: string[], children: string[] }[] 
+  unions: { parents: string[], children: string[], type?: string }[],
+  relationships: any[] 
 }) {
   const viewport = useViewport();
   
   if (nodes.length === 0) return null;
 
-  const paths: string[] = [];
+  const solidPaths: string[] = [];
+  // Foster connections need: Path1 (Top), Path2 (Bottom), LabelX, LabelY
+  const fosterConnections: { d1: string, d2: string, x: number, y: number }[] = [];
 
-  unions.forEach((union) => {
-    // Get parent node positions
+  unions.forEach((union, index) => {
     const parentNodes = union.parents
       .map(pid => nodes.find(n => n.id === pid))
       .filter((n): n is Node => n !== undefined);
     
-    // Get child node positions  
     const childNodes = union.children
       .map(cid => nodes.find(n => n.id === cid))
       .filter((n): n is Node => n !== undefined);
 
     if (parentNodes.length === 0 || childNodes.length === 0) return;
 
-    // Calculate connection points
-    // Parent: bottom center of node (using fixed NODE_HEIGHT)
     const parentBottoms = parentNodes.map(n => ({
       x: (n.position?.x || 0) + NODE_WIDTH / 2,
-      y: (n.position?.y || 0) + NODE_HEIGHT
+      y: (n.position?.y || 0) + NODE_HEIGHT,
+      id: n.id
     }));
 
-    // Child: top center of node
     const childTops = childNodes.map(n => ({
       x: (n.position?.x || 0) + NODE_WIDTH / 2,
-      y: n.position?.y || 0
+      y: n.position?.y || 0,
+      id: n.id
     }));
 
-    // Calculate the merge point Y (halfway between lowest parent and highest child)
     const lowestParentY = Math.max(...parentBottoms.map(p => p.y));
     const highestChildY = Math.min(...childTops.map(c => c.y));
-    const mergeY = lowestParentY + (highestChildY - lowestParentY) / 2;
+    
+    const staggerOffset = (index % 5) * 10; 
+    const mergeY = (lowestParentY + (highestChildY - lowestParentY) / 2) - 20 + staggerOffset;
 
-    // Calculate the horizontal line X range
-    const allX = [...parentBottoms.map(p => p.x), ...childTops.map(c => c.x)];
+    const activeParentBottoms = parentBottoms.filter(p => {
+        return Math.abs(p.y - lowestParentY) < 10;
+    });
+
+    const allX = [...activeParentBottoms.map(p => p.x), ...childTops.map(c => c.x)];
     const minX = Math.min(...allX);
     const maxX = Math.max(...allX);
 
-    // Draw vertical lines from each parent down to merge line
-    parentBottoms.forEach(p => {
-      paths.push(`M ${p.x} ${p.y} L ${p.x} ${mergeY}`);
+    activeParentBottoms.forEach(p => {
+      solidPaths.push(`M ${p.x} ${p.y} L ${p.x} ${mergeY}`);
     });
 
-    // Draw horizontal merge line
-    paths.push(`M ${minX} ${mergeY} L ${maxX} ${mergeY}`);
+    solidPaths.push(`M ${minX} ${mergeY} L ${maxX} ${mergeY}`);
 
-    // Draw vertical lines from merge line down to each child
     childTops.forEach(c => {
-      paths.push(`M ${c.x} ${mergeY} L ${c.x} ${c.y}`);
+       const isFoster = union.parents.every(pId => {
+           const rel = relationships.find((r: any) => r.from === c.id && r.to === pId);
+           return rel?.type === 'foster_parent';
+       });
+
+       if (isFoster) {
+           // Calculate gap
+           const dy = c.y - mergeY;
+           const midY = mergeY + dy / 2;
+           // Dynamic gap: tighter for short lines to maximize line visibility
+           const gapHalf = dy < 40 ? 7 : 10; 
+
+           if (dy > 20) {
+               // Ensure d1 and d2 don't cross boundaries
+               const y1 = Math.max(mergeY, midY - gapHalf); 
+               const y2 = Math.min(c.y, midY + gapHalf);
+               
+               const d1 = `M ${c.x} ${mergeY} L ${c.x} ${y1}`;
+               const d2 = `M ${c.x} ${y2} L ${c.x} ${c.y}`;
+               fosterConnections.push({ d1, d2, x: c.x, y: midY });
+           } else {
+                // Fallback for very tight spaces: just dashed line
+                const path = `M ${c.x} ${mergeY} L ${c.x} ${c.y}`;
+                fosterConnections.push({ d1: path, d2: '', x: -10000, y: -10000 }); 
+           }
+       } else {
+           solidPaths.push(`M ${c.x} ${mergeY} L ${c.x} ${c.y}`);
+       }
     });
   });
 
@@ -94,15 +122,229 @@ function FamilyLines({ nodes, unions }: {
       }}
     >
       <g transform={`translate(${viewport.x}, ${viewport.y}) scale(${viewport.zoom})`}>
-        {paths.map((d, i) => (
+        {solidPaths.map((d, i) => (
           <path
-            key={i}
+            key={`solid-${i}`}
             d={d}
-            stroke="#94a3b8" // slate-400
+            stroke="#94a3b8" 
             strokeWidth={2 / viewport.zoom}
             fill="none"
           />
         ))}
+        {fosterConnections.map((conn, i) => (
+            <g key={`foster-${i}`}>
+                <path d={conn.d1} stroke="#94a3b8" strokeWidth={2 / viewport.zoom} strokeDasharray="3,3" fill="none" />
+                {conn.d2 && <path d={conn.d2} stroke="#94a3b8" strokeWidth={2 / viewport.zoom} strokeDasharray="3,3" fill="none" />}
+                {conn.x > -1000 && (
+                    <text
+                        x={conn.x}
+                        y={conn.y}
+                        dy={3}
+                        textAnchor="middle"
+                        fill="#64748b"
+                        style={{ fontSize: 10, fontWeight: 500 }}
+                    >
+                        <tspan fill="white" stroke="white" strokeWidth="4" paintOrder="stroke">Fostered</tspan>
+                        <tspan x={conn.x} dy={0}>Fostered</tspan>
+                    </text>
+                )}
+            </g>
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+// Custom SVG lines for married couples
+function SpouseLines({ nodes, unions }: { 
+  nodes: Node[], 
+  unions: { parents: string[], children: string[], type?: string }[] 
+}) {
+  const viewport = useViewport();
+  
+  if (nodes.length === 0) return null;
+
+  const connections: React.ReactNode[] = [];
+
+  // 1. Organize unions into Groups (Vertical Hubs) vs Standalone (Horizontal)
+  const hubGroups: Record<string, { hub: Node, spouses: { node: Node, type: string }[] }> = {};
+  const horizontalCouples: { p1: Node, p2: Node, type: string }[] = [];
+
+  unions.forEach(union => {
+      if (union.parents.length !== 2) return;
+      
+      const p1 = nodes.find(n => n.id === union.parents[0]);
+      const p2 = nodes.find(n => n.id === union.parents[1]);
+      if (!p1 || !p2) return;
+
+      const type = union.type || '';
+      if (!type) return;
+
+      const dy = Math.abs((p1.position?.y || 0) - (p2.position?.y || 0));
+      const isVertical = dy > NODE_HEIGHT / 2;
+
+      if (isVertical) {
+          // Identify Hub (Upper) vs Spouse (Lower)
+          const [hub, spouse] = (p1.position?.y || 0) < (p2.position?.y || 0) ? [p1, p2] : [p2, p1];
+          
+          if (!hubGroups[hub.id]) {
+              hubGroups[hub.id] = { hub, spouses: [] };
+          }
+          hubGroups[hub.id].spouses.push({ node: spouse, type });
+      } else {
+          horizontalCouples.push({ p1, p2, type });
+      }
+  });
+
+  // 2. Render Vertical Hub Groups (Unified Fork)
+  Object.values(hubGroups).forEach((group, groupIndex) => {
+      const { hub, spouses } = group;
+      
+      const hubX = (hub.position?.x || 0) + NODE_WIDTH / 2;
+      const hubY = (hub.position?.y || 0) + NODE_HEIGHT;
+      
+      // Sort spouses by X to find range
+      spouses.sort((a, b) => (a.node.position?.x || 0) - (b.node.position?.x || 0));
+      
+      // Sort spouses by X to find range
+      spouses.sort((a, b) => (a.node.position?.x || 0) - (b.node.position?.x || 0));
+      
+      // If layout varies, find min/max Y? ELK usually aligns them. Let's pick min Y of spouses.
+      const minY = Math.min(...spouses.map(s => s.node.position?.y || 0));
+      
+      const midY = hubY + (minY - hubY) / 2;
+      
+      // Draw Trunk (Hub -> Mid)
+      connections.push(
+          <path
+              key={`hub-trunk-${groupIndex}`}
+              d={`M ${hubX} ${hubY} L ${hubX} ${midY}`}
+              stroke="#94a3b8"
+              strokeWidth={2 / viewport.zoom}
+              strokeDasharray="5,5"
+              fill="none"
+          />
+      );
+
+      // Range for Horizontal Bar
+      const minX = (spouses[0].node.position?.x || 0) + NODE_WIDTH / 2;
+      const maxX = (spouses[spouses.length - 1].node.position?.x || 0) + NODE_WIDTH / 2;
+      
+      // Draw Horizontal Connector Bar
+      // Connect from MinSpouse to MaxSpouse at midY
+      // Also ensure connection to Hub Trunk if Hub is outside range? 
+      // Usually Hub is centered above, so it should be within or effectively connected if we draw line to HubX.
+      // Better: Draw bar from min(MinSpouseX, HubX) to max(MaxSpouseX, HubX)? 
+      // No, classic tree is Bar across spouses, Trunk connects to Bar.
+      // If HubX is not within [MinX, MaxX], we extend the bar to HubX.
+      const barMinX = Math.min(minX, hubX);
+      const barMaxX = Math.max(maxX, hubX);
+      
+      connections.push(
+          <path
+              key={`hub-bar-${groupIndex}`}
+              d={`M ${barMinX} ${midY} L ${barMaxX} ${midY}`}
+              stroke="#94a3b8"
+              strokeWidth={2 / viewport.zoom}
+              strokeDasharray="5,5"
+              fill="none"
+          />
+      );
+
+      // Draw Drops to each Spouse
+      spouses.forEach((spouse, sIndex) => {
+          const sX = (spouse.node.position?.x || 0) + NODE_WIDTH / 2;
+          const sY = spouse.node.position?.y || 0;
+          
+          const dropPath = `M ${sX} ${midY} L ${sX} ${sY}`;
+          const label = spouse.type === 'married' ? 'Married' : 
+                        spouse.type === 'divorced' ? 'Divorced' : 
+                        spouse.type === 'not_married' ? 'Not Married' : spouse.type;
+
+          const labelY = midY + (sY - midY) / 2;
+
+          connections.push(
+              <g key={`hub-drop-${groupIndex}-${sIndex}`}>
+                  <path
+                      d={dropPath}
+                      stroke="#94a3b8"
+                      strokeWidth={2 / viewport.zoom}
+                      strokeDasharray="5,5"
+                      fill="none"
+                  />
+                  <text
+                    x={sX}
+                    y={labelY}
+                    dy={4} 
+                    textAnchor="middle"
+                    fill="#64748b" 
+                    style={{ fontSize: 12, fontWeight: 500 }} 
+                  >
+                     <tspan fill="white" stroke="white" strokeWidth="4" paintOrder="stroke">{label}</tspan>
+                     <tspan x={sX} dy={0}>{label}</tspan>
+                  </text>
+              </g>
+          );
+      });
+  });
+
+  // 3. Render Horizontal Couples (Legacy/Standard)
+  horizontalCouples.forEach((couple, index) => {
+      const { p1, p2, type } = couple;
+      const label = type === 'married' ? 'Married' : 
+                    type === 'divorced' ? 'Divorced' : 
+                    type === 'not_married' ? 'Not Married' : type;
+
+      const [left, right] = (p1.position?.x || 0) < (p2.position?.x || 0) ? [p1, p2] : [p2, p1];
+
+      const startX = (left.position?.x || 0) + NODE_WIDTH;
+      const startY = (left.position?.y || 0) + NODE_HEIGHT / 2;
+      const endX = (right.position?.x || 0);
+      const endY = (right.position?.y || 0) + NODE_HEIGHT / 2;
+
+      const midX = startX + (endX - startX) / 2;
+
+      const distance = endX - startX;
+      const minPadding = 10; 
+        
+      let gapHalfWidth = 35; 
+      if (distance < (gapHalfWidth * 2 + minPadding * 2)) {
+         gapHalfWidth = Math.max(0, (distance - minPadding * 2) / 2);
+      }
+
+      if (startX >= endX) return; 
+
+      const leftPath = `M ${startX} ${startY} L ${midX - gapHalfWidth} ${startY}`;
+      const rightPath = `M ${midX + gapHalfWidth} ${endY} L ${endX} ${endY}`;
+
+      connections.push(
+        <g key={`spouse-horz-${index}`}>
+            <path d={leftPath} stroke="#94a3b8" strokeWidth={2 / viewport.zoom} strokeDasharray="5,5" fill="none" />
+            <path d={rightPath} stroke="#94a3b8" strokeWidth={2 / viewport.zoom} strokeDasharray="5,5" fill="none" />
+            <text x={midX} y={startY} dy={4 / viewport.zoom} textAnchor="middle" fill="#64748b" style={{ fontSize: 12, fontWeight: 500 }}>
+                {label}
+            </text>
+            <circle cx={startX} cy={startY} r={3} fill="#94a3b8" />
+            <circle cx={endX} cy={endY} r={3} fill="#94a3b8" />
+        </g>
+      );
+  });
+
+  return (
+    <svg
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        overflow: 'visible',
+        zIndex: 1 // Slightly above FamilyLines (0)
+      }}
+    >
+      <g transform={`translate(${viewport.x}, ${viewport.y}) scale(${viewport.zoom})`}>
+        {connections}
       </g>
     </svg>
   );
@@ -116,7 +358,7 @@ interface FamilyTreeProps {
 function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [povId, setPovId] = useState<string | null>(null);
-  const [unions, setUnions] = useState<{ parents: string[], children: string[] }[]>([]);
+  const [unions, setUnions] = useState<{ parents: string[], children: string[], type?: string }[]>([]);
   const { setCenter } = useReactFlow();
 
   const nodeTypes = useMemo(() => ({ person: PersonNode }), []);
@@ -131,29 +373,55 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
     // Validate structure (basic check)
     if (!familyData.relationships || !familyData.people) return;
     
+    // Identify explicit couples
+    const explicitCouples: Record<string, string> = {}; // key -> type
+
     familyData.relationships.forEach((r: any) => {
-      if (r.type === 'parent') {
+      if (r.type === 'parent' || r.type === 'foster_parent') {
         if (!childToParents[r.from]) childToParents[r.from] = [];
         childToParents[r.from].push(r.to);
+      } else if (['married', 'divorced', 'not_married'].includes(r.type)) {
+         const key = [r.from, r.to].sort().join('-');
+         explicitCouples[key] = r.type;
       }
     });
 
     // Group children by their parent set (union)
-    const unionMap: Record<string, { parents: string[], children: string[] }> = {};
+    const unionMap: Record<string, { parents: string[], children: string[], type?: string }> = {};
     Object.entries(childToParents).forEach(([childId, parentIds]) => {
       parentIds.sort();
       const unionKey = parentIds.join('-');
       if (!unionMap[unionKey]) {
-        unionMap[unionKey] = { parents: parentIds, children: [] };
+        unionMap[unionKey] = { parents: parentIds, children: [], type: explicitCouples[unionKey] };
       }
       unionMap[unionKey].children.push(childId);
+    });
+
+    // Ensure childless couples are included
+    Object.entries(explicitCouples).forEach(([key, type]) => {
+        if (!unionMap[key]) {
+            const parents = key.split('-');
+            unionMap[key] = { parents, children: [], type };
+        } else {
+             // update type if exists
+             if (!unionMap[key].type) unionMap[key].type = type;
+        }
     });
 
     const unionList = Object.values(unionMap);
     setUnions(unionList);
 
     // Create Person nodes only
-    const peopleNodes = familyData.people.map((p: any) => ({
+    const peopleNodes = familyData.people
+      .sort((a: any, b: any) => {
+         // Sort by birthDate descending (Youngest First) to match the visual layout preference
+         // where Mulan (youngest wife) is left, Nurlina (oldest) is right.
+         // This ensures children (Bruno, 2010) come before (Findia, 1999), aligning them with moms.
+         const dateA = new Date(a.birthDate || '1900-01-01').getTime();
+         const dateB = new Date(b.birthDate || '1900-01-01').getTime();
+         return dateB - dateA;
+      })
+      .map((p: any) => ({
       id: p.id,
       position: { x: 0, y: 0 },
       data: { ...p, label: p.name },
@@ -162,7 +430,11 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
     }));
 
     // Create edges for ELK layout calculation (but we won't render them)
+    // Edges must reference the sorted nodes? ID matching doesn't care about order,
+    // but ELK layout respects node array order for initial positioning.
     const layoutEdges: { id: string, source: string, target: string }[] = [];
+    const fosterChildrenIds: string[] = [];
+
     unionList.forEach((union) => {
       union.parents.forEach((parentId) => {
         union.children.forEach((childId) => {
@@ -171,12 +443,25 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
             source: parentId,
             target: childId
           });
+
+          // Check if this specific parent-child relationship is foster
+          const isFoster = familyData.relationships.some((r: any) => 
+              r.from === childId && r.to === parentId && r.type === 'foster_parent'
+          );
+          if (isFoster) {
+              fosterChildrenIds.push(childId);
+          }
         });
       });
     });
 
     // Layout with ELK
-    getLayoutedElements({ nodes: peopleNodes, edges: layoutEdges }).then(({ nodes: layoutedNodes }) => {
+    getLayoutedElements({ 
+      nodes: peopleNodes, 
+      edges: layoutEdges, 
+      unions: unionList, 
+      fosterChildren: fosterChildrenIds 
+    }).then(({ nodes: layoutedNodes }) => {
       // Restore POV if exists
       setNodes(layoutedNodes.map((n) => {
         const person = familyData.people.find((p: any) => p.id === n.id);
@@ -212,7 +497,7 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
       const relationship = calculateRelationship(
         povId, 
         node.id, 
-        familyData.relationships.map((r: any) => ({ source: r.to, target: r.from })),
+        familyData.relationships.map((r: any) => ({ source: r.to, target: r.from, type: r.type })),
         familyData.people
       );
       return {
@@ -271,11 +556,12 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
         nodesDraggable={false} // Maybe allow drag? User didn't specify.
         panOnScroll
         selectionOnDrag={false}
-        panOnDrag={[1, 2]}
+        panOnDrag={true}
         maxZoom={4}
         minZoom={0.1}
       >
-        <FamilyLines nodes={nodes} unions={unions} />
+        <FamilyLines nodes={nodes} unions={unions} relationships={familyData.relationships} />
+        <SpouseLines nodes={nodes} unions={unions} />
         <Background />
         <Controls />
         <MiniMap className="hidden md:block" />

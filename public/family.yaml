@@ -35,6 +35,14 @@ people:
     address: []
     phone_number: []
     short_bio: "Petani tembakau."
+  - id: "mbah_putri"
+    name: "Mbah Suminah"
+    gender: "female"
+    birthDate: "1932-04-21"
+    deceased: true
+    address: []
+    phone_number: []
+    short_bio: "Penjual Jamu Gendong."
 
   # Generasi 2
   - id: "budi_santoso"
@@ -87,6 +95,38 @@ people:
     address: []
     phone_number: []
     short_bio: "Pensiunan Pegawai Bank."
+  - id: "bu_herman"
+    name: "Bu Herman"
+    gender: "female"
+    birthDate: "1963-06-15"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Ibu Rumah Tangga."
+  - id: "bu_agus"
+    name: "Bu Agus"
+    gender: "female"
+    birthDate: "1964-12-12"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Guru TK."
+  - id: "anto_sudirman"
+    name: "Anto Sudirman"
+    gender: "male"
+    birthDate: "1970-02-02"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Musisi."
+  - id: "nurlina_sari"
+    name: "Nurlina Sari"
+    gender: "female"
+    birthDate: "1972-03-15"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Penyanyi."
 
   # Generasi 3
   - id: "eko_prasetyo"
@@ -113,6 +153,14 @@ people:
       - number: "081700009999"
         is_whatsapp_number: true
     short_bio: "Desainer Grafis Freelance."
+  - id: "doni_pratama"
+    name: "Doni Pratama"
+    gender: "male"
+    birthDate: "1994-11-20"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Mahasiswa Arsitektur."
   - id: "rina_indah"
     name: "Rina Indah"
     gender: "female"
@@ -143,6 +191,30 @@ people:
     address: []
     phone_number: []
     short_bio: "Mahasiswa."
+  - id: "fitria_anto"
+    name: "Fitria"
+    gender: "female"
+    birthDate: "1999-01-01"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Model."
+  - id: "sondang_anto"
+    name: "Sondang"
+    gender: "female"
+    birthDate: "2000-05-05"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Penulis Lagu."
+  - id: "tita_karo"
+    name: "Tita Karo"
+    gender: "male"
+    birthDate: "1998-12-12"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Produser Musik."
 
   # Generasi 4 (Anak-anak Eko & Dewi)
   - id: "rizky_ramadhan"
@@ -171,6 +243,60 @@ people:
     address: []
     phone_number: []
     short_bio: "Bayi lucu."
+  - id: "bonar_sondang"
+    name: "Bonar"
+    gender: "male"
+    birthDate: "2024-01-01"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Bayi."
+
+  # New Wives for Anto
+  - id: "wendy_wife"
+    name: "Wendy"
+    gender: "female"
+    birthDate: "1980-01-01"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Istri kedua Anto."
+  - id: "mulan_wife"
+    name: "Mulan"
+    gender: "female"
+    birthDate: "1985-02-02"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Istri ketiga Anto."
+  
+  # New Child (Wendy & Anto)
+  - id: "bruno_son"
+    name: "Bruno"
+    gender: "male"
+    birthDate: "2010-05-05"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Anak Anto dan Wendy."
+  
+  # Foster Children
+  - id: "gilang_foster"
+    name: "Gilang"
+    gender: "male"
+    birthDate: "2015-06-01"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Anak asuh Dika dan Rina."
+  - id: "sri_ningsih_foster"
+    name: "Sri Ningsih"
+    gender: "female"
+    birthDate: "2016-07-07"
+    deceased: false
+    address: []
+    phone_number: []
+    short_bio: "Anak asuh Sari."
 
 relationships:
   # Gen 2 -> Gen 1 (Child -> Parent)
@@ -200,9 +326,13 @@ relationships:
   - type: "parent"
     from: "rina_indah"
     to: "sri_wahyuni"
+
   - type: "parent"
-    from: "dewi_lestari"
-    to: "agus_pratama" # Anak Agus
+    from: "doni_pratama"
+    to: "agus_pratama" 
+  - type: "parent"
+    from: "doni_pratama"
+    to: "bu_agus"
   
   # Gen 4 -> Gen 3 (Eko & Dewi: Note: In original file Dewi was paired with Eko as wife? No, relationship structure in original YAML seemed to imply Eko & Dewi are siblings or partners? 
   # Wait, looking at original relationships:
@@ -238,8 +368,103 @@ relationships:
   - type: "parent"
     from: "pak_herman"
     to: "mbah_sastro"
+  - type: "parent"
+    from: "pak_herman"
+    to: "mbah_putri"
   
   # Dika's Sibling (Ipar to Rina)
   - type: "parent"
     from: "sari_mahendra"
     to: "pak_herman"
+  - type: "parent"
+    from: "dika_mahendra"
+    to: "bu_herman"
+  - type: "parent"
+    from: "sari_mahendra"
+    to: "bu_herman"
+  
+  # Anto & Nurlina Branch
+  - type: "parent"
+    from: "anto_sudirman"
+    to: "raden_soedirman"
+  - type: "parent"
+    from: "anto_sudirman"
+    to: "siti_hartini"
+  - type: "parent"
+    from: "fitria_anto"
+    to: "anto_sudirman"
+  - type: "parent"
+    from: "fitria_anto"
+    to: "nurlina_sari"
+  - type: "parent"
+    from: "sondang_anto"
+    to: "anto_sudirman"
+  - type: "parent"
+    from: "sondang_anto"
+    to: "nurlina_sari"
+  - type: "parent"
+    from: "bonar_sondang"
+    to: "sondang_anto"
+  - type: "parent"
+    from: "bonar_sondang"
+    to: "tita_karo"
+
+  # Explicit Spouse Relationships
+  - type: "married"
+    from: "raden_soedirman"
+    to: "siti_hartini"
+  - type: "married"
+    from: "mbah_sastro"
+    to: "mbah_putri"
+  - type: "married"
+    from: "budi_santoso"
+    to: "sri_wahyuni"
+  - type: "married"
+    from: "agus_pratama"
+    to: "bu_agus"
+  - type: "married"
+    from: "pak_herman"
+    to: "bu_herman"
+  - type: "married"
+    from: "eko_prasetyo"
+    to: "dewi_lestari"
+  - type: "married"
+    from: "rina_indah"
+    to: "dika_mahendra"
+  
+  # Divorced
+  - type: "divorced"
+    from: "anto_sudirman"
+    to: "nurlina_sari"
+
+  # Not Married
+  - type: "not_married"
+    from: "sondang_anto"
+    to: "tita_karo"
+
+  # Anto's New Family Relations
+  - type: "parent"
+    from: "bruno_son"
+    to: "anto_sudirman"
+  - type: "parent"
+    from: "bruno_son"
+    to: "wendy_wife"
+
+  # New Marriages
+  - type: "married"
+    from: "anto_sudirman"
+    to: "wendy_wife"
+  - type: "married"
+    from: "anto_sudirman"
+    to: "mulan_wife"
+
+  # Foster Relationships
+  - type: "foster_parent"
+    from: "gilang_foster"
+    to: "dika_mahendra"
+  - type: "foster_parent"
+    from: "gilang_foster"
+    to: "rina_indah"
+  - type: "foster_parent"
+    from: "sri_ningsih_foster"
+    to: "sari_mahendra"

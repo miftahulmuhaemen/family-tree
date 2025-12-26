@@ -1,6 +1,7 @@
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Info } from 'lucide-react';
 
 export type Address = {
   address: string;
@@ -39,6 +40,7 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
   const isDeceased = typeof deceased === 'boolean' ? deceased : deceased?.status;
 
   const getAge = (birthDateString?: string) => {
+    // ... (unchanged)
     if (!birthDateString) return null;
     const today = new Date();
     const birthDate = new Date(birthDateString);
@@ -53,7 +55,7 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
   const age = getAge(birthDate);
 
   return (
-    <div className="relative w-64">
+    <div className="relative w-64 group">
       <Handle 
         type="target" 
         position={Position.Top} 
@@ -62,7 +64,7 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
       
       <Card 
         className={cn(
-          "w-full h-[120px] transition-all duration-300 ease-in-out border-2 flex flex-col justify-center items-center shadow-md hover:shadow-lg",
+          "w-full h-[120px] transition-all duration-300 ease-in-out border-2 flex flex-col justify-center items-center shadow-md hover:shadow-lg cursor-pointer",
           // Base styles & Colors
           gender === 'male' 
             ? "bg-blue-100 border-blue-300" 
@@ -77,6 +79,10 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
           isDeceased && "opacity-90 grayscale bg-gray-100 border-gray-300"
         )}
       >
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <Info size={16} className="text-gray-500/70" />
+        </div>
+
         <CardHeader className="p-0 text-center w-full">
            {relationshipLabel && (
             <div className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-0.5">

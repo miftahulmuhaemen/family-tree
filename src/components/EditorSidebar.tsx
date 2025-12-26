@@ -17,6 +17,7 @@ interface EditorSidebarProps {
   onLoad: (id: string, token?: string) => Promise<void>;
   editToken: string | null;
   onUnlock: (token: string) => void;
+  lastSaved: Date | null;
 }
 
 export function EditorSidebar({
@@ -32,7 +33,8 @@ export function EditorSidebar({
   currentId,
   onLoad,
   editToken,
-  onUnlock
+  onUnlock,
+  lastSaved
 }: EditorSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [width, setWidth] = useState(400);
@@ -149,8 +151,11 @@ export function EditorSidebar({
           <div className="flex flex-col overflow-hidden mr-2">
             <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100 whitespace-nowrap">Configuration</h2>
             {currentId && (
-              <div className="flex items-center gap-1.5 text-xs font-mono mt-0.5">
-                 <span className="text-green-600 dark:text-green-400">ID: {currentId}</span>
+              <div className="flex items-center gap-2 text-xs font-mono mt-0.5 max-w-full">
+                 <div className="flex items-center gap-1 text-green-600 dark:text-green-400 min-w-0" title={currentId}>
+                    <span className="shrink-0">ID:</span>
+                    <span className="truncate max-w-[120px]">{currentId}</span>
+                 </div>
                  {editToken ? (
                     <div className="flex items-center gap-1 text-amber-600 dark:text-amber-500 cursor-pointer" onClick={copyToken} title="Click to copy Edit Token">
                        <Unlock className="w-3 h-3" />
@@ -271,17 +276,26 @@ export function EditorSidebar({
         {/* Status Bar */}
         <div className="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-[#1e1e1e] space-y-4">
           
-          {/* Validation Status */}
-          <div className="flex items-start gap-2 text-sm">
-            {isValid ? (
-              <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                <CheckCircle className="w-4 h-4 shrink-0" />
-                <span className="whitespace-nowrap">Valid Configuration</span>
-              </div>
-            ) : (
-              <div className="flex items-start gap-2 text-red-600 dark:text-red-400 animate-in slide-in-from-bottom-2 fade-in">
-                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                <span className="text-xs break-all">{errorMessage || "Invalid YAML"}</span>
+          {/* Validation Status & Last Saved */}
+          <div className="flex items-center justify-between gap-2 min-h-[20px]">
+            <div className="flex items-center gap-2 text-sm flex-1">
+              {isValid ? (
+                <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                  <CheckCircle className="w-4 h-4 shrink-0" />
+                  <span className="whitespace-nowrap font-medium">Valid Configuration</span>
+                </div>
+              ) : (
+                <div className="flex items-start gap-2 text-red-600 dark:text-red-400 animate-in slide-in-from-bottom-2 fade-in">
+                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                  <span className="text-xs break-all leading-tight">{errorMessage || "Invalid YAML"}</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Last Saved Info */}
+            {lastSaved && (
+              <div className="text-xs text-gray-400 dark:text-gray-500 text-right shrink-0">
+                Last saved: {lastSaved.toLocaleDateString()}
               </div>
             )}
           </div>

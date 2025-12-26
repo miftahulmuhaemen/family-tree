@@ -6,6 +6,7 @@ import { EditorSidebar } from './components/EditorSidebar';
 
 import { ShareSuccessModal } from './components/ShareSuccessModal';
 import { NotFound } from './components/NotFound';
+import { WelcomeToast } from './components/WelcomeToast';
 
 const queryClient = new QueryClient();
 
@@ -20,9 +21,12 @@ function App() {
 
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [editToken, setEditToken] = useState<string | null>(null);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   // Share Modal State
   const [showShareModal, setShowShareModal] = useState(false);
+  // ...
+
   const [shareData, setShareData] = useState<{id: string, token: string, url: string} | null>(null);
 
   // Initial Load
@@ -148,7 +152,9 @@ function App() {
       const data = await response.json();
       
       if (data.success && data.id) {
-        setCurrentId(data.id); 
+        setCurrentId(data.id);
+        const now = new Date();
+        setLastSaved(now); 
         
         // Update URL
         const newUrl = `${window.location.protocol}//${window.location.host}?id=${data.id}`;
@@ -197,6 +203,14 @@ function App() {
         setYamlContent(text);
         setCurrentId(id);
         setEditToken(token || null); // Clear token unless provided (for future deep link handling)
+
+        // Try to get Last-Modified header
+        const lastMod = response.headers.get('Last-Modified');
+        if (lastMod) {
+           setLastSaved(new Date(lastMod));
+        } else {
+           setLastSaved(null);
+        }
         
         // Update URL
         const newUrl = `${window.location.protocol}//${window.location.host}?id=${id}`;
@@ -240,6 +254,7 @@ function App() {
             onLoad={handleLoadId}
             editToken={editToken}
             onUnlock={setEditToken}
+            lastSaved={lastSaved}
           />
         )}
 
@@ -248,6 +263,8 @@ function App() {
             <FamilyTree data={treeData} isLoading={isLoading} />
         </div>
       </div>
+      
+      <WelcomeToast />
 
       <ShareSuccessModal 
         isOpen={showShareModal} 
