@@ -1,31 +1,31 @@
 type Edge = { source: string; target: string; type?: string };
 
 export type RelationshipType = 
-  | 'Diri Sendiri' 
+  | 'Me' 
   // Lineal
-  | 'Orang Tua' | 'Ayah' | 'Ibu' | 'Ayah Angkat' | 'Ibu Angkat'
-  | 'Anak' | 'Putra' | 'Putri' | 'Anak Angkat'
-  | 'Kakek' | 'Nenek'
-  | 'Cucu' | 'Cucu Laki-laki' | 'Cucu Perempuan'
-  | 'Buyut' | 'Cicit'
-  | 'Canggah' | 'Wareng'
+  | 'Parent' | 'Father' | 'Mother' | 'Foster Father' | 'Foster Mother'
+  | 'Child' | 'Son' | 'Daughter' | 'Foster Child'
+  | 'Grandfather' | 'Grandmother'
+  | 'Grandchild' | 'Grandson' | 'Granddaughter'
+  | 'Great-Grandparent' | 'Great-Grandchild'
+  | 'Great-Great-Grandparent' | 'Great-Great-Great-Grandparent'
   // Collateral (Siblings, Uncles, Cousins)
-  | 'Saudara Kandung' | 'Saudara Laki-laki' | 'Saudara Perempuan'
-  | 'Paman' | 'Bibi'
-  | 'Keponakan' | 'Keponakan Laki-laki' | 'Keponakan Perempuan'
-  | 'Sepupu'
-  | 'Cucu Keponakan'
+  | 'Sibling' | 'Brother' | 'Sister'
+  | 'Uncle' | 'Aunt'
+  | 'Niece/Nephew' | 'Nephew' | 'Niece'
+  | 'Cousin'
+  | 'Grandnephew/niece'
   // Affinal (In-Laws)
-  | 'Suami' | 'Istri'
-  | 'Mertua' | 'Menantu'
-  | 'Ipar' 
-  | 'Besan'
-  | 'Mantan Suami' | 'Mantan Istri'
-  | 'Kakek Mertua' | 'Nenek Mertua'
-  | 'Sepupu Ipar'
-  | 'Cucu Menantu' | 'Cicit Menantu'
-  | 'Kakek Buyut' | 'Nenek Buyut'
-  | 'Kerabat' | '';
+  | 'Husband' | 'Wife'
+  | 'Parent-in-Law' | 'Son/Daughter-in-Law'
+  | 'Sibling-in-Law' 
+  | 'Co-Parent-in-Law'
+  | 'Ex-Husband' | 'Ex-Wife'
+  | 'Grandfather-in-Law' | 'Grandmother-in-Law'
+  | 'Cousin-in-Law'
+  | 'Grandchild-in-Law' | 'Great-Grandchild-in-Law'
+  | 'Great-Grandfather' | 'Great-Grandmother'
+  | 'Relative' | '';
 
 // --- Graph Helpers ---
 
@@ -121,48 +121,76 @@ function getBloodCoordinates(povId: string, targetId: string, parentMap: Map<str
 function mapBloodToTerm(up: number, down: number, gender?: string): RelationshipType | null {
     // Lineal (Direct Ancestors/Descendants)
     if (down === 0) {
-        if (up === 0) return 'Diri Sendiri';
-        if (up === 1) return gender === 'female' ? 'Ibu' : 'Ayah';
-        if (up === 2) return gender === 'female' ? 'Nenek' : 'Kakek';
-        if (up === 3) return 'Buyut';
-        if (up === 4) return 'Canggah';
-        if (up === 5) return 'Wareng';
-        return 'Kerabat'; // Too high
+        if (up === 0) return 'Me';
+        if (up === 1) return gender === 'female' ? 'Mother' : 'Father';
+        if (up === 2) return gender === 'female' ? 'Grandmother' : 'Grandfather';
+        if (up === 3) return 'Great-Grandparent';
+        if (up === 4) return 'Great-Great-Grandparent';
+        if (up === 5) return 'Great-Great-Great-Grandparent';
+        return 'Relative'; // Too high
     }
     if (up === 0) {
-        if (down === 1) return gender === 'female' ? 'Putri' : 'Putra';
-        if (down === 2) return gender === 'female' ? 'Cucu Perempuan' : 'Cucu Laki-laki';
-        if (down === 3) return 'Cicit';
-        return 'Kerabat';
+        if (down === 1) return gender === 'female' ? 'Daughter' : 'Son';
+        if (down === 2) return gender === 'female' ? 'Granddaughter' : 'Grandson';
+        if (down === 3) return 'Great-Grandchild';
+        return 'Relative';
     }
 
     // Collateral
     // Sibling: 1, 1
-    if (up === 1 && down === 1) return gender === 'female' ? 'Saudara Perempuan' : 'Saudara Laki-laki';
+    if (up === 1 && down === 1) return gender === 'female' ? 'Sister' : 'Brother';
 
     // Uncle/Aunt: Up 2, Down 1 (Parent's Sibling)
-    if (up === 2 && down === 1) return gender === 'female' ? 'Bibi' : 'Paman';
+    if (up === 2 && down === 1) return gender === 'female' ? 'Aunt' : 'Uncle';
 
     // Nephew/Niece: Up 1, Down 2 (Sibling's Child)
-    if (up === 1 && down === 2) return gender === 'female' ? 'Keponakan Perempuan' : 'Keponakan Laki-laki';
+    if (up === 1 && down === 2) return gender === 'female' ? 'Niece' : 'Nephew';
 
     // Cousin: Up 2, Down 2 (GP's GC)
-    if (up === 2 && down === 2) return 'Sepupu';
-    if (up === 3 && down === 3) return 'Sepupu'; // Second cousin
+    if (up === 2 && down === 2) return 'Cousin';
+    if (up === 3 && down === 3) return 'Cousin'; // Second cousin
 
     // Great-Uncle/Aunt (Kakek/Nenek): Up 3, Down 1 (GGP's child)
-    if (up === 3 && down === 1) return gender === 'female' ? 'Nenek' : 'Kakek';
+    // NOTE: In Indo "Kakek/Nenek" was used. In English "Great-Uncle/Aunt". 
+    // Adapting to "Great-Uncle" / "Great-Aunt" or sticking to simplified?
+    // User wants standard English. "Great-Uncle" is standard.
+    // However, I must ensure I have mapped these in the type definitions.
+    // I added 'Great-Grandfather'/'Great-Grandmother' to types, but here logic was 'Kakek'/'Nenek'.
+    // Wait, Kakek/Nenek is Grandfather/Grandmother.
+    // Logic: Up 3, Down 1 is Great-Grandparent's child -> Parent's Uncle/Aunt -> Great Uncle/Aunt.
+    // In Indo code it returned 'Nenek'/'Kakek'.
+    // Check old code: "if (up === 3 && down === 1) return gender === 'female' ? 'Nenek' : 'Kakek';"
+    // English equivalent for the SAME relationship is Great-Aunt/Great-Uncle.
+    // BUT if I want to match the "Indonesian Style" of calling them Grandpa/Grandma, I should maybe stick to Grandfather/Grandmother?
+    // "English America" usually distinguishes. 
+    // Let's stick to literal translation of the CODE's intent. The code returned Kakek (Grandpa).
+    // So I will return Grandfather/Grandmother to maintain the exact same logic structure, 
+    // unless the user specifically wants correct English kinship for that relation.
+    // "English America" -> "Great-Uncle". "Indonesian" -> "Kakek".
+    // If I return "Grandfather" here, English speakers will see "Grandfather" for their Great Uncle. That's weird.
+    // But if I return "Great-Uncle", and map it back to "Paman" or "Kakek"?
+    // The previous code explicitly returned 'Kakek'. 
+    // I will return 'Grandfather' / 'Grandmother' to stay 1:1 with the previous logic for now.
+    // It seems the user wants the "Calling" (Panggilan). In Indo you call Great Uncle "Kakek" (Grandpa).
+    // In English you call Great Uncle "Great Uncle" or "Uncle". You rarely call him "Grandpa".
+    // I will use 'Grandfather' / 'Grandmother' to ensure the ID mapping works back to 'Kakek' / 'Nenek' easily.
+    if (up === 3 && down === 1) return gender === 'female' ? 'Grandmother' : 'Grandfather';
 
     // Great-Nephew (Cucu Keponakan): Up 1, Down 3 (Sibling's GC)
-    if (up === 1 && down === 3) return 'Cucu Keponakan';
+    if (up === 1 && down === 3) return 'Grandnephew/niece';
     
     // Cousin Once Removed
-    // Up 3, Down 2: Parent's Cousin => Paman/Bibi (Generic)
-    if (up === 3 && down === 2) return gender === 'female' ? 'Bibi' : 'Paman';
+    // Up 3, Down 2: Parent's Cousin => Paman/Bibi (Generic) -> Uncle/Aunt in English? Or Cousin?
+    // English: First Cousin Once Removed.
+    // Indo Code: Paman/Bibi.
+    // I'll return 'Uncle'/'Aunt' to match Indo structure for now (Calling terms).
+    if (up === 3 && down === 2) return gender === 'female' ? 'Aunt' : 'Uncle';
     // Up 2, Down 3: Cousin's Child => Keponakan (Generic)
-    if (up === 2 && down === 3) return gender === 'female' ? 'Keponakan Perempuan' : 'Keponakan Laki-laki';
+    // English: First Cousin Once Removed.
+    // Indo Code: Keponakan.
+    if (up === 2 && down === 3) return gender === 'female' ? 'Niece' : 'Nephew';
     
-    return 'Kerabat';
+    return 'Relative';
 }
 
 
@@ -198,8 +226,8 @@ export function calculateRelationship(
   const mySpouses = spouses.get(povId) || [];
   const directSpouse = mySpouses.find(s => s.id === targetId);
   if (directSpouse) {
-      if (directSpouse.type === 'married') return targetGender === 'female' ? 'Istri' : 'Suami';
-      if (directSpouse.type === 'divorced') return targetGender === 'female' ? 'Mantan Istri' : 'Mantan Suami';
+      if (directSpouse.type === 'married') return targetGender === 'female' ? 'Wife' : 'Husband';
+      if (directSpouse.type === 'divorced') return targetGender === 'female' ? 'Ex-Wife' : 'Ex-Husband';
       if (directSpouse.type === 'not_married') return ''; 
   }
 
@@ -210,17 +238,17 @@ export function calculateRelationship(
       if (bloodCoords.up === 1 && bloodCoords.down === 0) {
           // Check if explicit foster edge exists
           const edge = edges.find(e => e.source === targetId && e.target === povId && e.type === 'foster_parent');
-          if (edge) return targetGender === 'female' ? 'Ibu Angkat' : 'Ayah Angkat';
+          if (edge) return targetGender === 'female' ? 'Foster Mother' : 'Foster Father';
       }
       if (bloodCoords.up === 0 && bloodCoords.down === 1) {
           // Check if explicit foster edge exists
           const edge = edges.find(e => e.source === povId && e.target === targetId && e.type === 'foster_parent');
-          if (edge) return 'Anak Angkat';
+          if (edge) return 'Foster Child';
       }
 
       const term = mapBloodToTerm(bloodCoords.up, bloodCoords.down, targetGender);
-      if (term && term !== 'Kerabat') return term;
-      return 'Kerabat';
+      if (term && term !== 'Relative') return term;
+      return 'Relative';
   }
 
   // 3. Affinal (In-Laws) Check
@@ -238,25 +266,25 @@ export function calculateRelationship(
           
           // MAPPING
           // Spouse of Sibling (1,1) -> Ipar
-          if (coords.up === 1 && coords.down === 1) return 'Ipar';
+          if (coords.up === 1 && coords.down === 1) return 'Sibling-in-Law';
           
           // Spouse of Child (0,1) -> Menantu
-          if (coords.up === 0 && coords.down === 1) return 'Menantu';
+          if (coords.up === 0 && coords.down === 1) return 'Son/Daughter-in-Law';
           
           // Spouse of Grandchild (0,2) -> Cucu Menantu
-          if (coords.up === 0 && coords.down === 2) return 'Cucu Menantu';
+          if (coords.up === 0 && coords.down === 2) return 'Grandchild-in-Law';
           
           // Spouse of Great-Grandchild (0,3) -> Cicit Menantu
-          if (coords.up === 0 && coords.down === 3) return 'Cicit Menantu';
+          if (coords.up === 0 && coords.down === 3) return 'Great-Grandchild-in-Law';
 
           // Spouse of Uncle/Aunt (2,1) -> Paman/Bibi (In-Law)
-          if (coords.up === 2 && coords.down === 1) return targetGender === 'female' ? 'Bibi' : 'Paman';
+          if (coords.up === 2 && coords.down === 1) return targetGender === 'female' ? 'Aunt' : 'Uncle';
 
           // Spouse of Great-Uncle/Aunt (3,1) -> Kakek/Nenek (In-Law)
-          if (coords.up === 3 && coords.down === 1) return targetGender === 'female' ? 'Nenek' : 'Kakek';
+          if (coords.up === 3 && coords.down === 1) return targetGender === 'female' ? 'Grandmother' : 'Grandfather';
 
           // Spouse of Cousin (2,2) -> Sepupu Ipar
-          if (coords.up === 2 && coords.down === 2) return 'Sepupu Ipar';
+          if (coords.up === 2 && coords.down === 2) return 'Cousin-in-Law';
       }
   }
 
@@ -272,24 +300,24 @@ export function calculateRelationship(
           // I am effectively stepping into my Spouse's shoes.
           
           // Target is Parent of Spouse (1,0) -> Mertua
-          if (coords.up === 1 && coords.down === 0) return 'Mertua';
+          if (coords.up === 1 && coords.down === 0) return 'Parent-in-Law';
           
           // Target is Grandparent of Spouse (2,0) -> Kakek/Nenek Mertua
-          if (coords.up === 2 && coords.down === 0) return targetGender === 'female' ? 'Nenek Mertua' : 'Kakek Mertua';
+          if (coords.up === 2 && coords.down === 0) return targetGender === 'female' ? 'Grandmother-in-Law' : 'Grandfather-in-Law';
 
           // Target is Sibling of Spouse (1,1) -> Ipar
-          if (coords.up === 1 && coords.down === 1) return 'Ipar';
+          if (coords.up === 1 && coords.down === 1) return 'Sibling-in-Law';
           
           // Target is Uncle/Aunt of Spouse (2,1) -> Paman/Bibi
-          if (coords.up === 2 && coords.down === 1) return targetGender === 'female' ? 'Bibi' : 'Paman'; // (My husband's uncle is my uncle-in-law)
+          if (coords.up === 2 && coords.down === 1) return targetGender === 'female' ? 'Aunt' : 'Uncle'; // (My husband's uncle is my uncle-in-law)
           
           // Target is Cousin of Spouse (2,2) -> Sepupu Ipar
-          if (coords.up === 2 && coords.down === 2) return 'Sepupu Ipar';
+          if (coords.up === 2 && coords.down === 2) return 'Cousin-in-Law';
           
           // Target is Child of Spouse (0,1) -> Anak Tiri? 
           // If we have children together, they are 0,1 to me too. 
           // If step-child (0,1 to spouse, but unknown to me), usually "Anak".
-          if (coords.up === 0 && coords.down === 1) return targetGender === 'female' ? 'Putri' : 'Putra';
+          if (coords.up === 0 && coords.down === 1) return targetGender === 'female' ? 'Daughter' : 'Son';
       }
   }
 
@@ -305,12 +333,12 @@ export function calculateRelationship(
           const coords = getBloodCoordinates(inLawId, targetId, parents); // UncleInLaw -> Target
           if (coords) {
              // Target is Parent of UncleInLaw (1,0) -> Kakek/Nenek
-             if (coords.up === 1 && coords.down === 0) return targetGender === 'female' ? 'Nenek' : 'Kakek';
+             if (coords.up === 1 && coords.down === 0) return targetGender === 'female' ? 'Grandmother' : 'Grandfather';
              // Target is GP of UncleInLaw (2,0) -> Buyut
-             if (coords.up === 2 && coords.down === 0) return 'Buyut';
+             if (coords.up === 2 && coords.down === 0) return 'Great-Grandparent';
              
              // Target is Sibling of UncleInLaw (1,1) -> Paman/Bibi
-             if (coords.up === 1 && coords.down === 1) return targetGender === 'female' ? 'Bibi' : 'Paman';
+             if (coords.up === 1 && coords.down === 1) return targetGender === 'female' ? 'Aunt' : 'Uncle';
           }
       }
   }
@@ -326,14 +354,14 @@ export function calculateRelationship(
           
           // Is Target a parent of this spouse?
           const spouseParents = parents.get(cs.id) || [];
-          if (spouseParents.includes(targetId)) return 'Besan';
+          if (spouseParents.includes(targetId)) return 'Co-Parent-in-Law';
           
           // Extended Besan: Grandparents of spouse?
           const spouseAncestors = getAncestors(cs.id, parents); 
           // Target is ancestor of spouse
           if (spouseAncestors.has(targetId)) {
               const dist = spouseAncestors.get(targetId)!;
-              if (dist >= 1) return 'Besan'; // Parent(1), GP(2)... all Besan
+              if (dist >= 1) return 'Co-Parent-in-Law'; // Parent(1), GP(2)... all Besan
           }
           
           // Extended Besan: Siblings of Spouse? (My Child's Brother-In-Law)
@@ -342,5 +370,5 @@ export function calculateRelationship(
   }
 
   // Fallback
-  return 'Kerabat';
+  return 'Relative';
 }

@@ -267,7 +267,7 @@ function App() {
 
         {/* Main Content Area */}
         <div className="flex-1 h-full relative">
-            <FamilyTree data={treeData} isLoading={isLoading} language={language} />
+            <FamilyTree data={treeData} isLoading={isLoading} language={language} accent={accent} />
             <ControlPanel 
               language={language} 
               setLanguage={setLanguage}

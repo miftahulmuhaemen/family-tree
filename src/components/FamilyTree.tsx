@@ -15,7 +15,7 @@ import PersonNode, { type PersonData } from './PersonNode';
 import DetailDrawer from './DetailDrawer';
 import { getLayoutedElements } from '../utils/layout';
 import { calculateRelationship } from '../utils/kinship';
-import { TERMS } from '@/utils/i18n';
+import { TERMS, KINSHIP_ID_MAPPING } from '@/utils/i18n';
 import type { Language } from '@/utils/i18n';
 
 const NODE_WIDTH = 256;
@@ -356,9 +356,10 @@ interface FamilyTreeProps {
   data: any;
   isLoading?: boolean;
   language: Language;
+  accent: string;
 }
 
-function FamilyTreeInner({ data: familyData, isLoading, language }: FamilyTreeProps) {
+function FamilyTreeInner({ data: familyData, isLoading, language, accent }: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [povId, setPovId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -504,16 +505,23 @@ function FamilyTreeInner({ data: familyData, isLoading, language }: FamilyTreePr
         familyData.relationships.map((r: any) => ({ source: r.to, target: r.from, type: r.type })),
         familyData.people
       );
+
+      let finalLabel: string | null = relationship;
+      // Default to Indonesian translation unless English accent is selected
+      if (relationship && accent !== 'English America') {
+         finalLabel = KINSHIP_ID_MAPPING[relationship] || relationship;
+      }
+
       return {
         ...node,
         selected: node.id === povId, // Ensure selected state is controlled by povId
         data: {
           ...node.data,
-          relationshipLabel: relationship || undefined
+          relationshipLabel: finalLabel || undefined
         }
       };
     }));
-  }, [povId, familyData, setNodes]); // This runs when povId changes (click)
+  }, [povId, familyData, setNodes, accent]); // This runs when povId changes (click) or accent changes
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     setPovId(node.id); // This will trigger the effect above to update selected state and relationships
