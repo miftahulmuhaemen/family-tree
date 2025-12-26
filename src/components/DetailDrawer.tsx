@@ -1,16 +1,20 @@
 import { X } from "lucide-react";
 import type { PersonData } from "./PersonNode";
 import { cn } from "@/lib/utils";
+import { TERMS } from '@/utils/i18n';
+import type { Language } from '@/utils/i18n';
 
 interface DetailDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   person: PersonData | null;
+  language?: Language;
 }
 
-export default function DetailDrawer({ isOpen, onClose, person }: DetailDrawerProps) {
+export default function DetailDrawer({ isOpen, onClose, person, language = 'id' }: DetailDrawerProps) {
   if (!person) return null;
 
+  const terms = TERMS[language];
   const { name, gender, birthDate, address, phone_number, short_bio, deceased, additionals } = person;
 
   const getAge = (birthDateString?: string) => {
@@ -35,13 +39,13 @@ export default function DetailDrawer({ isOpen, onClose, person }: DetailDrawerPr
   return (
     <div
       className={cn(
-        "fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out border-l",
+        "fixed inset-y-0 right-0 z-[60] w-full sm:w-[400px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out border-l",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}
     >
       <div className="h-full flex flex-col p-6 overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold">Detail Keluarga</h2>
+          <h2 className="text-xl font-bold">{terms.family_detail}</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <X className="w-6 h-6" />
           </button>
@@ -57,11 +61,11 @@ export default function DetailDrawer({ isOpen, onClose, person }: DetailDrawerPr
                       "px-2 py-1 rounded-full text-xs font-medium",
                       isDeceased ? "bg-gray-100 text-gray-600" : "bg-green-100 text-green-600"
                     )}>
-                      {isDeceased ? "Meninggal Dunia" : "Hidup"}
+                      {isDeceased ? terms.deceased : terms.alive}
                     </span>
                     {!isDeceased && age !== null && (
                       <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-600 text-xs font-medium">
-                        {age} Tahun
+                        {age} {terms.years}
                       </span>
                     )}
                 </div>
@@ -80,15 +84,15 @@ export default function DetailDrawer({ isOpen, onClose, person }: DetailDrawerPr
         <div className="space-y-6 flex-1">
            {/* Bio */}
            <div className="bg-gray-50 p-4 rounded-lg">
-             <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Biografi Singkat</h4>
+             <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">{terms.short_bio}</h4>
              <p className="text-gray-700 italic">
-               {short_bio ? `"${short_bio}"` : "Tidak ada biografi."}
+               {short_bio ? `"${short_bio}"` : terms.no_bio}
              </p>
            </div>
 
            {/* Contact */}
            <div className="space-y-3">
-             <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider border-b pb-1">Kontak</h4>
+             <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider border-b pb-1">{terms.contact}</h4>
              
              {phone_number && phone_number.length > 0 ? (
                <div className="space-y-3">
@@ -113,13 +117,13 @@ export default function DetailDrawer({ isOpen, onClose, person }: DetailDrawerPr
                    ))}
                </div>
              ) : (
-               <p className="text-gray-500 italic">Tidak ada nomor telepon.</p>
+               <p className="text-gray-500 italic">{terms.no_phone}</p>
              )}
            </div>
 
            {/* Address */}
            <div className="space-y-3">
-             <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider border-b pb-1">Lokasi</h4>
+             <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider border-b pb-1">{terms.location}</h4>
              
              {address && address.length > 0 ? (
                address.map((addr, idx) => (
@@ -135,27 +139,27 @@ export default function DetailDrawer({ isOpen, onClose, person }: DetailDrawerPr
                         rel="noopener noreferrer"
                         className="text-blue-500 hover:text-blue-700 text-sm hover:underline mt-1"
                       >
-                         Lihat di Google Maps
+                         {terms.view_maps}
                       </a>
                     </div>
                  </div>
                ))
              ) : (
-               <p className="text-gray-500 italic">Tidak ada alamat.</p>
+               <p className="text-gray-500 italic">{terms.no_address}</p>
              )}
            </div>
            
            {/* Additional Info */}
            <div className="space-y-2 text-sm text-gray-500 pt-4 border-t">
               <div className="flex justify-between">
-                <span>Tanggal Lahir:</span>
+                <span>{terms.birth_date}:</span>
                 <span className="font-medium text-gray-900">
-                  {birthDate ? new Date(birthDate).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' }) : "-"}
+                  {birthDate ? new Date(birthDate).toLocaleDateString(language === 'id' ? "id-ID" : "en-US", { day: 'numeric', month: 'long', year: 'numeric' }) : "-"}
                 </span>
               </div>
               <div className="flex justify-between">
-                 <span>Jenis Kelamin:</span>
-                 <span className="font-medium text-gray-900 capitalize">{gender === 'male' ? 'Laki-laki' : 'Perempuan'}</span>
+                 <span>{terms.gender}:</span>
+                 <span className="font-medium text-gray-900 capitalize">{gender === 'male' ? terms.male : terms.female}</span>
               </div>
 
                {/* Dynamic Additionals */}

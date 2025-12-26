@@ -15,18 +15,21 @@ import PersonNode, { type PersonData } from './PersonNode';
 import DetailDrawer from './DetailDrawer';
 import { getLayoutedElements } from '../utils/layout';
 import { calculateRelationship } from '../utils/kinship';
+import { TERMS } from '@/utils/i18n';
+import type { Language } from '@/utils/i18n';
 
 const NODE_WIDTH = 256;
 const NODE_HEIGHT = 120; // Reduced from 280 to match new minimal card size
 
 // Custom SVG lines component that draws family connections
-function FamilyLines({ nodes, unions, relationships }: { 
-  nodes: Node[], 
+function FamilyLines({ nodes, unions, relationships, language }: {
+  nodes: Node[],
   unions: { parents: string[], children: string[], type?: string }[],
-  relationships: any[] 
+  relationships: any[],
+  language: Language
 }) {
   const viewport = useViewport();
-  
+
   if (nodes.length === 0) return null;
 
   const solidPaths: string[] = [];
@@ -37,7 +40,7 @@ function FamilyLines({ nodes, unions, relationships }: {
     const parentNodes = union.parents
       .map(pid => nodes.find(n => n.id === pid))
       .filter((n): n is Node => n !== undefined);
-    
+
     const childNodes = union.children
       .map(cid => nodes.find(n => n.id === cid))
       .filter((n): n is Node => n !== undefined);
@@ -58,8 +61,8 @@ function FamilyLines({ nodes, unions, relationships }: {
 
     const lowestParentY = Math.max(...parentBottoms.map(p => p.y));
     const highestChildY = Math.min(...childTops.map(c => c.y));
-    
-    const staggerOffset = (index % 5) * 10; 
+
+    const staggerOffset = (index % 5) * 10;
     const mergeY = (lowestParentY + (highestChildY - lowestParentY) / 2) - 20 + staggerOffset;
 
     const activeParentBottoms = parentBottoms.filter(p => {
@@ -87,20 +90,20 @@ function FamilyLines({ nodes, unions, relationships }: {
            const dy = c.y - mergeY;
            const midY = mergeY + dy / 2;
            // Dynamic gap: tighter for short lines to maximize line visibility
-           const gapHalf = dy < 40 ? 7 : 10; 
+           const gapHalf = dy < 40 ? 7 : 10;
 
            if (dy > 20) {
                // Ensure d1 and d2 don't cross boundaries
-               const y1 = Math.max(mergeY, midY - gapHalf); 
+               const y1 = Math.max(mergeY, midY - gapHalf);
                const y2 = Math.min(c.y, midY + gapHalf);
-               
+
                const d1 = `M ${c.x} ${mergeY} L ${c.x} ${y1}`;
                const d2 = `M ${c.x} ${y2} L ${c.x} ${c.y}`;
                fosterConnections.push({ d1, d2, x: c.x, y: midY });
            } else {
                 // Fallback for very tight spaces: just dashed line
                 const path = `M ${c.x} ${mergeY} L ${c.x} ${c.y}`;
-                fosterConnections.push({ d1: path, d2: '', x: -10000, y: -10000 }); 
+                fosterConnections.push({ d1: path, d2: '', x: -10000, y: -10000 });
            }
        } else {
            solidPaths.push(`M ${c.x} ${mergeY} L ${c.x} ${c.y}`);
@@ -126,7 +129,7 @@ function FamilyLines({ nodes, unions, relationships }: {
           <path
             key={`solid-${i}`}
             d={d}
-            stroke="#94a3b8" 
+            stroke="#94a3b8"
             strokeWidth={2 / viewport.zoom}
             fill="none"
           />
@@ -144,8 +147,8 @@ function FamilyLines({ nodes, unions, relationships }: {
                         fill="#64748b"
                         style={{ fontSize: 10, fontWeight: 500 }}
                     >
-                        <tspan fill="white" stroke="white" strokeWidth="4" paintOrder="stroke">Fostered</tspan>
-                        <tspan x={conn.x} dy={0}>Fostered</tspan>
+                        <tspan fill="white" stroke="white" strokeWidth="4" paintOrder="stroke">{TERMS[language].foster}</tspan>
+                        <tspan x={conn.x} dy={0}>{TERMS[language].foster}</tspan>
                     </text>
                 )}
             </g>
@@ -156,12 +159,13 @@ function FamilyLines({ nodes, unions, relationships }: {
 }
 
 // Custom SVG lines for married couples
-function SpouseLines({ nodes, unions }: { 
-  nodes: Node[], 
-  unions: { parents: string[], children: string[], type?: string }[] 
+function SpouseLines({ nodes, unions, language }: {
+  nodes: Node[],
+  unions: { parents: string[], children: string[], type?: string }[],
+  language: Language
 }) {
   const viewport = useViewport();
-  
+
   if (nodes.length === 0) return null;
 
   const connections: React.ReactNode[] = [];
@@ -172,7 +176,7 @@ function SpouseLines({ nodes, unions }: {
 
   unions.forEach(union => {
       if (union.parents.length !== 2) return;
-      
+
       const p1 = nodes.find(n => n.id === union.parents[0]);
       const p2 = nodes.find(n => n.id === union.parents[1]);
       if (!p1 || !p2) return;
@@ -186,7 +190,7 @@ function SpouseLines({ nodes, unions }: {
       if (isVertical) {
           // Identify Hub (Upper) vs Spouse (Lower)
           const [hub, spouse] = (p1.position?.y || 0) < (p2.position?.y || 0) ? [p1, p2] : [p2, p1];
-          
+
           if (!hubGroups[hub.id]) {
               hubGroups[hub.id] = { hub, spouses: [] };
           }
@@ -199,21 +203,21 @@ function SpouseLines({ nodes, unions }: {
   // 2. Render Vertical Hub Groups (Unified Fork)
   Object.values(hubGroups).forEach((group, groupIndex) => {
       const { hub, spouses } = group;
-      
+
       const hubX = (hub.position?.x || 0) + NODE_WIDTH / 2;
       const hubY = (hub.position?.y || 0) + NODE_HEIGHT;
-      
+
       // Sort spouses by X to find range
       spouses.sort((a, b) => (a.node.position?.x || 0) - (b.node.position?.x || 0));
-      
+
       // Sort spouses by X to find range
       spouses.sort((a, b) => (a.node.position?.x || 0) - (b.node.position?.x || 0));
-      
+
       // If layout varies, find min/max Y? ELK usually aligns them. Let's pick min Y of spouses.
       const minY = Math.min(...spouses.map(s => s.node.position?.y || 0));
-      
+
       const midY = hubY + (minY - hubY) / 2;
-      
+
       // Draw Trunk (Hub -> Mid)
       connections.push(
           <path
@@ -229,17 +233,17 @@ function SpouseLines({ nodes, unions }: {
       // Range for Horizontal Bar
       const minX = (spouses[0].node.position?.x || 0) + NODE_WIDTH / 2;
       const maxX = (spouses[spouses.length - 1].node.position?.x || 0) + NODE_WIDTH / 2;
-      
+
       // Draw Horizontal Connector Bar
       // Connect from MinSpouse to MaxSpouse at midY
-      // Also ensure connection to Hub Trunk if Hub is outside range? 
+      // Also ensure connection to Hub Trunk if Hub is outside range?
       // Usually Hub is centered above, so it should be within or effectively connected if we draw line to HubX.
-      // Better: Draw bar from min(MinSpouseX, HubX) to max(MaxSpouseX, HubX)? 
+      // Better: Draw bar from min(MinSpouseX, HubX) to max(MaxSpouseX, HubX)?
       // No, classic tree is Bar across spouses, Trunk connects to Bar.
       // If HubX is not within [MinX, MaxX], we extend the bar to HubX.
       const barMinX = Math.min(minX, hubX);
       const barMaxX = Math.max(maxX, hubX);
-      
+
       connections.push(
           <path
               key={`hub-bar-${groupIndex}`}
@@ -255,11 +259,10 @@ function SpouseLines({ nodes, unions }: {
       spouses.forEach((spouse, sIndex) => {
           const sX = (spouse.node.position?.x || 0) + NODE_WIDTH / 2;
           const sY = spouse.node.position?.y || 0;
-          
+
           const dropPath = `M ${sX} ${midY} L ${sX} ${sY}`;
-          const label = spouse.type === 'married' ? 'Married' : 
-                        spouse.type === 'divorced' ? 'Divorced' : 
-                        spouse.type === 'not_married' ? 'Not Married' : spouse.type;
+          const labelKey = spouse.type as keyof typeof TERMS['en'];
+          const label = TERMS[language][labelKey] || spouse.type;
 
           const labelY = midY + (sY - midY) / 2;
 
@@ -275,10 +278,10 @@ function SpouseLines({ nodes, unions }: {
                   <text
                     x={sX}
                     y={labelY}
-                    dy={4} 
+                    dy={4}
                     textAnchor="middle"
-                    fill="#64748b" 
-                    style={{ fontSize: 12, fontWeight: 500 }} 
+                    fill="#64748b"
+                    style={{ fontSize: 12, fontWeight: 500 }}
                   >
                      <tspan fill="white" stroke="white" strokeWidth="4" paintOrder="stroke">{label}</tspan>
                      <tspan x={sX} dy={0}>{label}</tspan>
@@ -291,9 +294,8 @@ function SpouseLines({ nodes, unions }: {
   // 3. Render Horizontal Couples (Legacy/Standard)
   horizontalCouples.forEach((couple, index) => {
       const { p1, p2, type } = couple;
-      const label = type === 'married' ? 'Married' : 
-                    type === 'divorced' ? 'Divorced' : 
-                    type === 'not_married' ? 'Not Married' : type;
+      const labelKey = type as keyof typeof TERMS['en'];
+      const label = TERMS[language][labelKey] || type;
 
       const [left, right] = (p1.position?.x || 0) < (p2.position?.x || 0) ? [p1, p2] : [p2, p1];
 
@@ -305,14 +307,14 @@ function SpouseLines({ nodes, unions }: {
       const midX = startX + (endX - startX) / 2;
 
       const distance = endX - startX;
-      const minPadding = 10; 
-        
-      let gapHalfWidth = 35; 
+      const minPadding = 10;
+
+      let gapHalfWidth = 35;
       if (distance < (gapHalfWidth * 2 + minPadding * 2)) {
          gapHalfWidth = Math.max(0, (distance - minPadding * 2) / 2);
       }
 
-      if (startX >= endX) return; 
+      if (startX >= endX) return;
 
       const leftPath = `M ${startX} ${startY} L ${midX - gapHalfWidth} ${startY}`;
       const rightPath = `M ${midX + gapHalfWidth} ${endY} L ${endX} ${endY}`;
@@ -353,9 +355,10 @@ function SpouseLines({ nodes, unions }: {
 interface FamilyTreeProps {
   data: any;
   isLoading?: boolean;
+  language: Language;
 }
 
-function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
+function FamilyTreeInner({ data: familyData, isLoading, language }: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [povId, setPovId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -370,10 +373,10 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
 
     // Build parent-child relationships from YAML
     const childToParents: Record<string, string[]> = {};
-    
+
     // Validate structure (basic check)
     if (!familyData.relationships || !familyData.people) return;
-    
+
     // Identify explicit couples
     const explicitCouples: Record<string, string> = {}; // key -> type
 
@@ -446,7 +449,7 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
           });
 
           // Check if this specific parent-child relationship is foster
-          const isFoster = familyData.relationships.some((r: any) => 
+          const isFoster = familyData.relationships.some((r: any) =>
               r.from === childId && r.to === parentId && r.type === 'foster_parent'
           );
           if (isFoster) {
@@ -457,11 +460,11 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
     });
 
     // Layout with ELK
-    getLayoutedElements({ 
-      nodes: peopleNodes, 
-      edges: layoutEdges, 
-      unions: unionList, 
-      fosterChildren: fosterChildrenIds 
+    getLayoutedElements({
+      nodes: peopleNodes,
+      edges: layoutEdges,
+      unions: unionList,
+      fosterChildren: fosterChildrenIds
     }).then(({ nodes: layoutedNodes }) => {
       // Restore POV if exists
       setNodes(layoutedNodes.map((n) => {
@@ -470,10 +473,10 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
           ...n,
           type: 'person',
           selected: n.id === povId, // Sync selection
-          data: { 
+          data: {
             ...person,
             label: person?.name
-          } 
+          }
         };
       }));
     });
@@ -496,8 +499,8 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
 
     setNodes((nds) => nds.map((node) => {
       const relationship = calculateRelationship(
-        povId, 
-        node.id, 
+        povId,
+        node.id,
         familyData.relationships.map((r: any) => ({ source: r.to, target: r.from, type: r.type })),
         familyData.people
       );
@@ -514,18 +517,18 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     setPovId(node.id); // This will trigger the effect above to update selected state and relationships
-    
+
     // Check if mobile
     if (window.innerWidth < 768) {
         setIsDrawerOpen(false); // Mobile: Select node but don't open drawer immediately
     } else {
         setIsDrawerOpen(true); // Desktop: Open explicitly
     }
-    
+
     // Center the node
     const x = node.position.x + (node.measured?.width ?? NODE_WIDTH) / 2;
     const y = node.position.y + (node.measured?.height ?? NODE_HEIGHT) / 2;
-    
+
     setCenter(x, y, { zoom: 1.2, duration: 800 });
   }, [setCenter]);
 
@@ -560,22 +563,22 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <ReactFlow
         nodes={nodes}
-        edges={[]} 
+        edges={[]}
         onNodesChange={onNodesChange}
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
         fitView
         nodesConnectable={false}
-        nodesDraggable={false} 
+        nodesDraggable={false}
         panOnScroll
         selectionOnDrag={false}
         panOnDrag={true}
         maxZoom={4}
         minZoom={0.1}
       >
-        <FamilyLines nodes={nodes} unions={unions} relationships={familyData.relationships} />
-        <SpouseLines nodes={nodes} unions={unions} />
+        <FamilyLines nodes={nodes} unions={unions} relationships={familyData.relationships} language={language} />
+        <SpouseLines nodes={nodes} unions={unions} language={language} />
         <Background />
         <Controls />
         <MiniMap className="hidden md:block" />
@@ -584,20 +587,21 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
       {/* Floating Action Button for Mobile Details */}
       {povId && !isDrawerOpen && (
           <div className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
-              <button 
+              <button
                   onClick={openDrawer}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-full shadow-lg font-semibold flex items-center justify-center hover:bg-blue-700 active:scale-95 transition-all text-center"
+                  className="bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800/60 px-8 py-3 rounded-full shadow-xl font-semibold flex items-center justify-center hover:bg-zinc-900 hover:text-white hover:border-zinc-700 active:scale-95 transition-all text-center"
               >
-                  <span>View Details</span>
+                  <span>{TERMS[language].view_details}</span>
               </button>
           </div>
       )}
 
       {/* Detail Drawer */}
-      <DetailDrawer 
-        isOpen={!!povId && isDrawerOpen} 
-        onClose={closeDrawer} 
-        person={selectedPerson as PersonData | null} 
+      <DetailDrawer
+        isOpen={!!povId && isDrawerOpen}
+        onClose={closeDrawer}
+        person={selectedPerson as PersonData | null}
+        language={language}
       />
     </div>
   );

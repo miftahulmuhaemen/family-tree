@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Share2, AlertCircle, CheckCircle, Moon, Sun, Save, FolderDown, Loader2, Lock, Unlock, Key, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Editor from '@monaco-editor/react';
+import { TERMS } from '@/utils/i18n';
+import type { Language } from '@/utils/i18n';
 
 interface EditorSidebarProps {
   yaml: string;
@@ -18,6 +20,7 @@ interface EditorSidebarProps {
   editToken: string | null;
   onUnlock: (token: string) => void;
   lastSaved: Date | null;
+  language?: Language;
 }
 
 export function EditorSidebar({
@@ -34,13 +37,16 @@ export function EditorSidebar({
   onLoad,
   editToken,
   onUnlock,
-  lastSaved
+  lastSaved,
+  language = 'id'
 }: EditorSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [width, setWidth] = useState(400);
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   
+  const terms = TERMS[language];
+
   // Load Popover Logic
   const [showLoadInput, setShowLoadInput] = useState(false);
   const [loadIdInput, setLoadIdInput] = useState('');
@@ -122,7 +128,7 @@ export function EditorSidebar({
       {/* Toggle Button (Visible when collapsed) */}
       <div 
         className={cn(
-          "fixed top-4 left-4 z-50 transition-all duration-300",
+          "fixed top-4 left-4 z-40 transition-all duration-300",
           isCollapsed ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full pointer-events-none",
           isDarkMode && "dark"
         )}
@@ -130,7 +136,7 @@ export function EditorSidebar({
         <button
           onClick={() => setIsCollapsed(false)}
           className="bg-white/90 dark:bg-gray-800/90 backdrop-blur shadow-lg p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          title="Open Editor"
+          title={terms.open_editor}
         >
           <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200" />
         </button>
@@ -141,7 +147,7 @@ export function EditorSidebar({
         ref={sidebarRef}
         style={{ width: isCollapsed ? 0 : width }}
         className={cn(
-          "fixed top-0 left-0 h-full bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-gray-700 shadow-xl z-40 transition-[transform] duration-300 flex flex-col overflow-hidden",
+          "fixed top-0 left-0 h-full bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-gray-700 shadow-xl z-[70] transition-[transform] duration-300 flex flex-col overflow-hidden",
           isCollapsed ? "-translate-x-full" : "translate-x-0",
           isDarkMode && "dark"
         )}
@@ -149,23 +155,23 @@ export function EditorSidebar({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-[#1e1e1e] relative z-20">
           <div className="flex flex-col overflow-hidden mr-2">
-            <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100 whitespace-nowrap">Configuration</h2>
+            <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100 whitespace-nowrap">{terms.configuration}</h2>
             {currentId && (
               <div className="flex items-center gap-2 text-xs font-mono mt-0.5 max-w-full">
                  <div className="flex items-center gap-1 text-green-600 dark:text-green-400 min-w-0" title={currentId}>
-                    <span className="shrink-0">ID:</span>
+                    <span className="shrink-0">{terms.id}</span>
                     <span className="truncate max-w-[120px]">{currentId}</span>
                  </div>
                  {editToken ? (
                     <div className="flex items-center gap-1 text-amber-600 dark:text-amber-500 cursor-pointer" onClick={copyToken} title="Click to copy Edit Token">
                        <Unlock className="w-3 h-3" />
-                       <span className="truncate max-w-[80px]">Unlocked</span>
+                       <span className="truncate max-w-[80px]">{terms.unlocked}</span>
                        <Copy className="w-2.5 h-2.5 opacity-50"/>
                     </div>
                  ) : (
                     <div className="flex items-center gap-1 text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors" onClick={() => setShowUnlockInput(!showUnlockInput)}>
                        <Lock className="w-3 h-3" />
-                       <span>Locked</span>
+                       <span>{terms.locked}</span>
                     </div>
                  )}
               </div>
@@ -176,7 +182,7 @@ export function EditorSidebar({
                   <div className="absolute top-14 left-4 w-60 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-50">
                      <div className="flex items-center gap-2 mb-2 text-xs text-gray-500 dark:text-gray-400">
                         <Key className="w-3 h-3" />
-                        <span>Enter Edit Token to Unlock</span>
+                        <span>{terms.enter_token}</span>
                      </div>
                      <form onSubmit={handleUnlockSubmit} className="flex gap-2">
                         <input 
@@ -191,7 +197,7 @@ export function EditorSidebar({
                           type="submit"
                           className="px-2 py-1 text-xs font-medium bg-amber-600 text-white rounded hover:bg-amber-700"
                         >
-                          Unlock
+                          {terms.unlock}
                         </button>
                      </form>
                   </div>
@@ -207,7 +213,7 @@ export function EditorSidebar({
                     "p-1.5 rounded-md transition-colors",
                     showLoadInput ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
                   )}
-                  title="Load Config by ID"
+                  title={terms.load_config}
                 >
                   <FolderDown className="w-5 h-5" />
                 </button>
@@ -229,7 +235,7 @@ export function EditorSidebar({
                           disabled={isLoadingId}
                           className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                         >
-                          {isLoadingId ? <Loader2 className="w-3 h-3 animate-spin"/> : "Sync"}
+                          {isLoadingId ? <Loader2 className="w-3 h-3 animate-spin"/> : terms.sync}
                         </button>
                      </form>
                   </div>
@@ -239,14 +245,14 @@ export function EditorSidebar({
              <button
               onClick={toggleDarkMode}
               className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
-              title="Toggle Dark Mode"
+              title={terms.toggle_dark_mode}
             >
               {isDarkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-500" />}
             </button>
             <button
               onClick={() => setIsCollapsed(true)}
               className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
-              title="Minimize"
+              title={terms.minimize}
             >
               <ChevronLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </button>
@@ -282,12 +288,12 @@ export function EditorSidebar({
               {isValid ? (
                 <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                   <CheckCircle className="w-4 h-4 shrink-0" />
-                  <span className="whitespace-nowrap font-medium">Valid Configuration</span>
+                  <span className="whitespace-nowrap font-medium">{terms.valid_config}</span>
                 </div>
               ) : (
                 <div className="flex items-start gap-2 text-red-600 dark:text-red-400 animate-in slide-in-from-bottom-2 fade-in">
                   <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span className="text-xs break-all leading-tight">{errorMessage || "Invalid YAML"}</span>
+                  <span className="text-xs break-all leading-tight">{errorMessage || terms.invalid_config}</span>
                 </div>
               )}
             </div>
@@ -295,7 +301,7 @@ export function EditorSidebar({
             {/* Last Saved Info */}
             {lastSaved && (
               <div className="text-xs text-gray-400 dark:text-gray-500 text-right shrink-0">
-                Last saved: {lastSaved.toLocaleDateString()}
+                {terms.last_saved} {lastSaved.toLocaleDateString()}
               </div>
             )}
           </div>
@@ -310,7 +316,7 @@ export function EditorSidebar({
                 ? "bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg"
                 : "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
             )}
-            title={isLocked ? "Enter Edit Token to Unlock" : ""}
+            title={isLocked ? terms.enter_token : ""}
           >
              {isSharing ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -322,9 +328,9 @@ export function EditorSidebar({
               <Share2 className="w-4 h-4" />
             )}
             
-            {isSharing ? (currentId ? 'Saving...' : 'Generating Link...') 
-              : isLocked ? 'Locked (Read Only)'
-              : currentId ? 'Save Configuration' : 'Share Configuration'}
+            {isSharing ? (currentId ? terms.saving : terms.generating_link) 
+              : isLocked ? terms.locked_readonly
+              : currentId ? terms.save_config : terms.share_config}
           </button>
         </div>
 

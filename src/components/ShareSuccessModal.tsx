@@ -1,6 +1,8 @@
 import { Copy, X, Check, ShieldAlert, Link } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { TERMS } from '@/utils/i18n';
+import type { Language } from '@/utils/i18n';
 
 interface ShareSuccessModalProps {
   isOpen: boolean;
@@ -10,15 +12,17 @@ interface ShareSuccessModalProps {
     token: string;
     url: string;
   } | null;
+  language?: Language;
 }
 
-export function ShareSuccessModal({ isOpen, onClose, shareData }: ShareSuccessModalProps) {
+export function ShareSuccessModal({ isOpen, onClose, shareData, language = 'id' }: ShareSuccessModalProps) {
   const [copied, setCopied] = useState(false);
+  const terms = TERMS[language];
 
   if (!isOpen || !shareData) return null;
 
   const handleCopy = async () => {
-    const textToCopy = `Family Tree Config Shared!\n\nLink: ${shareData.url}\nID: ${shareData.id}\nEdit Token: ${shareData.token}\n\nKEEP THIS TOKEN SAFE! You need it to edit this file in the future.`;
+    const textToCopy = `Family Tree Config Shared!\n\n${terms.share_link}: ${shareData.url}\n${terms.id} ${shareData.id}\n${terms.edit_token}: ${shareData.token}\n\n${terms.save_token_warning}`;
     await navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -32,7 +36,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData }: ShareSuccessMo
         <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <Check className="w-5 h-5 text-green-500" />
-            Configuration Shared
+            {terms.config_shared}
           </h3>
           <button 
             onClick={onClose}
@@ -49,7 +53,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData }: ShareSuccessMo
           <div className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-lg text-sm text-amber-800 dark:text-amber-200">
             <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5" />
             <p>
-              You must save the <strong>Edit Token</strong> below. Without it, you will not be able to make changes to this configuration later.
+              {terms.save_token_warning}
             </p>
           </div>
 
@@ -58,7 +62,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData }: ShareSuccessMo
             {/* Share Link */}
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-                <Link className="w-3.5 h-3.5" /> Share Link
+                <Link className="w-3.5 h-3.5" /> {terms.share_link}
               </label>
               <div className="p-2.5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 break-all text-xs font-mono text-gray-600 dark:text-gray-300">
                 {shareData.url}
@@ -68,7 +72,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData }: ShareSuccessMo
             {/* Edit Token */}
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-                <ShieldAlert className="w-3.5 h-3.5" /> Edit Token
+                <ShieldAlert className="w-3.5 h-3.5" /> {terms.edit_token}
               </label>
               <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-between group">
                 <code className="text-sm font-mono font-bold text-amber-600 dark:text-amber-500 tracking-wide select-all">
@@ -89,7 +93,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData }: ShareSuccessMo
               )}
             >
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              {copied ? "Copied!" : "Copy Details to Clipboard"}
+              {copied ? terms.copied : terms.copy_details}
             </button>
           </div>
 

@@ -7,6 +7,8 @@ import { EditorSidebar } from './components/EditorSidebar';
 import { ShareSuccessModal } from './components/ShareSuccessModal';
 import { NotFound } from './components/NotFound';
 import { WelcomeToast } from './components/WelcomeToast';
+import { ControlPanel } from './components/ControlPanel';
+import { TERMS } from './utils/i18n';
 
 const queryClient = new QueryClient();
 
@@ -23,10 +25,15 @@ function App() {
   const [editToken, setEditToken] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
+  // Localization State
+  const [language, setLanguage] = useState<'id' | 'en'>('id');
+  const [accent, setAccent] = useState<string>('Indonesian');
+
+  const terms = TERMS[language];
+
   // Share Modal State
   const [showShareModal, setShowShareModal] = useState(false);
-  // ...
-
+ 
   const [shareData, setShareData] = useState<{id: string, token: string, url: string} | null>(null);
 
   // Initial Load
@@ -62,7 +69,7 @@ function App() {
         }
       } catch (e) {
         console.error("Failed to load family data", e);
-        setErrorMsg("Failed to load configuration");
+        setErrorMsg(terms.config_failed);
       } finally {
         setIsLoading(false);
       }
@@ -170,8 +177,7 @@ function App() {
            });
            setShowShareModal(true);
         } else {
-             // For standard updates (Save), just log or small toast (optional)
-             console.log("Configuration Saved");
+             console.log(terms.config_saved);
         }
       } else {
         throw new Error('Invalid response from worker');
@@ -255,21 +261,29 @@ function App() {
             editToken={editToken}
             onUnlock={setEditToken}
             lastSaved={lastSaved}
+            language={language}
           />
         )}
 
         {/* Main Content Area */}
         <div className="flex-1 h-full relative">
-            <FamilyTree data={treeData} isLoading={isLoading} />
+            <FamilyTree data={treeData} isLoading={isLoading} language={language} />
+            <ControlPanel 
+              language={language} 
+              setLanguage={setLanguage}
+              accent={accent}
+              setAccent={setAccent}
+            />
         </div>
       </div>
       
-      <WelcomeToast />
+      <WelcomeToast language={language} />
 
       <ShareSuccessModal 
         isOpen={showShareModal} 
         onClose={() => setShowShareModal(false)} 
-        shareData={shareData} 
+        shareData={shareData}
+        language={language}
       />
     </QueryClientProvider>
   );
