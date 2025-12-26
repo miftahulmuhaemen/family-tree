@@ -38,9 +38,6 @@ function buildGraph(edges: Edge[]) {
     edges.forEach(e => {
         // Parent-Child edges (default or explicitly 'parent' or 'foster_parent')
         if (!e.type || e.type === 'parent' || e.type === 'foster_parent') {
-            // Wait, looking at family.yaml, "from: parent, to: child" ?
-            // In FamilyTree.tsx, we map: source = r.to (Parent), target = r.from (Child).
-            // So source is PARENT, target is CHILD.
             const parentId = e.source;
             const childId = e.target;
 

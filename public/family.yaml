@@ -17,6 +17,7 @@ people:
     short_bio: "Pensiunan Guru, mencintai wayang kulit."
     additionals:
       hobi: "Mendengarkan Gending Jawa setiap sore sambil minum teh tubruk kental manis."
+      lorem_ipsum: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
   - id: "siti_hartini"
     name: "Siti Hartini"
     gender: "female"
@@ -334,10 +335,6 @@ relationships:
     from: "doni_pratama"
     to: "bu_agus"
   
-  # Gen 4 -> Gen 3 (Eko & Dewi: Note: In original file Dewi was paired with Eko as wife? No, relationship structure in original YAML seemed to imply Eko & Dewi are siblings or partners? 
-  # Wait, looking at original relationships:
-  # 4_male_1 (Rizky) -> 3_male_1 (Eko) AND 3_female_1 (Dewi)
-  # So Eko & Dewi are parents of Rizky & Alya.
   - type: "parent"
     from: "rizky_ramadhan"
     to: "eko_prasetyo"
@@ -351,8 +348,6 @@ relationships:
     from: "alya_zahra"
     to: "dewi_lestari"
 
-  # Rina's Family (For In-Law Testing)
-  # Rina (rina_indah) + Dika (Husband) -> Rini (Child)
   - type: "parent"
     from: "rini_kecil"
     to: "rina_indah"
@@ -360,8 +355,6 @@ relationships:
     from: "rini_kecil"
     to: "dika_mahendra"
   
-  # Dika's Family (In-Laws to Rina)
-  # Dika -> Pak Herman (Father) -> Mbah Sastro (Grandfather)
   - type: "parent"
     from: "dika_mahendra"
     to: "pak_herman"
@@ -372,7 +365,6 @@ relationships:
     from: "pak_herman"
     to: "mbah_putri"
   
-  # Dika's Sibling (Ipar to Rina)
   - type: "parent"
     from: "sari_mahendra"
     to: "pak_herman"
@@ -383,7 +375,6 @@ relationships:
     from: "sari_mahendra"
     to: "bu_herman"
   
-  # Anto & Nurlina Branch
   - type: "parent"
     from: "anto_sudirman"
     to: "raden_soedirman"
@@ -408,6 +399,13 @@ relationships:
   - type: "parent"
     from: "bonar_sondang"
     to: "tita_karo"
+
+  - type: "parent"
+    from: "bruno_son"
+    to: "anto_sudirman"
+  - type: "parent"
+    from: "bruno_son"
+    to: "wendy_wife"
 
   # Explicit Spouse Relationships
   - type: "married"
@@ -441,14 +439,6 @@ relationships:
   - type: "not_married"
     from: "sondang_anto"
     to: "tita_karo"
-
-  # Anto's New Family Relations
-  - type: "parent"
-    from: "bruno_son"
-    to: "anto_sudirman"
-  - type: "parent"
-    from: "bruno_son"
-    to: "wendy_wife"
 
   # New Marriages
   - type: "married"

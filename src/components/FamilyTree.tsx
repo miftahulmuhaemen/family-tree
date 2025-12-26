@@ -358,6 +358,7 @@ interface FamilyTreeProps {
 function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [povId, setPovId] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [unions, setUnions] = useState<{ parents: string[], children: string[], type?: string }[]>([]);
   const { setCenter } = useReactFlow();
 
@@ -514,10 +515,14 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     setPovId(node.id); // This will trigger the effect above to update selected state and relationships
     
+    // Check if mobile
+    if (window.innerWidth < 768) {
+        setIsDrawerOpen(false); // Mobile: Select node but don't open drawer immediately
+    } else {
+        setIsDrawerOpen(true); // Desktop: Open explicitly
+    }
+    
     // Center the node
-    // We need to account for node width/height to center it perfectly
-    // Assuming node width ~256 (NODE_WIDTH). height is variable but let's assume it's roughly centered.
-    // setCenter accepts x, y, options.
     const x = node.position.x + (node.measured?.width ?? NODE_WIDTH) / 2;
     const y = node.position.y + (node.measured?.height ?? NODE_HEIGHT) / 2;
     
@@ -526,9 +531,21 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
 
   const onPaneClick = useCallback(() => {
     setPovId(null);
+    setIsDrawerOpen(false);
   }, []);
 
-  const closeDrawer = () => setPovId(null);
+  const closeDrawer = () => {
+    // On mobile, closing drawer should just hide it so FAB returns (Selection persists).
+    // On desktop, it implies deselection.
+    if (window.innerWidth < 768) {
+        setIsDrawerOpen(false);
+    } else {
+        setPovId(null);
+        setIsDrawerOpen(false);
+    }
+  };
+
+  const openDrawer = () => setIsDrawerOpen(true);
 
   const selectedPerson = useMemo(() => {
       if (!povId || !familyData) return null;
@@ -548,12 +565,9 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
-        // fitView // removed to avoid jump on initial load if we want manual control, but useful for first load.
-        // Actually, let's keep fitView but we might need to be careful with it overriding our setCenter?
-        // fitView is an initial prop.
         fitView
         nodesConnectable={false}
-        nodesDraggable={false} // Maybe allow drag? User didn't specify.
+        nodesDraggable={false} 
         panOnScroll
         selectionOnDrag={false}
         panOnDrag={true}
@@ -567,9 +581,21 @@ function FamilyTreeInner({ data: familyData, isLoading }: FamilyTreeProps) {
         <MiniMap className="hidden md:block" />
       </ReactFlow>
 
+      {/* Floating Action Button for Mobile Details */}
+      {povId && !isDrawerOpen && (
+          <div className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
+              <button 
+                  onClick={openDrawer}
+                  className="bg-blue-600 text-white px-8 py-3 rounded-full shadow-lg font-semibold flex items-center justify-center hover:bg-blue-700 active:scale-95 transition-all text-center"
+              >
+                  <span>View Details</span>
+              </button>
+          </div>
+      )}
+
       {/* Detail Drawer */}
       <DetailDrawer 
-        isOpen={!!povId} 
+        isOpen={!!povId && isDrawerOpen} 
         onClose={closeDrawer} 
         person={selectedPerson as PersonData | null} 
       />
