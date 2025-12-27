@@ -7,7 +7,6 @@ interface ControlPanelProps {
   setLanguage: (lang: Language) => void;
   accent: string;
   setAccent: (accent: string) => void;
-  isDetailViewVisible?: boolean;
 }
 
 const ACCENTS = {
@@ -19,8 +18,7 @@ export function ControlPanel({
   language, 
   setLanguage, 
   accent, 
-  setAccent,
-  isDetailViewVisible
+  setAccent 
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(true);
   const terms = TERMS[language];
@@ -36,9 +34,7 @@ export function ControlPanel({
 
   return (
     <div 
-      className={`fixed left-1/2 -translate-x-1/2 z-50 flex items-center animate-in slide-in-from-bottom-4 fade-in duration-500 sm:scale-100 origin-bottom sm:origin-center transition-[bottom] ease-out ${
-        isDetailViewVisible ? 'bottom-[160px]' : 'bottom-20 sm:bottom-[70px]'
-      } ${isVisible ? 'gap-3' : 'gap-0'}`}
+      className={`flex items-center animate-in slide-in-from-bottom-4 fade-in duration-500 sm:scale-100 origin-bottom sm:origin-center ${isVisible ? 'gap-3' : 'gap-0'}`}
     >
       
       {/* Main Panel (Collapsible) */}

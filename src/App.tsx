@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import YAML from 'yaml';
 import FamilyTree from './components/FamilyTree';
 import { EditorSidebar } from './components/EditorSidebar';
+import DetailDrawer from './components/DetailDrawer';
 
 import { ShareSuccessModal } from './components/ShareSuccessModal';
 import { NotFound } from './components/NotFound';
@@ -237,8 +238,23 @@ function App() {
     setIsDarkMode(curr => !curr);
   };
 
+  // State for Family Tree Interactions (Lifted)
+  const [povId, setPovId] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const [isDetailViewVisible, setIsDetailViewVisible] = useState(false);
+  // Helper for Drawer Logic
+  const openDrawer = () => setIsDrawerOpen(true);
+  const closeDrawer = () => {
+    if (window.innerWidth < 768) {
+        setIsDrawerOpen(false);
+    } else {
+        setPovId(null);
+        setIsDrawerOpen(false);
+    }
+  };
+
+  const selectedPerson = treeData?.people.find((p: any) => p.id === povId) || null;
+
 
   if (!isLoading && !treeData && errorMsg === "Failed to load configuration") {
     return <NotFound />;
@@ -246,7 +262,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex w-screen h-screen bg-background overflow-hidden">
+      <div className="flex w-screen h-screen bg-background overflow-hidden relative">
         {/* Editor Sidebar (only if not read-only) */}
         {!isReadOnly && (
           <EditorSidebar
@@ -275,19 +291,47 @@ function App() {
               isLoading={isLoading} 
               language={language} 
               accent={accent}
-              onDetailViewChange={setIsDetailViewVisible}
-            />
-            <ControlPanel 
-              language={language} 
-              setLanguage={setLanguage}
-              accent={accent}
-              setAccent={setAccent}
-              isDetailViewVisible={isDetailViewVisible}
+              povId={povId}
+              setPovId={setPovId}
+              isDrawerOpen={isDrawerOpen}
+              setIsDrawerOpen={setIsDrawerOpen}
             />
         </div>
+
+        {/* Unified Floating Controls Integration */}
+         <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-4 animate-in slide-in-from-bottom-4 fade-in duration-500 w-full pointer-events-none">
+            {/* View Details Button (Mobile Only) */}
+            {povId && !isDrawerOpen && (
+              <div className="md:hidden pointer-events-auto">
+                   <button
+                      onClick={openDrawer}
+                      className="bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800/60 px-6 py-2 rounded-full shadow-xl font-semibold flex items-center justify-center hover:bg-zinc-900 hover:text-white hover:border-zinc-700 active:scale-95 transition-all text-center"
+                   >
+                      <span>{terms.view_details}</span>
+                   </button>
+              </div>
+            )}
+
+            {/* Control Panel */}
+            <div className="pointer-events-auto">
+               <ControlPanel 
+                  language={language} 
+                  setLanguage={setLanguage}
+                  accent={accent}
+                  setAccent={setAccent}
+                />
+            </div>
+         </div>
       </div>
       
       <WelcomeToast language={language} />
+
+      <DetailDrawer
+        isOpen={!!povId && isDrawerOpen}
+        onClose={closeDrawer}
+        person={selectedPerson}
+        language={language}
+      />
 
       <ShareSuccessModal 
         isOpen={showShareModal} 

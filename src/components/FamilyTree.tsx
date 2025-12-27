@@ -11,8 +11,7 @@ import {
   useReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import PersonNode, { type PersonData } from './PersonNode';
-import DetailDrawer from './DetailDrawer';
+import PersonNode from './PersonNode';
 import { getLayoutedElements } from '../utils/layout';
 import { calculateRelationship } from '../utils/kinship';
 import { TERMS, KINSHIP_ID_MAPPING } from '@/utils/i18n';
@@ -357,23 +356,24 @@ interface FamilyTreeProps {
   isLoading?: boolean;
   language: Language;
   accent: string;
-  onDetailViewChange?: (isVisible: boolean) => void;
+  povId: string | null;
+  setPovId: (id: string | null) => void;
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: (isOpen: boolean) => void;
 }
 
-function FamilyTreeInner({ data: familyData, isLoading, language, accent, onDetailViewChange }: FamilyTreeProps) {
+function FamilyTreeInner({ 
+  data: familyData, 
+  isLoading, 
+  language, 
+  accent, 
+  povId, 
+  setPovId,
+  setIsDrawerOpen
+}: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
-  const [povId, setPovId] = useState<string | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [unions, setUnions] = useState<{ parents: string[], children: string[], type?: string }[]>([]);
   const { setCenter } = useReactFlow();
-
-  // Notify App about Detail View Button visibility
-  useEffect(() => {
-    // Visible only if: person selected AND drawer closed AND is mobile
-    const isVisible = !!povId && !isDrawerOpen && window.innerWidth < 768;
-    onDetailViewChange?.(isVisible);
-  }, [povId, isDrawerOpen, onDetailViewChange]);
-
 
   const nodeTypes = useMemo(() => ({ person: PersonNode }), []);
 
@@ -554,24 +554,6 @@ function FamilyTreeInner({ data: familyData, isLoading, language, accent, onDeta
     setIsDrawerOpen(false);
   }, []);
 
-  const closeDrawer = () => {
-    // On mobile, closing drawer should just hide it so FAB returns (Selection persists).
-    // On desktop, it implies deselection.
-    if (window.innerWidth < 768) {
-        setIsDrawerOpen(false);
-    } else {
-        setPovId(null);
-        setIsDrawerOpen(false);
-    }
-  };
-
-  const openDrawer = () => setIsDrawerOpen(true);
-
-  const selectedPerson = useMemo(() => {
-      if (!povId || !familyData) return null;
-      return familyData.people.find((p: any) => p.id === povId) || null;
-  }, [povId, familyData]);
-
 
   if (isLoading) return <div className="flex items-center justify-center h-full">Loading Family Tree...</div>;
   if (!familyData) return null;
@@ -600,26 +582,6 @@ function FamilyTreeInner({ data: familyData, isLoading, language, accent, onDeta
         <Controls />
         <MiniMap className="hidden md:block" />
       </ReactFlow>
-
-      {/* Floating Action Button for Mobile Details */}
-      {povId && !isDrawerOpen && (
-          <div className="md:hidden absolute bottom-[110px] left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
-              <button
-                  onClick={openDrawer}
-                  className="bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800/60 px-6 py-2 rounded-full shadow-xl font-semibold flex items-center justify-center hover:bg-zinc-900 hover:text-white hover:border-zinc-700 active:scale-95 transition-all text-center"
-              >
-                  <span>{TERMS[language].view_details}</span>
-              </button>
-          </div>
-      )}
-
-      {/* Detail Drawer */}
-      <DetailDrawer
-        isOpen={!!povId && isDrawerOpen}
-        onClose={closeDrawer}
-        person={selectedPerson as PersonData | null}
-        language={language}
-      />
     </div>
   );
 }
