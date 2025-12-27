@@ -357,14 +357,23 @@ interface FamilyTreeProps {
   isLoading?: boolean;
   language: Language;
   accent: string;
+  onDetailViewChange?: (isVisible: boolean) => void;
 }
 
-function FamilyTreeInner({ data: familyData, isLoading, language, accent }: FamilyTreeProps) {
+function FamilyTreeInner({ data: familyData, isLoading, language, accent, onDetailViewChange }: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [povId, setPovId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [unions, setUnions] = useState<{ parents: string[], children: string[], type?: string }[]>([]);
   const { setCenter } = useReactFlow();
+
+  // Notify App about Detail View Button visibility
+  useEffect(() => {
+    // Visible only if: person selected AND drawer closed AND is mobile
+    const isVisible = !!povId && !isDrawerOpen && window.innerWidth < 768;
+    onDetailViewChange?.(isVisible);
+  }, [povId, isDrawerOpen, onDetailViewChange]);
+
 
   const nodeTypes = useMemo(() => ({ person: PersonNode }), []);
 
@@ -594,10 +603,10 @@ function FamilyTreeInner({ data: familyData, isLoading, language, accent }: Fami
 
       {/* Floating Action Button for Mobile Details */}
       {povId && !isDrawerOpen && (
-          <div className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="md:hidden absolute bottom-[110px] left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
               <button
                   onClick={openDrawer}
-                  className="bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800/60 px-8 py-3 rounded-full shadow-xl font-semibold flex items-center justify-center hover:bg-zinc-900 hover:text-white hover:border-zinc-700 active:scale-95 transition-all text-center"
+                  className="bg-zinc-950/90 backdrop-blur-md text-zinc-200 border border-zinc-800/60 px-6 py-2 rounded-full shadow-xl font-semibold flex items-center justify-center hover:bg-zinc-900 hover:text-white hover:border-zinc-700 active:scale-95 transition-all text-center"
               >
                   <span>{TERMS[language].view_details}</span>
               </button>

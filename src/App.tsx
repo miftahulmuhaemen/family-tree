@@ -237,6 +237,9 @@ function App() {
     setIsDarkMode(curr => !curr);
   };
 
+
+  const [isDetailViewVisible, setIsDetailViewVisible] = useState(false);
+
   if (!isLoading && !treeData && errorMsg === "Failed to load configuration") {
     return <NotFound />;
   }
@@ -267,12 +270,19 @@ function App() {
 
         {/* Main Content Area */}
         <div className="flex-1 h-full relative">
-            <FamilyTree data={treeData} isLoading={isLoading} language={language} accent={accent} />
+            <FamilyTree 
+              data={treeData} 
+              isLoading={isLoading} 
+              language={language} 
+              accent={accent}
+              onDetailViewChange={setIsDetailViewVisible}
+            />
             <ControlPanel 
               language={language} 
               setLanguage={setLanguage}
               accent={accent}
               setAccent={setAccent}
+              isDetailViewVisible={isDetailViewVisible}
             />
         </div>
       </div>

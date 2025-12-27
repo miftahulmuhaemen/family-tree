@@ -32,7 +32,7 @@ export function WelcomeToast({ language = 'id' }: WelcomeToastProps) {
         <div className="flex-1 min-w-0 text-center sm:text-left">
            <h3 className="hidden sm:block font-semibold text-sm sm:text-base">{terms.welcome_title}</h3>
            {supportEmail && (
-             <p className="text-sm font-semibold text-white sm:text-xs sm:text-zinc-400 sm:font-normal mt-0 sm:mt-0.5">
+             <p className="text-xs font-semibold text-white sm:text-xs sm:text-zinc-400 sm:font-normal mt-0 sm:mt-0.5">
                {terms.questions_email}{' '}
                <a 
                  href={`mailto:${supportEmail}`}

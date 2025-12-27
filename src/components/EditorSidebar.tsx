@@ -41,7 +41,11 @@ export function EditorSidebar({
   language = 'id'
 }: EditorSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [width, setWidth] = useState(400);
+  // Initial width should not exceed screen width
+  const [width, setWidth] = useState(() => {
+    if (typeof window === 'undefined') return 400;
+    return Math.min(400, window.innerWidth);
+  });
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   
@@ -62,7 +66,9 @@ export function EditorSidebar({
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return;
       const newWidth = e.clientX;
-      if (newWidth >= 300 && newWidth <= 800) { // Min: 300, Max: 800
+      // Min: 300, Max: 800 but never more than screen width
+      const maxWidth = typeof window !== 'undefined' ? window.innerWidth : 800;
+      if (newWidth >= 300 && newWidth <= 800 && newWidth <= maxWidth) {
         setWidth(newWidth);
       }
     };
@@ -145,7 +151,7 @@ export function EditorSidebar({
       {/* Sidebar Panel */}
       <div
         ref={sidebarRef}
-        style={{ width: isCollapsed ? 0 : width }}
+        style={{ width: isCollapsed ? 0 : width, maxWidth: '100vw' }}
         className={cn(
           "fixed top-0 left-0 h-full bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-gray-700 shadow-xl z-[70] transition-[transform] duration-300 flex flex-col overflow-hidden",
           isCollapsed ? "-translate-x-full" : "translate-x-0",
