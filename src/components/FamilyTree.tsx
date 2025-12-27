@@ -579,7 +579,7 @@ function FamilyTreeInner({
         <FamilyLines nodes={nodes} unions={unions} relationships={familyData.relationships} language={language} />
         <SpouseLines nodes={nodes} unions={unions} language={language} />
         <Background />
-        <Controls />
+        <Controls style={{ bottom: '16px', left: '16px' }} />
         <MiniMap className="hidden md:block" />
       </ReactFlow>
     </div>

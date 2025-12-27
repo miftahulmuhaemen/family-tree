@@ -262,7 +262,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex w-screen h-screen bg-background overflow-hidden relative">
+      <div className="flex w-screen h-[100dvh] bg-background overflow-hidden relative">
         {/* Editor Sidebar (only if not read-only) */}
         {!isReadOnly && (
           <EditorSidebar
@@ -299,7 +299,7 @@ function App() {
         </div>
 
         {/* Unified Floating Controls Integration */}
-         <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-4 animate-in slide-in-from-bottom-4 fade-in duration-500 w-full pointer-events-none">
+         <div className="fixed bottom-[140px] left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-4 animate-in slide-in-from-bottom-4 fade-in duration-500 w-full pointer-events-none">
             {/* View Details Button (Mobile Only) */}
             {povId && !isDrawerOpen && (
               <div className="md:hidden pointer-events-auto">
