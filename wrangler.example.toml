@@ -11,11 +11,9 @@ bucket_name = "familytree"
 
 [[kv_namespaces]]
 binding = "FAMILYTREE_RATE_LIMITER"
-id = "d082926ed33a46d2be3796dfbb054a03"
+id = "<YOUR_KV_NAMESPACE_ID>"
 
 # Environment Variables (Non-Secret)
 [vars]
-ALLOWED_DOMAIN = "muhaemen.my.id"
+ALLOWED_DOMAIN = "example.com"
 ENVIRONMENT = "production"
-
-

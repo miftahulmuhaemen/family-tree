@@ -2,8 +2,31 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     
+    const origin = request.headers.get('Origin');
+    const allowedDomain = env.ALLOWED_DOMAIN;
+    const environment = env.ENVIRONMENT;
+    
+    let isAllowed = false;
+
+    if (origin) {
+      if (allowedDomain) {
+        // Create regex dynamically: ^https://(?:.+\.)?escaped_domain$
+        const escapedDomain = allowedDomain.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const allowedOriginRegex = new RegExp(`^https://(?:.+\\.)?${escapedDomain}$`);
+        if (allowedOriginRegex.test(origin)) {
+          isAllowed = true;
+        }
+      }
+
+      // Only allow localhost if explicitly in development environment
+      if (!isAllowed && environment === 'development' && 
+          (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+        isAllowed = true;
+      }
+    }
+
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': isAllowed ? origin : 'null',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Edit-Token',
     };
