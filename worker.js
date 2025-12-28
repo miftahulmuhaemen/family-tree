@@ -1,18 +1,7 @@
-/**
- * Cloudflare Worker for Family Tree Storage
- * 
- * Setup Instructions:
- * 1. Create a new Worker in Cloudflare Dashboard.
- * 2. Create an R2 Bucket named 'family-tree-configs'.
- * 3. Bind the R2 Bucket to this Worker with variable name 'BUCKET'.
- * 4. (Optional) Set a purely client-side restriction or just allow public for this personal use case.
- */
-
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     
-    // CORS Headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
@@ -28,12 +17,7 @@ export default {
       const id = url.pathname.slice(1); // Remove leading slash
       if (!id) return new Response('Missing ID', { status: 400, headers: corsHeaders });
 
-      // --- Rate Limiting Pre-Check ---
-      // We check if the IP is already blocked before doing anything.
-      // We ONLY track failed attempts, but if they are blocked, we block everything.
-      
       const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-      // Hash IP only (ignoring User-Agent to prevent bypass by switching browsers)
       const msgBuffer = new TextEncoder().encode(ip);
       const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -53,12 +37,10 @@ export default {
       } catch (e) {
         console.error('Rate limit read error:', e);
       }
-      // -------------------------------
 
       const object = await env.BUCKET.get(id);
       
       if (object === null) {
-        // --- Record Failed Attempt ---
         try {
            const currentCountStr = await env.FAMILYTREE_RATE_LIMITER.get(rateLimitKey);
            const currentCount = parseInt(currentCountStr, 10) || 0;
@@ -69,7 +51,6 @@ export default {
         } catch(e) {
           console.error('Rate limit write error:', e);
         }
-        // -----------------------------
         
         return new Response('Config not found', { status: 404, headers: corsHeaders });
       }
@@ -87,13 +68,7 @@ export default {
     // POST / -> Save config (Create New)
     if (request.method === 'POST') {
       try {
-        // Optional: Check Access Token if configured
-        if (env.API_TOKEN) {
-          const authHeader = request.headers.get('Authorization');
-          if (!authHeader || authHeader !== `Bearer ${env.API_TOKEN}`) {
-             return new Response('Unauthorized', { status: 401, headers: corsHeaders });
-          }
-        }
+
 
         const content = await request.text();
         
@@ -134,14 +109,6 @@ export default {
       if (!id) return new Response('Missing ID', { status: 400, headers: corsHeaders });
 
       try {
-        // Optional: Check Access Token
-        if (env.API_TOKEN) {
-          const authHeader = request.headers.get('Authorization');
-          if (!authHeader || authHeader !== `Bearer ${env.API_TOKEN}`) {
-             return new Response('Unauthorized', { status: 401, headers: corsHeaders });
-          }
-        }
-
         // --- Edit Token Verification ---
         const requestToken = request.headers.get('X-Edit-Token');
         if (!requestToken) {
@@ -155,22 +122,18 @@ export default {
 
         const storedToken = existingObject.customMetadata?.['edit-token'];
         
-        // If file has a token, it MUST match. If old file no token, allow update (legacy support) or block?
-        // Let's be strict: if it has a token, match it.
         if (storedToken && storedToken !== requestToken) {
            return new Response('Invalid Edit Token', { status: 403, headers: corsHeaders });
         }
-        // -------------------------------
 
         const content = await request.text();
         if (!content || content.length > 100000) {
            return new Response('Payload too large or empty', { status: 413, headers: corsHeaders });
         }
 
-        // Overwrite R2 (Persist the token!)
         await env.BUCKET.put(id, content, {
           httpMetadata: { contentType: 'text/yaml' },
-          customMetadata: { 'edit-token': storedToken || requestToken } // Keep existing or set new if none? stick to stored.
+          customMetadata: { 'edit-token': storedToken || requestToken } 
         });
 
         return new Response(JSON.stringify({ id, success: true, updated: true }), {

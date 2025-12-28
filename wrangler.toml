@@ -17,4 +17,4 @@ id = "d082926ed33a46d2be3796dfbb054a03"
 [vars]
 # ALLOWED_ORIGIN = "https://your-domain.com" # Optional: Limit CORS
 
-# Note: Secrets like AUTH_TOKEN should be set via `wrangler secret put AUTH_TOKEN`
+

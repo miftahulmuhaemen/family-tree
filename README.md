@@ -1,10 +1,10 @@
 # Family Tree Visualizer & Editor
 
-A robust, interactive static website for visualizing and editing family tree data. Built with React, powered by Cloudflare Workers and R2 for secure, serverless storage.
+Interactive family tree builder with editor and automatically visualize it. You can share it safely with your family members without worrying about the privacy, to take it further you can deploy it yourself.
 
 ## Features
 
-*   **Interactive Visualization**: Automatic hierarchical layout using `elkjs` and `React Flow`. Pan, zoom, and explore family connections.
+*   **Interactive Visualization**: Automatic hierarchical layout. Pan, zoom, and explore family connections.
 *   **Real-time Editor**: Integrated Monaco Editor for live YAML editing with syntax highlighting and validation.
 *   **Secure Sharing**:
     *   **Share**: Generate unique, shareable links for your family tree configurations.
@@ -12,18 +12,19 @@ A robust, interactive static website for visualizing and editing family tree dat
 *   **Privacy & Control**:
     *   **Read-Only Mode**: Viewers without the token can explore but not modify your tree.
     *   **Lock/Unlock**: Easily toggle editing permissions using your token.
-*   **Modern UI**:
+*   **Friendly UI**:
     *   **Dark Mode**: A sleek, dark-themed editor sidebar.
     *   **Responsive Design**: Collapsible, resizable sidebar and mobile-friendly layout.
-    *   **Kinship Logic**: Advanced relationship calculation (parent, child, spouse, etc.).
+    *   **Kinship Logic**: Relationship calculation (parent, child, spouse, etc.).
 
-## Project Structure
+## Project Structure 
 
 *   **`src/`**: The React frontend application.
     *   `src/components/`: UI components (EditorSidebar, ShareSuccessModal, etc.).
     *   `src/utils/`: Logic for parsing YAML and calculating layouts.
 *   **`worker.js`**: Cloudflare Worker script. Handles API requests, R2 storage, and authentication.
 *   **`wrangler.toml`**: Configuration file for the Cloudflare Worker and R2 bucket binding.
+*   **`env`**: Environment variables file.
 *   **`public/`**: Static assets and default `family.yaml`.
 
 ## Development Setup
@@ -78,7 +79,6 @@ The backend manages storage and security.
     Update `VITE_WORKER_URL` with your **Deployed Worker URL** (or local URL for dev).
     ```env
     VITE_WORKER_URL=https://your-worker-name.workers.dev
-    # VITE_API_TOKEN=your_token  # Optional: If you enabled auth in worker
     ```
 
 3.  **Run Development Server**:
@@ -102,12 +102,7 @@ The output will be in the `dist/` folder. You can deploy this folder to any stat
 npx wrangler pages deploy dist --project-name my-family-tree
 ```
 
-### Backend Deployment
-
-If you haven't already:
-```bash
-npx wrangler deploy
-```
+or connect to your repository and let the CI/CD handle it.
 
 ## Security Note
 

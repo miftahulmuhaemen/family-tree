@@ -234,12 +234,6 @@ function SpouseLines({ nodes, unions, language }: {
       const maxX = (spouses[spouses.length - 1].node.position?.x || 0) + NODE_WIDTH / 2;
 
       // Draw Horizontal Connector Bar
-      // Connect from MinSpouse to MaxSpouse at midY
-      // Also ensure connection to Hub Trunk if Hub is outside range?
-      // Usually Hub is centered above, so it should be within or effectively connected if we draw line to HubX.
-      // Better: Draw bar from min(MinSpouseX, HubX) to max(MaxSpouseX, HubX)?
-      // No, classic tree is Bar across spouses, Trunk connects to Bar.
-      // If HubX is not within [MinX, MaxX], we extend the bar to HubX.
       const barMinX = Math.min(minX, hubX);
       const barMaxX = Math.max(maxX, hubX);
 
@@ -428,9 +422,6 @@ function FamilyTreeInner({
     // Create Person nodes only
     const peopleNodes = familyData.people
       .sort((a: any, b: any) => {
-         // Sort by birthDate descending (Youngest First) to match the visual layout preference
-         // where Mulan (youngest wife) is left, Nurlina (oldest) is right.
-         // This ensures children (Bruno, 2010) come before (Findia, 1999), aligning them with moms.
          const dateA = new Date(a.birthDate || '1900-01-01').getTime();
          const dateB = new Date(b.birthDate || '1900-01-01').getTime();
          return dateB - dateA;
@@ -443,9 +434,6 @@ function FamilyTreeInner({
       height: NODE_HEIGHT
     }));
 
-    // Create edges for ELK layout calculation (but we won't render them)
-    // Edges must reference the sorted nodes? ID matching doesn't care about order,
-    // but ELK layout respects node array order for initial positioning.
     const layoutEdges: { id: string, source: string, target: string }[] = [];
     const fosterChildrenIds: string[] = [];
 

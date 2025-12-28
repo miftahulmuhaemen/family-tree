@@ -112,7 +112,6 @@ function App() {
     setIsSharing(true);
 
     const workerUrl = import.meta.env.VITE_WORKER_URL;
-    const apiToken = import.meta.env.VITE_API_TOKEN;
 
     if (!workerUrl) {
       alert("Worker URL is not configured in .env");
@@ -122,9 +121,6 @@ function App() {
 
     try {
       const headers: Record<string, string> = { 'Content-Type': 'text/yaml' };
-      if (apiToken) {
-        headers['Authorization'] = `Bearer ${apiToken}`;
-      }
       if (editToken) {
         headers['X-Edit-Token'] = editToken;
       }
