@@ -88,7 +88,14 @@ function App() {
       
       // Basic schema check
       if (parsed && Array.isArray(parsed.people) && Array.isArray(parsed.relationships)) {
-        setTreeData(parsed);
+        // Sanitize data to prevent crashes with intermediate states (e.g. typing a new list item)
+        const safeParsed = {
+          ...parsed,
+          people: parsed.people.filter((p: any) => p && typeof p === 'object'),
+          relationships: parsed.relationships.filter((r: any) => r && typeof r === 'object')
+        };
+        
+        setTreeData(safeParsed);
         setIsValid(true);
         setErrorMsg('');
       } else {
