@@ -68,6 +68,9 @@ export const TERMS = {
     mode_label: "MODE",
     mode_editor: "Editor",
     mode_public: "Public",
+    theme_label: "THEME",
+    theme_default: "Default",
+    theme_neu: "Soft Clay",
     
     // Relationships
     married: "Married",
@@ -190,6 +193,9 @@ export const TERMS = {
     mode_label: "MODE",
     mode_editor: "Editor",
     mode_public: "Publik",
+    theme_label: "TEMA",
+    theme_default: "Standar",
+    theme_neu: "Neumorfisme",
     
     // Relationships
     married: "Menikah",
