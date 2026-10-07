@@ -94,3 +94,64 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
 }
 
+/* Neumorphism Theme Variables */
+[data-theme="neumorphism"] {
+  --neu-base: #e6e9ef;
+  --neu-surface: #e6e9ef;
+  --neu-border: rgba(255, 255, 255, 0.7);
+  --neu-shadow-dark: rgba(163, 177, 198, 0.6);
+  --neu-shadow-light: rgba(255, 255, 255, 0.85);
+
+  --neu-raised: 6px 6px 14px var(--neu-shadow-dark), -6px -6px 14px var(--neu-shadow-light);
+  --neu-raised-sm: 3px 3px 8px var(--neu-shadow-dark), -3px -3px 8px var(--neu-shadow-light);
+  --neu-pressed: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
+  --neu-pressed-sm: inset 1.5px 1.5px 3px var(--neu-shadow-dark), inset -1.5px -1.5px 3px var(--neu-shadow-light);
+
+  --neu-accent: #4338ca;
+  --neu-male: #2563eb;
+  --neu-male-bg: #dbeafe;
+  --neu-female: #e11d48;
+  --neu-female-bg: #ffe4e6;
+  --neu-deceased: #64748b;
+  --neu-deceased-bg: #e2e8f0;
+}
+
+[data-theme="neumorphism"].dark {
+  --neu-base: #181b20;
+  --neu-surface: #1c2027;
+  --neu-border: rgba(255, 255, 255, 0.06);
+  --neu-shadow-dark: rgba(0, 0, 0, 0.75);
+  --neu-shadow-light: rgba(255, 255, 255, 0.04);
+
+  --neu-raised: 6px 6px 16px var(--neu-shadow-dark), -4px -4px 12px var(--neu-shadow-light);
+  --neu-raised-sm: 3px 3px 8px var(--neu-shadow-dark), -2px -2px 6px var(--neu-shadow-light);
+  --neu-pressed: inset 3px 3px 6px var(--neu-shadow-dark), inset -2px -2px 5px var(--neu-shadow-light);
+  --neu-pressed-sm: inset 1.5px 1.5px 3px var(--neu-shadow-dark), inset -1px -1px 3px var(--neu-shadow-light);
+
+  --neu-accent: #818cf8;
+  --neu-male: #38bdf8;
+  --neu-male-bg: rgba(56, 189, 248, 0.12);
+  --neu-female: #fb7185;
+  --neu-female-bg: rgba(251, 113, 133, 0.12);
+  --neu-deceased: #94a3b8;
+  --neu-deceased-bg: rgba(148, 163, 184, 0.12);
+}
+
+@layer utilities {
+  .shadow-neu-raised {
+    box-shadow: var(--neu-raised);
+  }
+  .shadow-neu-raised-sm {
+    box-shadow: var(--neu-raised-sm);
+  }
+  .shadow-neu-pressed {
+    box-shadow: var(--neu-pressed);
+  }
+  .shadow-neu-pressed-sm {
+    box-shadow: var(--neu-pressed-sm);
+  }
+  .shadow-neu-convex {
+    box-shadow: var(--neu-raised);
+  }
+}
+
