@@ -8,14 +8,16 @@ import { SidebarHeader } from './sidebar/SidebarHeader';
 import { SidebarTabs, type SidebarTabType } from './sidebar/SidebarTabs';
 import { PersonDetailView } from './sidebar/PersonDetailView';
 import { MembersView } from './sidebar/MembersView';
-import { YamlEditorView } from './sidebar/YamlEditorView';
+import { GedcomEditorView } from './sidebar/GedcomEditorView';
 import { SidebarFooter } from './sidebar/SidebarFooter';
 import { useMemberFilters } from '@/hooks/useMemberFilters';
 import { useSidebarResize } from '@/hooks/useSidebarResize';
 
 export interface EditorSidebarProps {
-  yaml: string;
-  onYamlChange: (value: string) => void;
+  gedcom?: string;
+  onGedcomChange?: (value: string) => void;
+  yaml?: string; // Backward compatibility alias
+  onYamlChange?: (value: string) => void; // Backward compatibility alias
   isValid: boolean;
   errorMessage?: string;
   onShare: () => void;
@@ -41,6 +43,8 @@ export interface EditorSidebarProps {
 }
 
 export function EditorSidebar({
+  gedcom,
+  onGedcomChange,
   yaml,
   onYamlChange,
   isValid,
@@ -70,6 +74,9 @@ export function EditorSidebar({
   const isCollapsed = controlledIsCollapsed !== undefined ? controlledIsCollapsed : internalIsCollapsed;
   const setIsCollapsed = controlledSetIsCollapsed || setInternalIsCollapsed;
 
+  const activeGedcom = gedcom ?? yaml ?? '';
+  const handleGedcomChange = onGedcomChange ?? onYamlChange ?? (() => {});
+
   const [activeTab, setActiveTab] = useState<SidebarTabType>('members');
 
   const {
@@ -94,7 +101,7 @@ export function EditorSidebar({
   }, [selectedPersonId]);
 
   useEffect(() => {
-    if (isReadOnly && activeTab === 'yaml') {
+    if (isReadOnly && (activeTab === 'gedcom' || activeTab === 'yaml')) {
       setActiveTab(selectedPersonId ? 'detail' : 'members');
     }
   }, [isReadOnly, activeTab, selectedPersonId]);
@@ -195,9 +202,9 @@ export function EditorSidebar({
               terms={terms}
             />
           ) : (
-            <YamlEditorView
-              yaml={yaml}
-              onYamlChange={onYamlChange}
+            <GedcomEditorView
+              gedcom={activeGedcom}
+              onGedcomChange={handleGedcomChange}
               isDarkMode={isDarkMode}
               isLocked={isLocked}
             />

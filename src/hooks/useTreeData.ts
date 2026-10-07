@@ -1,50 +1,35 @@
 import { useState, useEffect, useCallback } from 'react';
-import YAML from 'yaml';
 import type { FamilyData, Person, Relationship } from '@/types/family';
+import { parseGedcom, serializeGedcom, deduplicateRelationships } from '@/utils/gedcom';
 
 export interface UseTreeDataReturn {
-  yamlContent: string;
+  gedcomContent: string;
+  yamlContent: string; // Backward compatibility alias
   treeData: FamilyData | null;
   isValid: boolean;
   errorMsg: string;
-  setYamlContent: (yaml: string) => void;
+  setGedcomContent: (gedcom: string) => void;
+  setYamlContent: (gedcom: string) => void; // Backward compatibility alias
   updateTreeState: (newPeople: Person[], newRelationships: Relationship[]) => void;
   deduplicateRelationships: (relationships: Relationship[]) => Relationship[];
 }
 
-export function deduplicateRelationships(relationships: Relationship[]): Relationship[] {
-  const seenRel = new Set<string>();
-  const deduplicated: Relationship[] = [];
+export { deduplicateRelationships };
 
-  for (const r of relationships) {
-    if (!r || typeof r !== 'object' || !r.type || !r.from || !r.to) continue;
-    const key = ['married', 'divorced', 'not_married'].includes(r.type)
-      ? `${r.type}:${[r.from, r.to].sort().join('-')}`
-      : `${r.type}:${r.from}:${r.to}`;
-
-    if (!seenRel.has(key)) {
-      seenRel.add(key);
-      deduplicated.push(r);
-    }
-  }
-
-  return deduplicated;
-}
-
-export function useTreeData(initialYaml: string = ''): UseTreeDataReturn {
-  const [yamlContent, setYamlContent] = useState<string>(initialYaml);
+export function useTreeData(initialContent: string = ''): UseTreeDataReturn {
+  const [content, setContent] = useState<string>(initialContent);
   const [treeData, setTreeData] = useState<FamilyData | null>(null);
   const [isValid, setIsValid] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   // Live Validation & Parsing
   useEffect(() => {
-    if (!yamlContent) return;
+    if (!content) return;
 
     try {
-      const parsed = YAML.parse(yamlContent);
+      const parsed = parseGedcom(content);
 
-      if (parsed && Array.isArray(parsed.people) && Array.isArray(parsed.relationships)) {
+      if (parsed && Array.isArray(parsed.people)) {
         const safeRelationships = deduplicateRelationships(parsed.relationships);
         const safeParsed: FamilyData = {
           people: parsed.people.filter((p: any) => p && typeof p === 'object'),
@@ -55,28 +40,30 @@ export function useTreeData(initialYaml: string = ''): UseTreeDataReturn {
         setIsValid(true);
         setErrorMsg('');
       } else {
-        throw new Error("YAML must contain 'people' and 'relationships' arrays");
+        throw new Error("GEDCOM data must contain individuals and relationships");
       }
     } catch (e: any) {
       setIsValid(false);
-      setErrorMsg(e.message || "Invalid YAML syntax");
+      setErrorMsg(e.message || "Invalid GEDCOM syntax");
     }
-  }, [yamlContent]);
+  }, [content]);
 
-  // Synchronize TreeData state -> YAML string
+  // Synchronize TreeData state -> GEDCOM string
   const updateTreeState = useCallback((newPeople: Person[], newRelationships: Relationship[]) => {
     const deduplicated = deduplicateRelationships(newRelationships);
     const newData: FamilyData = { people: newPeople, relationships: deduplicated };
-    const yamlString = YAML.stringify(newData);
-    setYamlContent(yamlString);
+    const gedcomString = serializeGedcom(newData);
+    setContent(gedcomString);
   }, []);
 
   return {
-    yamlContent,
+    gedcomContent: content,
+    yamlContent: content,
     treeData,
     isValid,
     errorMsg,
-    setYamlContent,
+    setGedcomContent: setContent,
+    setYamlContent: setContent,
     updateTreeState,
     deduplicateRelationships
   };

@@ -7,9 +7,11 @@ export interface ShareResult {
 }
 
 export interface UseTreeRemoteProps {
-  yamlContent: string;
+  gedcomContent?: string;
+  yamlContent?: string; // Backward compatibility alias
   isValid: boolean;
-  onYamlLoaded: (yaml: string) => void;
+  onGedcomLoaded?: (gedcom: string) => void;
+  onYamlLoaded?: (gedcom: string) => void; // Backward compatibility alias
   configFailedMessage?: string;
 }
 
@@ -30,11 +32,16 @@ export interface UseTreeRemoteReturn {
 }
 
 export function useTreeRemote({
+  gedcomContent,
   yamlContent,
   isValid,
+  onGedcomLoaded,
   onYamlLoaded,
   configFailedMessage = "Gagal memuat konfigurasi"
 }: UseTreeRemoteProps): UseTreeRemoteReturn {
+  const content = gedcomContent ?? yamlContent ?? '';
+  const notifyLoaded = onGedcomLoaded ?? onYamlLoaded ?? (() => {});
+
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [editToken, setEditToken] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -61,17 +68,17 @@ export function useTreeRemote({
             const response = await fetch(`${workerUrl}/${shareId}`);
             if (!response.ok) throw new Error('Config not found');
             const text = await response.text();
-            onYamlLoaded(text);
+            notifyLoaded(text);
           } else {
-            console.warn("VITE_WORKER_URL is not set. Falling back to default family.yaml for demo.");
-            const response = await fetch('/family.yaml');
+            console.warn("VITE_WORKER_URL is not set. Falling back to default family.ged for demo.");
+            const response = await fetch('/family.ged');
             const text = await response.text();
-            onYamlLoaded(text);
+            notifyLoaded(text);
           }
         } else {
-          const response = await fetch('/family.yaml');
+          const response = await fetch('/family.ged');
           const text = await response.text();
-          onYamlLoaded(text);
+          notifyLoaded(text);
         }
       } catch (e: any) {
         console.error("Failed to load family data", e);
@@ -85,7 +92,7 @@ export function useTreeRemote({
   }, []);
 
   const handleShareOrSave = useCallback(async () => {
-    if (!isValid || !yamlContent) return;
+    if (!isValid || !content) return;
     setIsSharing(true);
 
     const workerUrl = import.meta.env.VITE_WORKER_URL;
@@ -96,7 +103,7 @@ export function useTreeRemote({
     }
 
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'text/yaml' };
+      const headers: Record<string, string> = { 'Content-Type': 'text/plain' };
       if (editToken) {
         headers['X-Edit-Token'] = editToken;
       }
@@ -107,14 +114,14 @@ export function useTreeRemote({
         response = await fetch(`${workerUrl}/${currentId}`, {
           method: 'PUT',
           headers,
-          body: yamlContent
+          body: content
         });
       } else {
         // SHARE (Create new)
         response = await fetch(workerUrl, {
           method: 'POST',
           headers,
-          body: yamlContent
+          body: content
         });
       }
 
@@ -152,7 +159,7 @@ export function useTreeRemote({
     } finally {
       setIsSharing(false);
     }
-  }, [isValid, yamlContent, currentId, editToken]);
+  }, [isValid, content, currentId, editToken]);
 
   const handleLoadId = useCallback(async (id: string, token?: string) => {
     const workerUrl = import.meta.env.VITE_WORKER_URL;
@@ -167,7 +174,7 @@ export function useTreeRemote({
       if (!response.ok) throw new Error('Config not found or invalid ID');
 
       const text = await response.text();
-      onYamlLoaded(text);
+      notifyLoaded(text);
       setCurrentId(id);
       setEditToken(token || null);
 
@@ -182,7 +189,7 @@ export function useTreeRemote({
     } finally {
       setIsLoading(false);
     }
-  }, [onYamlLoaded]);
+  }, [notifyLoaded]);
 
   return {
     currentId,

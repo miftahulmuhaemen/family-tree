@@ -17,11 +17,11 @@ export function FamilyTreePage() {
   const [viewMode, setViewMode] = useState<'editor' | 'public'>('editor');
   const { isDarkMode, toggleDarkMode } = useDarkMode();
 
-  const { yamlContent, setYamlContent, treeData, isValid, errorMsg, updateTreeState } = useTreeData('');
+  const { gedcomContent, setGedcomContent, treeData, isValid, errorMsg, updateTreeState } = useTreeData('');
   const remote = useTreeRemote({
-    yamlContent,
+    gedcomContent,
     isValid,
-    onYamlLoaded: setYamlContent
+    onGedcomLoaded: setGedcomContent
   });
   const nav = useTreeNavigation(treeData?.people[0]?.id);
   const modals = useTreeModals({
@@ -40,7 +40,7 @@ export function FamilyTreePage() {
   return (
     <div className="flex w-screen h-[100dvh] bg-background overflow-hidden relative">
       <EditorSidebar
-        yaml={yamlContent} onYamlChange={setYamlContent} isValid={isValid} errorMessage={errorMsg || remote.remoteError}
+        gedcom={gedcomContent} onGedcomChange={setGedcomContent} isValid={isValid} errorMessage={errorMsg || remote.remoteError}
         onShare={remote.handleShareOrSave} isSharing={remote.isSharing} isReadOnly={isPublicPreview}
         isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} currentId={remote.currentId}
         onLoad={remote.handleLoadId} editToken={remote.editToken} onUnlock={remote.setEditToken}

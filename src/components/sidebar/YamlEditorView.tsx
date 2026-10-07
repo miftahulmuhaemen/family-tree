@@ -1,4 +1,4 @@
-import Editor from '@monaco-editor/react';
+import { GedcomEditorView } from './GedcomEditorView';
 
 export interface YamlEditorViewProps {
   yaml: string;
@@ -14,21 +14,13 @@ export function YamlEditorView({
   isLocked
 }: YamlEditorViewProps) {
   return (
-    <Editor
-      height="100%"
-      language="yaml"
-      theme={isDarkMode ? "vs-dark" : "light"}
-      value={yaml}
-      onChange={(value) => onYamlChange(value || '')}
-      options={{
-        minimap: { enabled: true },
-        fontSize: 13,
-        wordWrap: 'on',
-        lineNumbers: 'on',
-        scrollBeyondLastLine: false,
-        automaticLayout: true,
-        readOnly: isLocked
-      }}
+    <GedcomEditorView
+      gedcom={yaml}
+      onGedcomChange={onYamlChange}
+      isDarkMode={isDarkMode}
+      isLocked={isLocked}
     />
   );
 }
+
+export default YamlEditorView;

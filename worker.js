@@ -114,7 +114,7 @@ export default {
         
         // Save to R2 with Edit Token in Metadata
         await env.BUCKET.put(id, content, {
-          httpMetadata: { contentType: 'text/yaml' },
+          httpMetadata: { contentType: request.headers.get('Content-Type') || 'text/plain' },
           customMetadata: { 'edit-token': editToken }
         });
 
@@ -155,7 +155,7 @@ export default {
         }
 
         await env.BUCKET.put(id, content, {
-          httpMetadata: { contentType: 'text/yaml' },
+          httpMetadata: { contentType: request.headers.get('Content-Type') || 'text/plain' },
           customMetadata: { 'edit-token': storedToken || requestToken } 
         });
 

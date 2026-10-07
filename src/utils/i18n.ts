@@ -10,7 +10,7 @@ export const TERMS = {
     // Editor Sidebar
     configuration: "Configuration",
     valid_config: "Valid Configuration",
-    invalid_config: "Invalid YAML",
+    invalid_config: "Invalid GEDCOM",
     save_config: "Save Configuration",
     share_config: "Share Configuration",
     saving: "Saving...",
@@ -77,7 +77,7 @@ export const TERMS = {
 
     // Interactive Editor & Actions
     members: "Members",
-    raw_code: "YAML Code",
+    raw_code: "GEDCOM Code",
     add_person: "Add Member",
     edit_person: "Edit Profile",
     delete_person: "Delete Member",
@@ -132,7 +132,7 @@ export const TERMS = {
     // Editor Sidebar
     configuration: "Konfigurasi",
     valid_config: "Konfigurasi Valid",
-    invalid_config: "YAML Tidak Valid",
+    invalid_config: "GEDCOM Tidak Valid",
     save_config: "Simpan Konfigurasi",
     share_config: "Bagikan Konfigurasi",
     saving: "Menyimpan...",
@@ -199,7 +199,7 @@ export const TERMS = {
 
     // Interactive Editor & Actions
     members: "Anggota",
-    raw_code: "Kode YAML",
+    raw_code: "Kode GEDCOM",
     add_person: "Tambah Anggota",
     edit_person: "Edit Profil",
     delete_person: "Hapus Anggota",
