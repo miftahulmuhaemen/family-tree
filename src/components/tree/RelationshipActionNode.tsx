@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import type { NodeProps, Node } from '@xyflow/react';
 import { Plus } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { cn } from '@/lib/utils';
 import type { Person } from '@/types/family';
+import { useIsNeumorphic } from '@/hooks/useTheme';
 
 gsap.registerPlugin(useGSAP);
 
@@ -17,29 +18,12 @@ export type RelationshipActionData = {
 
 export type RelationshipActionNodeType = Node<RelationshipActionData>;
 
-function useIsNeumorphic() {
-  const [isNeu, setIsNeu] = useState(() => {
-    if (typeof document === 'undefined') return false;
-    return document.documentElement.getAttribute('data-theme') === 'neumorphism';
-  });
-
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-    const update = () => setIsNeu(document.documentElement.getAttribute('data-theme') === 'neumorphism');
-    const observer = new MutationObserver(update);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    return () => observer.disconnect();
-  }, []);
-
-  return isNeu;
-}
-
 export function RelationshipActionNode({ data }: NodeProps<RelationshipActionNodeType>) {
   const isNeu = useIsNeumorphic();
   const nodeRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  useGSAP(() => {
+  const { contextSafe } = useGSAP(() => {
     const btn = btnRef.current;
     if (!btn) return;
 
@@ -56,7 +40,7 @@ export function RelationshipActionNode({ data }: NodeProps<RelationshipActionNod
 
   if (!data?.onAddChild) return null;
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = contextSafe((e: React.MouseEvent) => {
     e.stopPropagation();
     if (btnRef.current) {
       gsap.timeline()
@@ -64,7 +48,7 @@ export function RelationshipActionNode({ data }: NodeProps<RelationshipActionNod
         .to(btnRef.current, { scale: 1, duration: 0.14, ease: 'back.out(2)' });
     }
     data.onAddChild?.(data.parent1, data.parent2);
-  };
+  });
 
   return (
     <div ref={nodeRef} className="relative z-30 flex items-center justify-center pointer-events-auto select-none">

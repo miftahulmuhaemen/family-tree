@@ -41,3 +41,20 @@ export function useTheme(): UseThemeReturn {
 
   return { theme, setTheme, toggleTheme };
 }
+
+export function useIsNeumorphic(): boolean {
+  const [isNeu, setIsNeu] = useState(() => {
+    if (typeof document === 'undefined') return false;
+    return document.documentElement.getAttribute('data-theme') === 'neumorphism';
+  });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const update = () => setIsNeu(document.documentElement.getAttribute('data-theme') === 'neumorphism');
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+
+  return isNeu;
+}

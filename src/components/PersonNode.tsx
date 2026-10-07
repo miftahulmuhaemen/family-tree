@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -33,22 +33,7 @@ export type PersonData = {
 
 export type PersonNode = Node<PersonData>;
 
-function useIsNeumorphic() {
-  const [isNeu, setIsNeu] = useState(() => {
-    if (typeof document === 'undefined') return false;
-    return document.documentElement.getAttribute('data-theme') === 'neumorphism';
-  });
-
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-    const update = () => setIsNeu(document.documentElement.getAttribute('data-theme') === 'neumorphism');
-    const observer = new MutationObserver(update);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    return () => observer.disconnect();
-  }, []);
-
-  return isNeu;
-}
+import { useIsNeumorphic } from '@/hooks/useTheme';
 
 export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
   const { 
