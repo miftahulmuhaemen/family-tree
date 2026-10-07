@@ -66,26 +66,45 @@ The backend manages storage and security.
 
 ### 2. Frontend Setup
 
-1.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
+1. **Install Dependencies**:
+   ```bash
+   bun install
+   ```
 
-2.  **Environment Configuration**:
-    Create a `.env` file in the root directory:
-    ```bash
-    cp .env.example .env
-    ```
-    Update `VITE_WORKER_URL` with your **Deployed Worker URL** (or local URL for dev).
-    ```env
-    VITE_WORKER_URL=https://your-worker-name.workers.dev
-    ```
+2. **Environment Configuration**:
+   Create a `.env` file in the root directory:
+   ```bash
+   cp .env.example .env
+   ```
+   Update `VITE_WORKER_URL` with your **Deployed Worker URL** (or local URL for dev).
+   ```env
+   VITE_WORKER_URL=https://your-worker-name.workers.dev
+   ```
 
-3.  **Run Development Server**:
-    ```bash
-    npm run dev
-    ```
-    Open `http://localhost:5173` to view the app.
+3. **Run Development Server**:
+   ```bash
+   bun run dev
+   ```
+   Open `http://localhost:5173` to view the app.
+
+## Testing & Verification
+
+* **Unit Tests**:
+  ```bash
+  bun test
+  ```
+* **Production Build Compilation**:
+  ```bash
+  bun run build
+  ```
+* **Playwright E2E Tests**:
+  ```bash
+  bun run test:e2e
+  ```
+* **Knowledge Graph Extraction**:
+  ```bash
+  graphify extract .
+  ```
 
 ## Deployment
 
@@ -93,7 +112,7 @@ The backend manages storage and security.
 
 Build the static site:
 ```bash
-npm run build
+bun run build
 ```
 The output will be in the `dist/` folder. You can deploy this folder to any static host (Cloudflare Pages, Vercel, Netlify, GitHub Pages).
 

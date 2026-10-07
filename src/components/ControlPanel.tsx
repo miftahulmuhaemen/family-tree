@@ -2,11 +2,16 @@ import { useState, useEffect } from 'react';
 import { Settings2, X } from 'lucide-react';
 import { TERMS, type Language } from '@/utils/i18n';
 
+export type ViewMode = 'editor' | 'public';
+
 interface ControlPanelProps {
   language: Language;
   setLanguage: (lang: Language) => void;
   accent: string;
   setAccent: (accent: string) => void;
+  mode?: ViewMode;
+  setMode?: (mode: ViewMode) => void;
+  canToggleMode?: boolean;
 }
 
 const ACCENTS = {
@@ -18,7 +23,10 @@ export function ControlPanel({
   language, 
   setLanguage, 
   accent, 
-  setAccent 
+  setAccent,
+  mode = 'editor',
+  setMode,
+  canToggleMode = true
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(true);
   const terms = TERMS[language];
@@ -52,6 +60,44 @@ export function ControlPanel({
 
           {/* Vertical Divider */}
           <div className="hidden sm:block w-px h-4 bg-zinc-800 shrink-0"></div>
+
+          {/* Mode Switch (Editor / Public Preview) */}
+          {canToggleMode && setMode && (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="hidden sm:block text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+                  {terms.mode_label}
+                </span>
+                <div className="flex bg-zinc-900 rounded-full p-0.5 border border-zinc-800">
+                  <button
+                    type="button"
+                    onClick={() => setMode('editor')}
+                    className={`px-3 py-1 text-xs font-semibold rounded-full transition-all ${
+                      mode === 'editor'
+                        ? 'bg-zinc-800 text-zinc-100 shadow-sm'
+                        : 'text-zinc-500 hover:text-zinc-300'
+                    }`}
+                  >
+                    {terms.mode_editor}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode('public')}
+                    className={`px-3 py-1 text-xs font-semibold rounded-full transition-all ${
+                      mode === 'public'
+                        ? 'bg-zinc-800 text-zinc-100 shadow-sm'
+                        : 'text-zinc-500 hover:text-zinc-300'
+                    }`}
+                  >
+                    {terms.mode_public}
+                  </button>
+                </div>
+              </div>
+
+              {/* Vertical Divider */}
+              <div className="w-px h-4 bg-zinc-800 shrink-0"></div>
+            </>
+          )}
 
           {/* Language Toggle */}
           <div className="flex items-center gap-2">

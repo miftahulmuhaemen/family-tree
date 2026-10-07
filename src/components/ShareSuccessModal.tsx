@@ -35,7 +35,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData, language = 'id' 
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <Check className="w-5 h-5 text-green-500" />
+            <Check className="w-5 h-5 text-blue-600" />
             {terms.config_shared}
           </h3>
           <button 
@@ -50,8 +50,8 @@ export function ShareSuccessModal({ isOpen, onClose, shareData, language = 'id' 
         <div className="p-6 space-y-6">
           
           {/* Important Warning */}
-          <div className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-lg text-sm text-amber-800 dark:text-amber-200">
-            <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 p-3 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-700 dark:text-zinc-300">
+            <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-zinc-500" />
             <p>
               {terms.save_token_warning}
             </p>
@@ -75,7 +75,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData, language = 'id' 
                 <ShieldAlert className="w-3.5 h-3.5" /> {terms.edit_token}
               </label>
               <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-between group">
-                <code className="text-sm font-mono font-bold text-amber-600 dark:text-amber-500 tracking-wide select-all">
+                <code className="text-sm font-mono font-bold text-blue-600 dark:text-blue-400 tracking-wide select-all">
                   {shareData.token}
                 </code>
               </div>
@@ -88,8 +88,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData, language = 'id' 
             <button
               onClick={handleCopy}
               className={cn(
-                "flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium transition-all text-white shadow-md active:scale-95",
-                copied ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
+                "flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium transition-all text-white shadow-md active:scale-95 bg-blue-600 hover:bg-blue-700"
               )}
             >
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}

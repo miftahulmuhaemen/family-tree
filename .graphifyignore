@@ -1,0 +1,24 @@
+# Strictly ignore dot-directories and dotfiles
+.*
+.agents/
+.vscode/
+.git/
+.wrangler/
+
+# Build and runtime artifacts
+node_modules/
+dist/
+dist-ssr/
+public/
+
+# Test and report artifacts
+test-results/
+playwright-report/
+blob-report/
+coverage/
+*.test.log
+
+# Scratch scripts
+scratch/
+logs/
+*.log
