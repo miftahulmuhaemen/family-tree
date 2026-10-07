@@ -147,7 +147,7 @@ export function PersonFormModal({
                 <input type="checkbox" checked={isDeceased} onChange={(e) => setIsDeceased(e.target.checked)} className="sr-only peer" />
                 <div className={cn(
                   "w-9 h-5 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all",
-                  isNeu ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#181b20] peer-checked:bg-indigo-600" : "bg-zinc-200 dark:bg-zinc-700 peer-checked:bg-blue-600"
+                  isNeu ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#181b20] peer-checked:bg-zinc-900 dark:peer-checked:bg-zinc-100" : "bg-zinc-200 dark:bg-zinc-700 peer-checked:bg-zinc-900 dark:peer-checked:bg-zinc-100"
                 )} />
               </label>
             </div>
@@ -210,10 +210,10 @@ export function PersonFormModal({
             <button
               type="submit"
               className={cn(
-                "px-4 py-1.5 text-xs font-semibold rounded-xl transition-all cursor-pointer",
+                "px-4 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer",
                 isNeu
-                  ? "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] hover:shadow-neu-raised active:shadow-neu-pressed text-indigo-600 dark:text-indigo-400 border border-white/60 dark:border-white/5 font-bold"
-                  : "text-white bg-blue-600 hover:bg-blue-700 shadow-xs"
+                  ? "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] hover:shadow-neu-raised active:shadow-neu-pressed text-zinc-900 dark:text-zinc-100 border border-white/60 dark:border-white/5 font-bold"
+                  : "text-zinc-900 dark:text-zinc-100 bg-white hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 shadow-xs"
               )}
             >
               {terms.save_changes}

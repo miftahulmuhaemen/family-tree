@@ -10,6 +10,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import PersonNode from './PersonNode';
 import { RelationshipActionNode } from './tree/RelationshipActionNode';
+import { NewMemberNode } from './tree/NewMemberNode';
 import { getBranchLayout } from '../utils/branchLayout';
 import type { Language } from '@/utils/i18n';
 import type { RelativeType } from './AddRelativeModal';
@@ -22,7 +23,8 @@ import { GraphLines } from './tree/GraphLines';
 interface FamilyTreeProps {
   data: any;
   isLoading?: boolean;
-  isLocked?: boolean;
+  canvasMode?: 'pointer' | 'hand';
+  onCanvasModeChange?: (mode: 'pointer' | 'hand') => void;
   language: Language;
   accent: string;
   povId: string | null;
@@ -32,22 +34,29 @@ interface FamilyTreeProps {
   onEditPerson?: (person: any) => void;
   onDeletePerson?: (personId: string) => void;
   onAddDirectRelationship?: (rel: { type: 'parent' | 'married' | 'divorced' | 'not_married'; from: string; to: string }) => void;
+  onChangeRelationshipStatus?: (parent1Id: string, parent2Id: string, type: 'married' | 'divorced' | 'not_married') => void;
   onOpenDetail?: (personId: string) => void;
   onAddChildToRelationship?: (parent1: any, parent2: any) => void;
+  onAddPerson?: () => void;
 }
 
 function FamilyTreeInner({ 
   data: familyData, 
   isLoading, 
+  language = 'en',
   povId,  
   setPovId,
   isDarkMode,
-  isLocked = false,
+  canvasMode = 'hand',
+  onCanvasModeChange,
   onAddRelative,
   onEditPerson,
   onDeletePerson,
+  onAddDirectRelationship,
+  onChangeRelationshipStatus,
   onOpenDetail,
-  onAddChildToRelationship
+  onAddChildToRelationship,
+  onAddPerson
 }: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges] = useState<any[]>([]);
@@ -55,12 +64,33 @@ function FamilyTreeInner({
 
   const nodeTypes = useMemo(() => ({ 
     person: PersonNode,
-    relationshipAction: RelationshipActionNode
+    relationshipAction: RelationshipActionNode,
+    newMember: NewMemberNode
   }), []);
+
+  const changeStatusCallback = onChangeRelationshipStatus || (onAddDirectRelationship ? (p1: string, p2: string, type: any) => onAddDirectRelationship({ from: p1, to: p2, type }) : undefined);
 
   // Calculate Branch Layout when data loads or povId changes
   useEffect(() => {
     if (!familyData || !familyData.people || !familyData.relationships) return;
+
+    if (familyData.people.length === 0) {
+      setNodes([
+        {
+          id: 'new-member-placeholder',
+          type: 'newMember',
+          position: { x: 0, y: 0 },
+          data: {
+            onAddPerson,
+            language,
+            isDarkMode
+          }
+        }
+      ]);
+      setEdges([]);
+      setCenter(NODE_WIDTH / 2, NODE_HEIGHT / 2, { zoom: 1, duration: 400 });
+      return;
+    }
 
     const activeFocusId = povId || familyData.people[0]?.id;
     if (!activeFocusId) return;
@@ -70,8 +100,9 @@ function FamilyTreeInner({
       onEditPerson,
       onDeletePerson,
       onOpenDetail,
-      onAddChildToRelationship
-    });
+      onAddChildToRelationship,
+      onChangeRelationshipStatus: changeStatusCallback
+    }, language);
 
     setNodes(branch.nodes);
     setEdges(branch.edges);
@@ -83,11 +114,25 @@ function FamilyTreeInner({
       const fY = focusNode.position.y + NODE_HEIGHT / 2;
       setCenter(fX, fY, { zoom: 1.05, duration: 450 });
     }
-  }, [familyData, povId, setNodes, onAddRelative, onEditPerson, onDeletePerson, onOpenDetail, setCenter]);
+  }, [familyData, povId, language, setNodes, onAddRelative, onEditPerson, onDeletePerson, onOpenDetail, setCenter, changeStatusCallback, onAddPerson, isDarkMode]);
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    if (node.id === 'new-member-placeholder') {
+      onAddPerson?.();
+      return;
+    }
     setPovId(node.id);
-  }, [setPovId]);
+  }, [setPovId, onAddPerson]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
+      if (e.key === 'v' || e.key === 'V') onCanvasModeChange?.('pointer');
+      if (e.key === 'h' || e.key === 'H') onCanvasModeChange?.('hand');
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onCanvasModeChange]);
 
   if (isLoading) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">Loading Family Tree...</div>;
   if (!familyData) return null;
@@ -101,11 +146,13 @@ function FamilyTreeInner({
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
         fitView
+        fitViewOptions={{ padding: 0.35 }}
         nodesConnectable={false}
         nodesDraggable={false}
-        panOnScroll={!isLocked}
+        panOnScroll={true}
         selectionOnDrag={false}
-        panOnDrag={!isLocked}
+        panOnDrag={canvasMode === 'hand'}
+        panActivationKeyCode="Space"
         maxZoom={4}
         minZoom={0.1}
         colorMode={isDarkMode ? 'dark' : 'light'}

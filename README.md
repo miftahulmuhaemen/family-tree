@@ -1,6 +1,6 @@
 # Family Tree Visualizer & Editor
 
-Interactive genealogy family tree builder and hierarchical visualizer built with React, Vite, and Cloudflare Workers. It uses standard GEDCOM (5.5.1 / 7 compatible) as its native data representation, ensuring compatibility with industry-standard genealogy platforms (Ancestry.com, FamilySearch, Gramps, MyHeritage).
+Interactive genealogy family tree builder and hierarchical visualizer built with React and Vite. It uses standard GEDCOM (5.5.1 / 7 compatible) as its native data representation, ensuring compatibility with industry-standard genealogy platforms (Ancestry.com, FamilySearch, Gramps, MyHeritage).
 
 ## Features
 
@@ -10,10 +10,11 @@ Interactive genealogy family tree builder and hierarchical visualizer built with
   - **Editor Mode**: Interactive node-to-node editing, adding relatives, editing profile attributes, and real-time GEDCOM code editing.
   - **Public Preview Mode**: Clean, read-only viewing experience for sharing with family members without editing controls.
 - **Integrated Code Editor**: Real-time Monaco editor for direct GEDCOM code inspection and editing with synchronized graph validation.
-- **Secure Remote Sharing**:
-  - **Share**: Generate unique, shareable links stored securely in Cloudflare R2.
-  - **Edit Token Authorization**: Each share generates an owner edit token required to persist updates to the remote tree, preventing unauthorized modification.
-  - **Read-Only Links**: Visitors accessing the link without the edit token can explore the family tree in preview mode.
+- **Zero-Backend Google Drive Storage**:
+  - **Direct Save & Sync**: Save and update GEDCOM files directly into the user's Google Drive via Google Identity Services (GIS) and Google Drive REST API v3.
+  - **Google Picker Integration**: Browse and select existing `.ged` files directly from Google Drive.
+  - **Shareable Links**: Generate share links (`?driveId={fileId}`) with Google Drive public viewer/editor permissions.
+  - **Access Level Detection**: Real-time indicator displaying active file name and authorization level (Editor vs Viewer Only).
 - **Rich Person Metadata**: Support for full names, birth dates, deceased status, burial places, phone numbers, WhatsApp indicators, addresses, Google Maps links, and custom attributes.
 - **Kinship Logic & Search**: Relationship calculation engine (parents, children, spouses, siblings, in-laws) and comprehensive member filtering (gender, alive/deceased status, birth year).
 
@@ -21,11 +22,10 @@ Interactive genealogy family tree builder and hierarchical visualizer built with
 
 - **`src/`**: React frontend application
   - `src/components/`: Modular UI components (FamilyTree, EditorSidebar, ControlPanel, modals).
-  - `src/hooks/`: Custom state hooks (`useTreeData`, `useTreeRemote`, `useMemberFilters`, etc.).
+  - `src/hooks/`: Custom state hooks (`useTreeData`, `useGoogleDriveTree`, `useMemberFilters`, etc.).
+  - `src/services/`: Google Drive API client (`googleDriveService.ts`).
   - `src/utils/`: Core utilities (`gedcom.ts` parser/serializer, `branchLayout.ts`, `kinship.ts`, `date.ts`).
-  - `src/types/`: TypeScript domain definitions (`family.ts`).
-- **`worker.js`**: Cloudflare Worker script managing API endpoints, R2 bucket storage, and edit token verification.
-- **`wrangler.toml`**: Cloudflare Worker and R2 bucket binding configuration.
+  - `src/types/`: TypeScript domain definitions (`family.ts`, `google.d.ts`).
 - **`public/`**: Static assets and default demo dataset (`family.ged`).
 
 ## Development Setup
@@ -33,32 +33,24 @@ Interactive genealogy family tree builder and hierarchical visualizer built with
 ### Prerequisites
 
 - **Bun** (v1.0+)
-- **Cloudflare Account** (for Workers & R2 remote storage)
-- **Wrangler CLI**: `npm install -g wrangler`
+- **Google Cloud Console Project** with Google Drive API and Google Picker API enabled
 
-### 1. Backend Setup (Cloudflare Worker)
+### 1. Google Cloud Console Configuration
 
-1. **Login to Cloudflare**:
-   ```bash
-   npx wrangler login
-   ```
+1. **Enable APIs**:
+   - Google Drive API
+   - Google Picker API
 
-2. **Create R2 Bucket**:
-   ```bash
-   npx wrangler r2 bucket create familytree
-   ```
+2. **Configure OAuth Consent Screen**:
+   - Scope: `https://www.googleapis.com/auth/drive.file`
 
-3. **Start Local Worker**:
-   ```bash
-   npx wrangler dev
-   ```
+3. **Create Credentials**:
+   - **OAuth 2.0 Client ID** (Web application):
+     - Authorized JavaScript origins: `http://localhost:5173` and your production domain.
+   - **API Key**:
+     - Restricted to HTTP referrers matching your application domains.
 
-4. **Deploy Worker**:
-   ```bash
-   npx wrangler deploy
-   ```
-
-### 2. Frontend Setup
+### 2. Application Setup
 
 1. **Install Dependencies**:
    ```bash
@@ -70,9 +62,11 @@ Interactive genealogy family tree builder and hierarchical visualizer built with
    ```bash
    cp .env.example .env
    ```
-   Set `VITE_WORKER_URL` with your Cloudflare Worker endpoint:
+   Provide your Google API credentials:
    ```env
-   VITE_WORKER_URL=https://your-worker-name.workers.dev
+   VITE_GOOGLE_API_KEY=your-api-key
+   VITE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   VITE_GOOGLE_PROJECT_ID=your-project-id
    ```
 
 3. **Run Development Server**:
@@ -138,7 +132,8 @@ The application serializes family data according to the Lineage-Linked GEDCOM st
 0 TRLR
 ```
 
-## Security & Storage Limits
+## Security & Permissions Model
 
-- **Edit Tokens**: Generated per shared tree and required for PUT updates. The token is preserved in the browser's local state.
-- **Rate Limiting & Storage Quotas**: Cloudflare Workers enforce storage limits and rate limiting to prevent denial of service and resource exhaustion.
+- **Scope Principle of Least Privilege**: The application requests only the `https://www.googleapis.com/auth/drive.file` scope, granting access exclusively to files created or opened by this app—never the user's broader Google Drive contents.
+- **Access Control & Permissions**: File access levels (Editor vs Viewer) follow Google Drive's native permission model, managed directly through Google Drive REST API.
+- **Client-Side Direct Storage**: No intermediate backend or database is involved; all data is exchanged directly between the browser and Google APIs over HTTPS.

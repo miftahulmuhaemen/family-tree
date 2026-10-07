@@ -49,14 +49,11 @@ export function PersonContactSection({
                     href={`https://wa.me/${phone.number.replace(/^0/, '62').replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={cn(
-                      "font-medium flex items-center gap-1 hover:underline",
-                      isNeu ? "text-indigo-600 dark:text-indigo-400" : "text-blue-600 dark:text-blue-400"
-                    )}
+                    className="font-bold flex items-center gap-1 hover:opacity-80 text-zinc-900 dark:text-zinc-100"
                   >
                     {phone.number}
                     <span className={cn(
-                      "text-[10px] px-1 py-0.2 rounded border",
+                      "text-[10px] px-1 py-0.2 rounded border font-semibold",
                       isNeu
                         ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-600 dark:text-zinc-400 border-white/40 dark:border-white/5"
                         : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700"
@@ -97,10 +94,7 @@ export function PersonContactSection({
                     href={addr.gmap_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={cn(
-                      "text-[11px] hover:underline",
-                      isNeu ? "text-indigo-600 dark:text-indigo-400" : "text-blue-500 hover:text-blue-600"
-                    )}
+                    className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100"
                   >
                     {viewMapsLabel}
                   </a>

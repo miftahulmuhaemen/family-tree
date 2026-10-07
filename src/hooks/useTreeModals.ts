@@ -36,8 +36,14 @@ export interface UseTreeModalsReturn {
   closeRelativeModal: () => void;
   handleSavePerson: (person: Person) => void;
   handleDeletePerson: (personId: string) => void;
+  isDeleteModalOpen: boolean;
+  deletingPerson: Person | null;
+  deleteDependents: { children: Person[]; spouses: Person[]; parents: Person[]; };
+  openDeleteModal: (personId: string) => void;
+  closeDeleteModal: () => void;
   handleAddRelative: (payload: AddRelativePayload) => void;
   handleAddDirectRelationship: (rel: { type: 'parent' | 'married' | 'divorced' | 'not_married'; from: string; to: string }) => void;
+  handleChangeRelationshipStatus: (person1Id: string, person2Id: string, type: 'married' | 'divorced' | 'not_married') => void;
 }
 
 export function useTreeModals({
@@ -114,6 +120,47 @@ export function useTreeModals({
     updateTreeState(updatedPeople, treeData.relationships);
   }, [treeData, updateTreeState]);
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [deletingPerson, setDeletingPerson] = useState<Person | null>(null);
+
+  const openDeleteModal = useCallback((personId: string) => {
+    const person = treeData?.people.find(p => p.id === personId) || null;
+    if (person) {
+      setDeletingPerson(person);
+      setIsDeleteModalOpen(true);
+    }
+  }, [treeData]);
+
+  const closeDeleteModal = useCallback(() => {
+    setIsDeleteModalOpen(false);
+    setDeletingPerson(null);
+  }, []);
+
+  const deleteDependents = useMemo(() => {
+    if (!treeData || !deletingPerson) {
+      return { children: [], spouses: [], parents: [] };
+    }
+    const pid = deletingPerson.id;
+    const peopleMap = new Map(treeData.people.map(p => [p.id, p]));
+
+    const childIds = treeData.relationships
+      .filter(r => (r.type === 'parent' || r.type === 'foster_parent') && r.to === pid)
+      .map(r => r.from);
+    const children = childIds.map(id => peopleMap.get(id)).filter((p): p is Person => Boolean(p));
+
+    const spouseIds = treeData.relationships
+      .filter(r => (r.type === 'married' || r.type === 'divorced' || r.type === 'not_married') && (r.from === pid || r.to === pid))
+      .map(r => (r.from === pid ? r.to : r.from));
+    const spouses = Array.from(new Set(spouseIds)).map(id => peopleMap.get(id)).filter((p): p is Person => Boolean(p));
+
+    const parentIds = treeData.relationships
+      .filter(r => (r.type === 'parent' || r.type === 'foster_parent') && r.from === pid)
+      .map(r => r.to);
+    const parents = parentIds.map(id => peopleMap.get(id)).filter((p): p is Person => Boolean(p));
+
+    return { children, spouses, parents };
+  }, [treeData, deletingPerson]);
+
   // Delete Person
   const handleDeletePerson = useCallback((personId: string) => {
     if (!treeData) return;
@@ -125,6 +172,8 @@ export function useTreeModals({
       setPovId(null);
     }
     updateTreeState(updatedPeople, updatedRelationships);
+    setIsDeleteModalOpen(false);
+    setDeletingPerson(null);
   }, [treeData, povId, setPovId, updateTreeState]);
 
   // Add Relative (Spouse, Child, Parent)
@@ -253,7 +302,10 @@ export function useTreeModals({
       );
       if (existingIdx >= 0) {
         const updated = [...treeData.relationships];
-        updated[existingIdx] = rel;
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          type: rel.type
+        };
         updateTreeState(treeData.people, updated);
         return;
       }
@@ -261,6 +313,10 @@ export function useTreeModals({
 
     updateTreeState(treeData.people, [...treeData.relationships, rel]);
   }, [treeData, updateTreeState]);
+
+  const handleChangeRelationshipStatus = useCallback((person1Id: string, person2Id: string, type: 'married' | 'divorced' | 'not_married') => {
+    handleAddDirectRelationship({ from: person1Id, to: person2Id, type });
+  }, [handleAddDirectRelationship]);
 
   return {
     isPersonModalOpen,
@@ -278,7 +334,13 @@ export function useTreeModals({
     closeRelativeModal,
     handleSavePerson,
     handleDeletePerson,
+    isDeleteModalOpen,
+    deletingPerson,
+    deleteDependents,
+    openDeleteModal,
+    closeDeleteModal,
     handleAddRelative,
-    handleAddDirectRelationship
+    handleAddDirectRelationship,
+    handleChangeRelationshipStatus
   };
 }

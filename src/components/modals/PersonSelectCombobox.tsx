@@ -53,8 +53,8 @@ export function PersonSelectCombobox({
                 "p-2.5 rounded-xl cursor-pointer flex items-center justify-between transition-all",
                 selectedId === p.id
                   ? isNeu
-                    ? "shadow-neu-pressed bg-indigo-600 text-white font-semibold"
-                    : "bg-blue-600 text-white font-semibold"
+                    ? "shadow-neu-pressed bg-[#dde1e9] dark:bg-[#16181d] text-zinc-900 dark:text-zinc-100 font-bold"
+                    : "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold shadow-xs"
                   : isNeu
                     ? "hover:shadow-neu-raised-sm text-zinc-700 dark:text-zinc-300"
                     : "hover:bg-white dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"

@@ -3,6 +3,8 @@ import type { RelativeType, AddRelativeModalProps } from '@/components/AddRelati
 import { PersonFormModal } from '@/components/PersonFormModal';
 import { AddRelativeModal } from '@/components/AddRelativeModal';
 import { ShareSuccessModal } from '@/components/ShareSuccessModal';
+import { DeleteConfirmModal } from '@/components/DeleteConfirmModal';
+import { LoadFileModal } from '@/components/LoadFileModal';
 
 export interface PageModalsProps {
   isPersonModalOpen: boolean;
@@ -19,7 +21,17 @@ export interface PageModalsProps {
   handleAddRelative: AddRelativeModalProps['onAddRelative'];
   showShareModal: boolean;
   setShowShareModal: (open: boolean) => void;
-  shareData: { id: string; token: string; url: string } | null;
+  shareData: { id: string; token?: string; url: string } | null;
+  isDeleteModalOpen: boolean;
+  closeDeleteModal: () => void;
+  deletingPerson: Person | null;
+  deleteDependents: { children: Person[]; spouses: Person[]; parents: Person[] };
+  onConfirmDelete: (personId: string) => void;
+  isLoadModalOpen: boolean;
+  closeLoadModal: () => void;
+  onSelectGoogleDrive: () => void;
+  onSelectLocalFile: (content: string, fileName: string) => void;
+  onLoadExample?: () => void;
   language: 'id' | 'en';
 }
 
@@ -39,6 +51,16 @@ export function PageModals({
   showShareModal,
   setShowShareModal,
   shareData,
+  isDeleteModalOpen,
+  closeDeleteModal,
+  deletingPerson,
+  deleteDependents,
+  onConfirmDelete,
+  isLoadModalOpen,
+  closeLoadModal,
+  onSelectGoogleDrive,
+  onSelectLocalFile,
+  onLoadExample,
   language
 }: PageModalsProps) {
   return (
@@ -68,6 +90,24 @@ export function PageModals({
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         shareData={shareData}
+        language={language}
+      />
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        person={deletingPerson}
+        dependents={deleteDependents}
+        onConfirmDelete={onConfirmDelete}
+        language={language}
+      />
+
+      <LoadFileModal
+        isOpen={isLoadModalOpen}
+        onClose={closeLoadModal}
+        onSelectGoogleDrive={onSelectGoogleDrive}
+        onSelectLocalFile={onSelectLocalFile}
+        onLoadExample={onLoadExample}
         language={language}
       />
     </>

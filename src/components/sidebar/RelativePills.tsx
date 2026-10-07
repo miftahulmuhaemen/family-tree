@@ -14,6 +14,7 @@ export interface RelativePillsProps {
   children: RelativeItem[];
   onSelectPerson?: (id: string) => void;
   onAddChildToRelationship?: (spouseId: string) => void;
+  onChangeRelationshipStatus?: (spouseId: string, newType: 'married' | 'divorced' | 'not_married') => void;
   terms: any;
 }
 
@@ -23,6 +24,7 @@ export function RelativePills({
   children,
   onSelectPerson,
   onAddChildToRelationship,
+  onChangeRelationshipStatus,
   terms
 }: RelativePillsProps) {
   const isNeu = useIsNeumorphic();
@@ -52,30 +54,48 @@ export function RelativePills({
                   className={cn(
                     "px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer",
                     isNeu
-                      ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-800 dark:text-zinc-200 font-medium hover:text-indigo-600 dark:hover:text-indigo-400 border border-white/60 dark:border-white/5"
-                      : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 dark:hover:text-blue-400 border border-zinc-200 dark:border-zinc-700/80"
+                      ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-800 dark:text-zinc-200 font-bold hover:text-zinc-900 dark:hover:text-zinc-100 border border-white/60 dark:border-white/5"
+                      : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-700/60 hover:text-zinc-900 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-700/80"
                   )}
                 >
                   <span>{s.name}</span>
-                  {s.type !== 'married' && (
+                </button>
+                {onChangeRelationshipStatus ? (
+                  <select
+                    value={s.type || 'married'}
+                    onChange={(e) => onChangeRelationshipStatus(s.id, e.target.value as any)}
+                    className={cn(
+                      "px-2 py-1 rounded-lg text-[11px] font-semibold cursor-pointer border transition-all",
+                      isNeu
+                        ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-700 dark:text-zinc-200 border-white/60 dark:border-white/5"
+                        : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400"
+                    )}
+                    title="Ubah status hubungan"
+                  >
+                    <option value="married">{terms.married || "Menikah"}</option>
+                    <option value="divorced">{terms.divorced || "Cerai"}</option>
+                    <option value="not_married">{terms.not_married || "Tidak Menikah"}</option>
+                  </select>
+                ) : (
+                  s.type !== 'married' && (
                     <span className="opacity-75 text-[11px] ml-1">
                       ({terms[s.type as keyof typeof terms] || s.type})
                     </span>
-                  )}
-                </button>
+                  )
+                )}
                 {onAddChildToRelationship && (
                   <button
                     type="button"
                     onClick={() => onAddChildToRelationship(s.id)}
                     className={cn(
-                      "px-2 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 cursor-pointer",
+                      "px-2 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer",
                       isNeu
-                        ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-indigo-600 dark:text-indigo-400 border border-white/60 dark:border-white/5"
-                        : "bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800/80"
+                        ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-800 dark:text-zinc-200 border border-white/60 dark:border-white/5 hover:text-zinc-900 dark:hover:text-zinc-100"
+                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700"
                     )}
-                    title={`Tambah Anak dengan ${s.name}`}
+                    title={`${terms.add_child || "Add Child"} (${s.name})`}
                   >
-                    <span>+ Anak</span>
+                    <span>{terms.btn_child || "+ Child"}</span>
                   </button>
                 )}
               </div>
@@ -98,8 +118,8 @@ export function RelativePills({
                 className={cn(
                   "px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer",
                   isNeu
-                    ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-800 dark:text-zinc-200 font-medium hover:text-indigo-600 dark:hover:text-indigo-400 border border-white/60 dark:border-white/5"
-                    : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 dark:hover:text-blue-400 border border-zinc-200 dark:border-zinc-700/80"
+                    ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-800 dark:text-zinc-200 font-bold hover:text-zinc-900 dark:hover:text-zinc-100 border border-white/60 dark:border-white/5"
+                    : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-700/60 hover:text-zinc-900 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-700/80"
                 )}
               >
                 <span>{p.name}</span>
@@ -124,8 +144,8 @@ export function RelativePills({
                 className={cn(
                   "px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer",
                   isNeu
-                    ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-800 dark:text-zinc-200 font-medium hover:text-indigo-600 dark:hover:text-indigo-400 border border-white/60 dark:border-white/5"
-                    : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 dark:hover:text-blue-400 border border-zinc-200 dark:border-zinc-700/80"
+                    ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-800 dark:text-zinc-200 font-bold hover:text-zinc-900 dark:hover:text-zinc-100 border border-white/60 dark:border-white/5"
+                    : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-700/60 hover:text-zinc-900 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-700/80"
                 )}
               >
                 <span>{c.name}</span>

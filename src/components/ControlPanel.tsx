@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Settings2, X } from 'lucide-react';
+import { Settings2, X, Check, AlertCircle, Loader2 } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { TERMS, type Language } from '@/utils/i18n';
@@ -22,8 +22,13 @@ export interface ControlPanelProps {
   canToggleMode?: boolean;
   theme?: Theme;
   setTheme?: (theme: Theme) => void;
-  isLocked?: boolean;
-  onToggleLock?: () => void;
+  canvasMode?: 'pointer' | 'hand';
+  onCanvasModeChange?: (mode: 'pointer' | 'hand') => void;
+  fileName?: string | null;
+  fileStatus?: 'saved' | 'saving' | 'failed';
+  lastAction?: 'loaded' | 'saved';
+  lastSaved?: Date | null;
+  fileErrorMessage?: string;
 }
 
 const ACCENTS = {
@@ -35,12 +40,25 @@ export function ControlPanel({
   language, setLanguage, accent, setAccent,
   mode = 'editor', setMode, canToggleMode = true,
   theme = 'default', setTheme,
-  isLocked = false, onToggleLock
+  canvasMode = 'hand', onCanvasModeChange,
+  fileStatus = 'saved', lastAction = 'loaded', lastSaved, fileErrorMessage
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [panelView, setPanelView] = useState<'canvas' | 'settings'>('canvas');
   const terms = TERMS[language];
   const isNeu = theme === 'neumorphism';
+
+  const statusLabel = fileStatus === 'failed'
+    ? (language === 'id' ? 'Gagal' : 'Failed')
+    : fileStatus === 'saving'
+    ? (language === 'id' ? 'Menyimpan...' : 'Saving...')
+    : lastAction === 'saved'
+    ? (language === 'id' ? 'Tersimpan' : 'Saved')
+    : (language === 'id' ? 'Dimuat' : 'Loaded');
+
+  const timestampStr = lastSaved
+    ? lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    : '';
 
   const rootRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -103,17 +121,17 @@ export function ControlPanel({
   }, { dependencies: [theme], scope: rootRef });
 
   const dockClass = isNeu
-    ? 'bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5 rounded-full px-3 py-2 sm:px-4 flex items-center gap-2 sm:gap-3 whitespace-nowrap'
-    : 'bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-lg border border-zinc-200/80 dark:border-zinc-800/60 rounded-full px-3 py-2 sm:px-4 flex items-center gap-2 sm:gap-3 whitespace-nowrap text-zinc-900 dark:text-zinc-100';
+    ? 'bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5 rounded-full px-4 py-2.5 sm:px-5 sm:py-3 flex items-center gap-3 sm:gap-4 whitespace-nowrap'
+    : 'bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-xl border border-zinc-200/80 dark:border-zinc-800/60 rounded-full px-4 py-2.5 sm:px-5 sm:py-3 flex items-center gap-3 sm:gap-4 whitespace-nowrap text-zinc-900 dark:text-zinc-100';
 
-  const dividerClass = isNeu ? 'w-px h-4 bg-zinc-300/80 dark:bg-zinc-800 shrink-0' : 'w-px h-4 bg-zinc-200 dark:bg-zinc-800 shrink-0';
+  const dividerClass = isNeu ? 'w-px h-6 bg-zinc-300/80 dark:bg-zinc-800 shrink-0' : 'w-px h-6 bg-zinc-200 dark:bg-zinc-800 shrink-0';
 
   const toggleBtnClass = cn(
     "flex items-center justify-center rounded-full shadow-lg transition-all duration-300 cursor-pointer shrink-0 select-none",
     isNeu
       ? "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white active:shadow-neu-pressed"
-      : "bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-lg border border-zinc-200/80 dark:border-zinc-800/60 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 active:scale-95",
-    isVisible ? "w-10 h-10 p-0" : "px-5 py-2.5 gap-2"
+      : "bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-xl border border-zinc-200/80 dark:border-zinc-800/60 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 active:scale-95",
+    isVisible ? "w-12 h-12 p-0" : "px-6 py-3 gap-2.5"
   );
 
   const handleToggleVisible = () => {
@@ -126,19 +144,63 @@ export function ControlPanel({
   };
 
   return (
-    <div ref={rootRef} className={`flex items-center ${isVisible ? 'gap-3' : 'gap-0'}`}>
+    <div ref={rootRef} className={`flex items-center ${isVisible ? 'gap-3.5' : 'gap-0'}`}>
       <div
         ref={wrapperRef}
         className={`p-6 -m-6 overflow-hidden flex items-center ${isVisible ? 'max-w-[1000px]' : 'max-w-0 pointer-events-none'}`}
       >
         <div ref={panelRef} className={dockClass}>
+          {/* File Status (Most left part of control panel) */}
+          <div className="flex items-center gap-1.5 select-none shrink-0">
+            {fileStatus === 'failed' ? (
+              <div
+                className="flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100 cursor-help"
+                title={fileErrorMessage || statusLabel}
+              >
+                <AlertCircle className="w-4 h-4 text-zinc-700 dark:text-zinc-300 shrink-0" />
+                <div className="flex flex-col text-left leading-none">
+                  <span className="text-xs font-bold leading-tight">{statusLabel}</span>
+                  {timestampStr && (
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-normal leading-tight mt-0.5">
+                      {timestampStr}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ) : fileStatus === 'saving' ? (
+              <div className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+                <Loader2 className="w-4 h-4 animate-spin text-zinc-400 shrink-0" />
+                <div className="flex flex-col text-left leading-none">
+                  <span className="text-xs font-bold leading-tight">{statusLabel}</span>
+                </div>
+              </div>
+            ) : (
+              <div
+                className="flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100 cursor-help"
+                title={timestampStr ? `${statusLabel} (${timestampStr})` : statusLabel}
+              >
+                <Check className="w-4 h-4 text-zinc-700 dark:text-zinc-300 shrink-0" />
+                <div className="flex flex-col text-left leading-none">
+                  <span className="text-xs font-bold leading-tight">{statusLabel}</span>
+                  {timestampStr && (
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-normal leading-tight mt-0.5">
+                      {timestampStr}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className={dividerClass} />
+
           {/* Animated Dynamic Subview */}
           <div ref={contentRef} className="flex items-center">
             {panelView === 'canvas' ? (
               <ControlPanelCanvas
                 isNeu={isNeu}
-                isLocked={isLocked}
-                onToggleLock={onToggleLock}
+                canvasMode={canvasMode}
+                onCanvasModeChange={onCanvasModeChange}
               />
             ) : (
               <ControlPanelSettings
@@ -165,7 +227,7 @@ export function ControlPanel({
             type="button"
             onClick={() => setPanelView(prev => prev === 'settings' ? 'canvas' : 'settings')}
             className={cn(
-              "px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
+              "px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all cursor-pointer",
               isNeu
                 ? (panelView === 'settings'
                     ? "shadow-neu-pressed text-indigo-600 dark:text-indigo-400 bg-[#e6e9ef] dark:bg-[#181b20]"
@@ -176,7 +238,7 @@ export function ControlPanel({
             )}
             title={panelView === 'settings' ? 'Tutup Pengaturan' : (terms.settings || 'Pengaturan')}
           >
-            <Settings2 className={cn("w-3.5 h-3.5 transition-transform duration-300", panelView === 'settings' && "rotate-90 text-indigo-600 dark:text-indigo-400")} />
+            <Settings2 className={cn("w-4 h-4 transition-transform duration-300", panelView === 'settings' && "rotate-90 text-indigo-600 dark:text-indigo-400")} />
             <span>{terms.settings || 'Pengaturan'}</span>
           </button>
         </div>
@@ -191,11 +253,11 @@ export function ControlPanel({
         aria-label={isVisible ? "Tutup panel kontrol" : "Buka panel kontrol"}
       >
         {isVisible ? (
-          <X size={18} />
+          <X size={20} />
         ) : (
           <>
-            <Settings2 size={18} />
-            <span className={`text-sm font-semibold ${isNeu ? 'text-zinc-700 dark:text-zinc-200' : 'text-zinc-800 dark:text-zinc-200'}`}>
+            <Settings2 size={20} />
+            <span className={`text-sm sm:text-base font-semibold ${isNeu ? 'text-zinc-700 dark:text-zinc-200' : 'text-zinc-800 dark:text-zinc-200'}`}>
               {terms.control_panel}
             </span>
           </>

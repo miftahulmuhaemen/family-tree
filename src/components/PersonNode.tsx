@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react';
 import { cn } from "@/lib/utils";
 import { NodeActionMenu } from './tree/NodeActionMenu';
 import type { Address, PhoneNumber, DeceasedInfo } from '@/types/family';
+import { TERMS, type Language } from '@/utils/i18n';
 
 gsap.registerPlugin(useGSAP);
 
@@ -25,6 +26,7 @@ export type PersonData = {
   parentCount?: number;
   hasFather?: boolean;
   hasMother?: boolean;
+  language?: Language;
   onAddRelative?: (targetPerson: any, type: 'spouse' | 'child' | 'parent' | 'foster_child') => void;
   onEditPerson?: (person: any) => void;
   onDeletePerson?: (personId: string) => void;
@@ -38,8 +40,10 @@ import { useIsNeumorphic } from '@/hooks/useTheme';
 export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
   const { 
     label, gender, relationshipLabel, birthDate, deceased, 
-    hasFather = false, hasMother = false, onAddRelative, onDeletePerson, onOpenDetail 
+    hasFather = false, hasMother = false, onAddRelative, onDeletePerson, onOpenDetail,
+    language = 'en'
   } = data;
+  const t = TERMS[language as Language] || TERMS.en;
 
   const isDeceased = typeof deceased === 'boolean' ? deceased : deceased?.status;
   const isNeu = useIsNeumorphic();
@@ -76,7 +80,8 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
   };
 
   const age = getAge(birthDate);
-  const parentBtnLabel = hasFather && !hasMother ? '+ Ibu' : hasMother && !hasFather ? '+ Ayah' : '+ Ortu';
+  const parentBtnLabel = hasFather && !hasMother ? t.btn_mother : hasMother && !hasFather ? t.btn_father : t.btn_parent;
+  const parentBtnTitle = hasFather && !hasMother ? t.add_mother : hasMother && !hasFather ? t.add_father : t.add_parent;
   const initial = (label || '').trim().charAt(0).toUpperCase() || '?';
   const cleanLabel = (label || '').trim();
   const isLongName = cleanLabel.length > 18;
@@ -89,7 +94,7 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
 
   const actionBtnClass = isNeu
     ? "bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-700 dark:text-zinc-200 shadow-neu-raised-sm border border-white/60 dark:border-white/5 hover:shadow-neu-raised active:shadow-neu-pressed text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-all"
-    : "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-zinc-100 hover:bg-blue-600 dark:hover:bg-blue-600 dark:hover:text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-zinc-200 dark:border-zinc-700 transition-colors";
+    : "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-700 dark:hover:text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-zinc-200 dark:border-zinc-700 transition-colors";
 
   return (
     <div ref={nodeRef} className="relative w-64 group select-none">
@@ -97,18 +102,18 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
       {onAddRelative && (
         <>
           <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30 transition-all opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto hover:scale-105">
-            <button type="button" onClick={(e) => { e.stopPropagation(); onAddRelative(data, 'parent'); }} className={actionBtnClass} title={hasFather && !hasMother ? "Tambah Ibu" : hasMother && !hasFather ? "Tambah Ayah" : "Tambah Orang Tua"}>
+            <button type="button" onClick={(e) => { e.stopPropagation(); onAddRelative(data, 'parent'); }} className={actionBtnClass} title={parentBtnTitle}>
               <span>{parentBtnLabel}</span>
             </button>
           </div>
           <div className="absolute -right-3 top-1/2 -translate-y-1/2 translate-x-1/2 z-30 transition-all opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto hover:scale-105">
-            <button type="button" onClick={(e) => { e.stopPropagation(); onAddRelative(data, 'spouse'); }} className={cn(actionBtnClass, "whitespace-nowrap")} title="Tambah Pasangan atau Mantan">
-              <span>+ Pasangan</span>
+            <button type="button" onClick={(e) => { e.stopPropagation(); onAddRelative(data, 'spouse'); }} className={cn(actionBtnClass, "whitespace-nowrap")} title={t.add_spouse}>
+              <span>{t.btn_spouse}</span>
             </button>
           </div>
           <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 z-30 transition-all opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto hover:scale-105">
-            <button type="button" onClick={(e) => { e.stopPropagation(); onAddRelative(data, 'foster_child'); }} className={cn(actionBtnClass, "whitespace-nowrap")} title="Tambah Anak Angkat / Asuh">
-              <span>+ Anak Angkat</span>
+            <button type="button" onClick={(e) => { e.stopPropagation(); onAddRelative(data, 'foster_child'); }} className={cn(actionBtnClass, "whitespace-nowrap")} title={t.add_foster_child}>
+              <span>{t.btn_foster_child}</span>
             </button>
           </div>
         </>
@@ -121,7 +126,7 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
           isNeu ? (
             cn(
               "border border-white/60 dark:border-white/5 rounded-2xl shadow-neu-raised bg-[#e6e9ef] dark:bg-[#1c2027]",
-              isDeceased && "shadow-neu-pressed bg-zinc-200/50 dark:bg-zinc-800/50 text-zinc-500",
+              isDeceased && "shadow-neu-pressed bg-[#dde1e9] dark:bg-[#16181d] text-zinc-500",
               selected && (
                 isDeceased
                   ? "shadow-neu-pressed ring-2 ring-zinc-400 dark:ring-zinc-500 z-20"
@@ -134,7 +139,7 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
             cn(
               "border-2 rounded-xl shadow-sm hover:shadow-md bg-white dark:bg-zinc-900",
               gender === 'male' ? "border-blue-500" : "border-pink-400",
-              isDeceased && "opacity-80 grayscale bg-zinc-100 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-600",
+              isDeceased && "grayscale bg-zinc-100 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-600",
               selected && (
                 isDeceased
                   ? "ring-4 ring-zinc-400 dark:ring-zinc-500 shadow-xl z-20"
@@ -153,7 +158,7 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
               cn(
                 "shadow-neu-pressed-sm rounded-full",
                 isDeceased 
-                  ? "shadow-neu-pressed text-zinc-500 bg-zinc-200/50 dark:bg-zinc-800/50" 
+                  ? "shadow-neu-pressed text-zinc-500 bg-[#dde1e9] dark:bg-[#16181d]" 
                   : gender === 'male'
                     ? "text-[#2563eb] dark:text-[#38bdf8] bg-[#dbeafe] dark:bg-[rgba(56,189,248,0.12)]"
                     : "text-[#e11d48] dark:text-[#fb7185] bg-[#ffe4e6] dark:bg-[rgba(251,113,133,0.12)]"
@@ -213,12 +218,12 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
           </div>
           <div className={cn("text-xs mt-0.5 font-medium truncate", isNeu ? "text-zinc-500 dark:text-zinc-400" : "text-zinc-600 dark:text-zinc-400")}>
             {isDeceased ? (
-              <span className="text-zinc-500 text-xs">(Alm.) Meninggal</span>
+              <span className="text-zinc-500 text-xs">({t.deceased_badge}) {t.deceased_status}</span>
             ) : (
               age !== null ? (
-                <span className="text-xs font-semibold">{age} Tahun</span>
+                <span className="text-xs font-semibold">{age} {t.years}</span>
               ) : (
-                <span className="italic text-xs text-zinc-400">Umur tidak diketahui</span>
+                <span className="italic text-xs text-zinc-400">{t.unknown_age}</span>
               )
             )}
           </div>
@@ -229,6 +234,7 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
         personName={data.name || label}
         gender={gender}
         isDeceased={Boolean(isDeceased)}
+        language={language}
         onOpenDetail={onOpenDetail ? () => onOpenDetail(data.id) : undefined}
         onDelete={onDeletePerson ? () => onDeletePerson(data.id) : undefined}
       />

@@ -24,7 +24,12 @@ export function useTreeData(initialContent: string = ''): UseTreeDataReturn {
 
   // Live Validation & Parsing
   useEffect(() => {
-    if (!content) return;
+    if (!content || !content.trim()) {
+      setTreeData({ people: [], relationships: [] });
+      setIsValid(true);
+      setErrorMsg('');
+      return;
+    }
 
     try {
       const parsed = parseGedcom(content);

@@ -75,7 +75,7 @@ export function PersonEditForm({
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-3 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full px-3 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600"
         />
       </div>
 
@@ -91,7 +91,7 @@ export function PersonEditForm({
               name="sidebar-gender"
               checked={gender === 'male'}
               onChange={() => setGender('male')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-zinc-900 focus:ring-zinc-500"
             />
             {terms.male}
           </label>
@@ -101,7 +101,7 @@ export function PersonEditForm({
               name="sidebar-gender"
               checked={gender === 'female'}
               onChange={() => setGender('female')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-zinc-900 focus:ring-zinc-500"
             />
             {terms.female}
           </label>
@@ -117,7 +117,7 @@ export function PersonEditForm({
           type="date"
           value={birthDate}
           onChange={(e) => setBirthDate(e.target.value)}
-          className="w-full px-3 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full px-3 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600"
         />
       </div>
 
@@ -134,7 +134,7 @@ export function PersonEditForm({
               onChange={(e) => setIsDeceased(e.target.checked)}
               className="sr-only peer"
             />
-            <div className="w-8 h-4 bg-zinc-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600" />
+            <div className="w-8 h-4 bg-zinc-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-zinc-900 dark:peer-checked:bg-zinc-100" />
           </label>
         </div>
 
@@ -206,7 +206,7 @@ export function PersonEditForm({
         <button
           type="submit"
           disabled={!name.trim()}
-          className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-xl shadow-xs transition-colors"
+          className="px-4 py-1.5 text-xs font-bold text-zinc-900 dark:text-zinc-100 bg-white hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 disabled:opacity-50 rounded-xl shadow-xs transition-colors cursor-pointer"
         >
           Simpan Perubahan
         </button>

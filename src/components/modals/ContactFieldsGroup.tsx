@@ -18,7 +18,7 @@ export function ContactFieldsGroup({
 
   const inputCls = isNeu
     ? "shadow-neu-pressed rounded-xl border border-white/40 dark:border-white/5 bg-transparent text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
-    : "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500";
+    : "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600";
 
   return (
     <div className={cn("space-y-3 pt-2 border-t", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")}>
@@ -30,8 +30,10 @@ export function ContactFieldsGroup({
           type="button"
           onClick={onAdd}
           className={cn(
-            "text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors",
-            isNeu ? "text-indigo-600 dark:text-indigo-400 hover:underline" : "text-blue-600 dark:text-blue-400 hover:underline"
+            "px-2 py-0.5 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-all",
+            isNeu
+              ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-700 dark:text-zinc-200 border border-white/60 dark:border-white/5 hover:text-zinc-900 dark:hover:text-zinc-100"
+              : "bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 shadow-2xs hover:text-zinc-900 dark:hover:text-zinc-100"
           )}
         >
           <Plus className="w-3.5 h-3.5" />

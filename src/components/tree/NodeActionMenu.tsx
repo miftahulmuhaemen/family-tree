@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { cn } from '@/lib/utils';
 import { useIsNeumorphic } from '@/hooks/useTheme';
+import { TERMS, type Language } from '@/utils/i18n';
 
 gsap.registerPlugin(useGSAP);
 
@@ -11,6 +12,7 @@ export interface NodeActionMenuProps {
   personName: string;
   gender?: 'male' | 'female';
   isDeceased?: boolean;
+  language?: Language;
   onOpenDetail?: () => void;
   onDelete?: () => void;
 }
@@ -19,9 +21,11 @@ export function NodeActionMenu({
   personName,
   gender = 'male',
   isDeceased = false,
+  language = 'en',
   onOpenDetail,
   onDelete
 }: NodeActionMenuProps) {
+  const t = TERMS[language] || TERMS.en;
   const [isOpen, setIsOpen] = useState(false);
   const isNeu = useIsNeumorphic();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -137,7 +141,8 @@ export function NodeActionMenu({
                     : "border-blue-500 dark:border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40"
               )
         )}
-        title="Menu Tindakan"
+        title={t.action_menu}
+        aria-label={`${t.action_menu} - ${personName}`}
       >
         <Settings ref={gearRef} className="w-4 h-4 pointer-events-none" />
       </button>
@@ -169,7 +174,7 @@ export function NodeActionMenu({
               )}
             >
               <Info className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>Detail</span>
+              <span>{t.detail}</span>
             </button>
           )}
 
@@ -179,9 +184,7 @@ export function NodeActionMenu({
               onClick={() => {
                 setIsOpen(false);
                 if (gearRef.current) gsap.to(gearRef.current, { rotation: 0, duration: 0.25 });
-                if (window.confirm(`Hapus ${personName}?`)) {
-                  onDelete();
-                }
+                onDelete();
               }}
               className={cn(
                 "w-full px-3 py-2 flex items-center gap-2.5 text-red-500 rounded-lg font-medium text-left transition-colors mt-0.5",
@@ -191,7 +194,7 @@ export function NodeActionMenu({
               )}
             >
               <Trash2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
-              <span>Delete</span>
+              <span>{t.delete}</span>
             </button>
           )}
         </div>

@@ -1,4 +1,4 @@
-import { Plus, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import type { Person } from '@/types/family';
 import { useIsNeumorphic } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
@@ -28,7 +28,6 @@ export function MembersView({
   filteredPeople,
   selectedPersonId,
   onSelectPerson,
-  onAddPerson,
   onSwitchToDetail,
   searchQuery,
   setSearchQuery,
@@ -45,24 +44,8 @@ export function MembersView({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden p-4 space-y-3">
-      {/* Add Button & Search */}
+      {/* Search & Filters */}
       <div className="space-y-2">
-        {onAddPerson && (
-          <button
-            type="button"
-            onClick={onAddPerson}
-            className={cn(
-              "w-full py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer",
-              isNeu
-                ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-indigo-600 dark:text-indigo-400 border border-white/60 dark:border-white/10 hover:brightness-105"
-                : "bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-            )}
-          >
-            <Plus className="w-4 h-4" />
-            <span>{terms.add_person}</span>
-          </button>
-        )}
-
         <div className="relative">
           <Search className={cn(
             "w-3.5 h-3.5 absolute left-3 top-2.5 transition-colors",

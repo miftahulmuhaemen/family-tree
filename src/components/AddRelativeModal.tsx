@@ -64,10 +64,10 @@ export function AddRelativeModal({
   if (!isOpen || !targetPerson) return null;
 
   const getTitle = () => {
-    if (relativeType === 'spouse') return `${terms.add_spouse} / Mantan (${targetPerson.name})`;
-    if (relativeType === 'foster_child') return `Tambah Anak Angkat (${targetPerson.name})`;
+    if (relativeType === 'spouse') return `${terms.add_spouse} (${targetPerson.name})`;
+    if (relativeType === 'foster_child') return `${terms.add_foster_child || terms.foster} (${targetPerson.name})`;
     if (relativeType === 'child') {
-      return secondParent ? `Tambah Anak (${targetPerson.name} & ${secondParent.name})` : `${terms.add_child} (${targetPerson.name})`;
+      return secondParent ? `${terms.add_child} (${targetPerson.name} & ${secondParent.name})` : `${terms.add_child} (${targetPerson.name})`;
     }
     return `${terms.add_parent} (${targetPerson.name})`;
   };
@@ -82,12 +82,12 @@ export function AddRelativeModal({
 
       if (targetYear !== null && newPersonYear !== null) {
         if (relativeType === 'parent' && newPersonYear >= targetYear) {
-          alert("Gagal: Tahun kelahiran orang tua tidak boleh sama atau lebih muda dari anak!");
+          alert(terms.err_parent_younger || "Gagal: Tahun kelahiran orang tua tidak boleh sama atau lebih muda dari anak!");
           return;
         }
         if ((relativeType === 'child' || relativeType === 'foster_child') && !isFoster) {
           if (newPersonYear <= targetYear || (secondParentYear !== null && newPersonYear <= secondParentYear)) {
-            alert("Gagal: Tahun kelahiran anak tidak boleh sama atau lebih tua dari orang tua!");
+            alert(terms.err_child_older || "Gagal: Tahun kelahiran anak tidak boleh sama atau lebih tua dari orang tua!");
             return;
           }
         }

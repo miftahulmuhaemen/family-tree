@@ -19,7 +19,9 @@ export function getBranchLayout(
     onDeletePerson?: (personId: string) => void;
     onOpenDetail?: (personId: string) => void;
     onAddChildToRelationship?: (parent1: Person, parent2: Person) => void;
-  }
+    onChangeRelationshipStatus?: (parent1Id: string, parent2Id: string, type: 'married' | 'divorced' | 'not_married') => void;
+  },
+  language: 'id' | 'en' = 'en'
 ): BranchResult {
   const peopleMap = new Map<string, Person>();
   familyData.people.forEach(p => peopleMap.set(p.id, p));
@@ -123,7 +125,7 @@ export function getBranchLayout(
   const NODE_WIDTH = 256;
   const NODE_HEIGHT = 120;
   const GAP_X = 64;
-  const SPOUSE_GAP_X = 200;
+  const SPOUSE_GAP_X = 300;
   const LEVEL_GAP_Y = 140;
 
   const nodes: any[] = [];
@@ -149,6 +151,7 @@ export function getBranchLayout(
         parentCount,
         hasFather,
         hasMother,
+        language,
         onAddRelative: callbacks?.onAddRelative,
         onEditPerson: callbacks?.onEditPerson,
         onDeletePerson: callbacks?.onDeletePerson,
@@ -159,6 +162,10 @@ export function getBranchLayout(
       height: NODE_HEIGHT
     };
   };
+
+  const spouseLabel = (type: string) => type === 'married' 
+    ? (language === 'id' ? 'Pasangan' : 'Spouse') 
+    : (language === 'id' ? 'Mantan Pasangan' : 'Ex-Spouse');
 
   // --- LEVEL 0: Middle Row (Focus Person & Spouses) ---
   const middleY = LEVEL_GAP_Y + NODE_HEIGHT;
@@ -175,14 +182,13 @@ export function getBranchLayout(
     const spouseX = isMale ? (NODE_WIDTH + SPOUSE_GAP_X) / 2 : -(NODE_WIDTH + SPOUSE_GAP_X) / 2;
 
     nodes.push(createNode(focusPerson, focusX, middleY, undefined));
-    nodes.push(createNode(m.spouse, spouseX, middleY, m.type === 'married' ? 'Pasangan' : 'Mantan Pasangan'));
+    nodes.push(createNode(m.spouse, spouseX, middleY, spouseLabel(m.type)));
 
     // Direct clean horizontal marriage line
     const leftX = Math.min(focusX, spouseX) + NODE_WIDTH;
     const rightX = Math.max(focusX, spouseX);
     const lineY = middleY + NODE_HEIGHT / 2;
-    // Keep 38px margin to right card, expanding space exclusively on the left for '+ Pasangan'
-    const actionMidX = rightX - 72;
+    const actionMidX = (leftX + rightX) / 2 + 25;
 
     edges.push({
       id: `spouse-${focusPerson.id}-${m.spouse.id}`,
@@ -192,17 +198,20 @@ export function getBranchLayout(
       isDashed: m.type === 'divorced'
     });
 
-    if (callbacks?.onAddChildToRelationship) {
+    if (callbacks?.onAddChildToRelationship || callbacks?.onChangeRelationshipStatus) {
       nodes.push({
         id: `rel-action-${focusPerson.id}-${m.spouse.id}`,
         type: 'relationshipAction',
-        position: { x: actionMidX - 34, y: lineY - 14 },
+        position: { x: actionMidX - 70, y: lineY - 14 },
         data: {
           parent1: focusPerson,
           parent2: m.spouse,
-          onAddChild: callbacks.onAddChildToRelationship
+          relationshipType: m.type as 'married' | 'divorced' | 'not_married',
+          language,
+          onAddChild: callbacks?.onAddChildToRelationship,
+          onChangeRelationshipStatus: callbacks?.onChangeRelationshipStatus
         },
-        width: 68,
+        width: 140,
         height: 28,
         selectable: false,
         draggable: false
@@ -233,14 +242,14 @@ export function getBranchLayout(
     // Place left spouses
     leftSpouses.forEach(({ m, slotIndex }) => {
       const spouseX = -slotIndex * (NODE_WIDTH + SPOUSE_GAP_X);
-      nodes.push(createNode(m.spouse, spouseX, middleY, m.type === 'married' ? 'Pasangan' : 'Mantan Pasangan'));
+      nodes.push(createNode(m.spouse, spouseX, middleY, spouseLabel(m.type)));
 
       if (slotIndex === 1) {
         // Immediately adjacent to Focus: direct horizontal connection
         const leftX = spouseX + NODE_WIDTH;
         const rightX = focusX;
         const lineY = middleY + NODE_HEIGHT / 2;
-        const actionMidX = rightX - 72;
+        const actionMidX = (leftX + rightX) / 2 + 25;
         edges.push({
           id: `spouse-${focusPerson.id}-${m.spouse.id}`,
           path: `M ${leftX} ${lineY} L ${rightX} ${lineY}`,
@@ -250,17 +259,20 @@ export function getBranchLayout(
           isDashed: m.type === 'divorced'
         });
 
-        if (callbacks?.onAddChildToRelationship) {
+        if (callbacks?.onAddChildToRelationship || callbacks?.onChangeRelationshipStatus) {
           nodes.push({
             id: `rel-action-${focusPerson.id}-${m.spouse.id}`,
             type: 'relationshipAction',
-            position: { x: actionMidX - 34, y: lineY - 14 },
+            position: { x: actionMidX - 70, y: lineY - 14 },
             data: {
               parent1: focusPerson,
               parent2: m.spouse,
-              onAddChild: callbacks.onAddChildToRelationship
+              relationshipType: m.type as 'married' | 'divorced' | 'not_married',
+              language,
+              onAddChild: callbacks?.onAddChildToRelationship,
+              onChangeRelationshipStatus: callbacks?.onChangeRelationshipStatus
             },
-            width: 68,
+            width: 140,
             height: 28,
             selectable: false,
             draggable: false
@@ -271,6 +283,7 @@ export function getBranchLayout(
         const channelY = middleY + NODE_HEIGHT + 14 * slotIndex;
         const sMidX = spouseX + NODE_WIDTH / 2;
         const fMidX = focusX + NODE_WIDTH / 2;
+        const underMidX = (sMidX + fMidX) / 2;
         edges.push({
           id: `spouse-${focusPerson.id}-${m.spouse.id}`,
           path: `M ${sMidX} ${middleY + NODE_HEIGHT} L ${sMidX} ${channelY} L ${fMidX} ${channelY} L ${fMidX} ${middleY + NODE_HEIGHT}`,
@@ -279,20 +292,40 @@ export function getBranchLayout(
           children: m.children.map(c => c.id),
           isDashed: m.type === 'divorced'
         });
+
+        if (callbacks?.onAddChildToRelationship || callbacks?.onChangeRelationshipStatus) {
+          nodes.push({
+            id: `rel-action-${focusPerson.id}-${m.spouse.id}`,
+            type: 'relationshipAction',
+            position: { x: underMidX - 70, y: channelY - 14 },
+            data: {
+              parent1: focusPerson,
+              parent2: m.spouse,
+              relationshipType: m.type as 'married' | 'divorced' | 'not_married',
+              language,
+              onAddChild: callbacks?.onAddChildToRelationship,
+              onChangeRelationshipStatus: callbacks?.onChangeRelationshipStatus
+            },
+            width: 140,
+            height: 28,
+            selectable: false,
+            draggable: false
+          });
+        }
       }
     });
 
     // Place right spouses
     rightSpouses.forEach(({ m, slotIndex }) => {
       const spouseX = slotIndex * (NODE_WIDTH + SPOUSE_GAP_X);
-      nodes.push(createNode(m.spouse, spouseX, middleY, m.type === 'married' ? 'Pasangan' : 'Mantan Pasangan'));
+      nodes.push(createNode(m.spouse, spouseX, middleY, spouseLabel(m.type)));
 
       if (slotIndex === 1) {
         // Immediately adjacent to Focus: direct horizontal connection
         const leftX = focusX + NODE_WIDTH;
         const rightX = spouseX;
         const lineY = middleY + NODE_HEIGHT / 2;
-        const actionMidX = rightX - 72;
+        const actionMidX = (leftX + rightX) / 2 + 25;
         edges.push({
           id: `spouse-${focusPerson.id}-${m.spouse.id}`,
           path: `M ${leftX} ${lineY} L ${rightX} ${lineY}`,
@@ -302,17 +335,20 @@ export function getBranchLayout(
           isDashed: m.type === 'divorced'
         });
 
-        if (callbacks?.onAddChildToRelationship) {
+        if (callbacks?.onAddChildToRelationship || callbacks?.onChangeRelationshipStatus) {
           nodes.push({
             id: `rel-action-${focusPerson.id}-${m.spouse.id}`,
             type: 'relationshipAction',
-            position: { x: actionMidX - 34, y: lineY - 14 },
+            position: { x: actionMidX - 70, y: lineY - 14 },
             data: {
               parent1: focusPerson,
               parent2: m.spouse,
-              onAddChild: callbacks.onAddChildToRelationship
+              relationshipType: m.type as 'married' | 'divorced' | 'not_married',
+              language,
+              onAddChild: callbacks?.onAddChildToRelationship,
+              onChangeRelationshipStatus: callbacks?.onChangeRelationshipStatus
             },
-            width: 68,
+            width: 140,
             height: 28,
             selectable: false,
             draggable: false
@@ -323,6 +359,7 @@ export function getBranchLayout(
         const channelY = middleY + NODE_HEIGHT + 14 * slotIndex;
         const sMidX = spouseX + NODE_WIDTH / 2;
         const fMidX = focusX + NODE_WIDTH / 2;
+        const underMidX = (sMidX + fMidX) / 2;
         edges.push({
           id: `spouse-${focusPerson.id}-${m.spouse.id}`,
           path: `M ${sMidX} ${middleY + NODE_HEIGHT} L ${sMidX} ${channelY} L ${fMidX} ${channelY} L ${fMidX} ${middleY + NODE_HEIGHT}`,
@@ -331,6 +368,26 @@ export function getBranchLayout(
           children: m.children.map(c => c.id),
           isDashed: m.type === 'divorced'
         });
+
+        if (callbacks?.onAddChildToRelationship || callbacks?.onChangeRelationshipStatus) {
+          nodes.push({
+            id: `rel-action-${focusPerson.id}-${m.spouse.id}`,
+            type: 'relationshipAction',
+            position: { x: underMidX - 70, y: channelY - 14 },
+            data: {
+              parent1: focusPerson,
+              parent2: m.spouse,
+              relationshipType: m.type as 'married' | 'divorced' | 'not_married',
+              language,
+              onAddChild: callbacks?.onAddChildToRelationship,
+              onChangeRelationshipStatus: callbacks?.onChangeRelationshipStatus
+            },
+            width: 140,
+            height: 28,
+            selectable: false,
+            draggable: false
+          });
+        }
       }
     });
   }
@@ -342,7 +399,7 @@ export function getBranchLayout(
   if (distinctParents.length === 1) {
     const p = distinctParents[0];
     const pX = focusX;
-    nodes.push(createNode(p, pX, topY, p.gender === 'male' ? 'Ayah' : 'Ibu'));
+    nodes.push(createNode(p, pX, topY, p.gender === 'male' ? (language === 'id' ? 'Ayah' : 'Father') : (language === 'id' ? 'Ibu' : 'Mother')));
 
     const pBottomX = pX + NODE_WIDTH / 2;
     const pBottomY = topY + NODE_HEIGHT;
@@ -362,8 +419,8 @@ export function getBranchLayout(
     const p1X = focusX - (NODE_WIDTH + SPOUSE_GAP_X) / 2;
     const p2X = focusX + (NODE_WIDTH + SPOUSE_GAP_X) / 2;
 
-    nodes.push(createNode(father, p1X, topY, 'Ayah'));
-    nodes.push(createNode(mother, p2X, topY, 'Ibu'));
+    nodes.push(createNode(father, p1X, topY, language === 'id' ? 'Ayah' : 'Father'));
+    nodes.push(createNode(mother, p2X, topY, language === 'id' ? 'Ibu' : 'Mother'));
 
     // Parent marriage & drop to focus
     const parentChannelY = topY + NODE_HEIGHT + 24;
@@ -409,8 +466,10 @@ export function getBranchLayout(
       const fNode = nodes.find(n => n.id === focusPerson.id);
       const sX = sNode ? sNode.position.x : 0;
       const fX = fNode ? fNode.position.x : 0;
-      const rightCardX = Math.max(fX, sX);
-      const actionMidX = rightCardX - 72;
+      const relActionNode = nodes.find(n => n.id === `rel-action-${focusPerson.id}-${m.spouse.id}`);
+      const actionMidX = relActionNode
+        ? relActionNode.position.x + 70
+        : (Math.min(fX, sX) + NODE_WIDTH + Math.max(fX, sX)) / 2 + 25;
       const groupWidth = m.children.length * NODE_WIDTH + (m.children.length - 1) * GAP_X;
 
       childGroups.push({
@@ -496,7 +555,7 @@ export function getBranchLayout(
 
       group.children.forEach((c, cIdx) => {
         const cX = startX + cIdx * (NODE_WIDTH + GAP_X);
-        nodes.push(createNode(c, cX, bottomY, 'Anak'));
+        nodes.push(createNode(c, cX, bottomY, language === 'id' ? 'Anak' : 'Child'));
 
         const cTopX = cX + NODE_WIDTH / 2;
         // Orthogonal drop: from marriage union midpoint horizontally along channel to child top

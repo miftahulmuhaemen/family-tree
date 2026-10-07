@@ -15,13 +15,14 @@ export interface PersonDetailViewProps {
   onSelectPerson?: (id: string) => void;
   onEditPerson?: (person: Person) => void;
   onAddChildToRelationship?: (parent1: Person, parent2: Person) => void;
+  onChangeRelationshipStatus?: (person1Id: string, person2Id: string, type: 'married' | 'divorced' | 'not_married') => void;
   language: Language;
   terms: any;
 }
 
 export function PersonDetailView({
   person, people, relationships, onSelectPerson,
-  onEditPerson, onAddChildToRelationship, language, terms
+  onEditPerson, onAddChildToRelationship, onChangeRelationshipStatus, language, terms
 }: PersonDetailViewProps) {
   const isNeu = useIsNeumorphic();
   const [isEditing, setIsEditing] = useState(false);
@@ -99,15 +100,7 @@ export function PersonDetailView({
           ? "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] border border-white/60 dark:border-white/5"
           : "bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"
       )}>
-        <div className={cn(
-          "w-14 h-14 rounded-full flex items-center justify-center text-base font-bold",
-          isNeu
-            ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-800 dark:text-zinc-100 border border-white/40 dark:border-white/5"
-            : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 shadow-sm"
-        )}>
-          {person.name.charAt(0).toUpperCase()}
-        </div>
-        <div className="mt-2.5">
+        <div className="w-full">
           <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{person.name}</h3>
           <div className="flex items-center justify-center gap-2 mt-1.5">
             <span className="text-xs font-semibold text-zinc-500">
@@ -126,10 +119,10 @@ export function PersonDetailView({
             </span>
             {!isDeceased && age !== null && (
               <span className={cn(
-                "px-2.5 py-0.5 rounded-full text-xs font-semibold",
+                "px-2.5 py-0.5 rounded-full text-xs font-bold",
                 isNeu
-                  ? "shadow-neu-pressed-sm bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-400/20"
-                  : "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50"
+                  ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-700 dark:text-zinc-300 border border-white/40 dark:border-white/5"
+                  : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700"
               )}>
                 {age} {terms.years}
               </span>
@@ -149,10 +142,10 @@ export function PersonDetailView({
             type="button"
             onClick={() => setIsEditing(true)}
             className={cn(
-              "mt-3 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
+              "mt-3 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer",
               isNeu
-                ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-700 dark:text-zinc-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-white/60 dark:border-white/5"
-                : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 border border-zinc-200 dark:border-zinc-700 shadow-2xs"
+                ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100 border border-white/60 dark:border-white/5"
+                : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 shadow-2xs"
             )}
           >
             <Pencil className="w-3.5 h-3.5 text-zinc-400" />
@@ -172,6 +165,9 @@ export function PersonDetailView({
           if (spousePerson) {
             onAddChildToRelationship(person, spousePerson);
           }
+        } : undefined}
+        onChangeRelationshipStatus={onChangeRelationshipStatus ? (spouseId, newType) => {
+          onChangeRelationshipStatus(person.id, spouseId, newType);
         } : undefined}
         terms={terms}
       />
