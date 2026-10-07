@@ -1,5 +1,5 @@
 import type { Person, Relationship } from '@/types/family';
-import type { RelativeType } from '@/components/AddRelativeModal';
+import type { RelativeType, AddRelativeModalProps } from '@/components/AddRelativeModal';
 import { PersonFormModal } from '@/components/PersonFormModal';
 import { AddRelativeModal } from '@/components/AddRelativeModal';
 import { ShareSuccessModal } from '@/components/ShareSuccessModal';
@@ -8,7 +8,7 @@ export interface PageModalsProps {
   isPersonModalOpen: boolean;
   closePersonModal: () => void;
   editingPerson: Person | null;
-  handleSavePerson: (p: any) => void;
+  handleSavePerson: (p: Person) => void;
   isRelativeModalOpen: boolean;
   closeRelativeModal: () => void;
   relativeTargetPerson: Person | null;
@@ -16,7 +16,7 @@ export interface PageModalsProps {
   relativeType: RelativeType;
   treeData: { people: Person[]; relationships: Relationship[] } | null;
   targetSpouses: Person[];
-  handleAddRelative: (payload: any) => void;
+  handleAddRelative: AddRelativeModalProps['onAddRelative'];
   showShareModal: boolean;
   setShowShareModal: (open: boolean) => void;
   shareData: { id: string; token: string; url: string } | null;

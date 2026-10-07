@@ -1,5 +1,7 @@
 import { Search } from 'lucide-react';
 import type { Person } from '@/types/family';
+import { useIsNeumorphic } from '@/hooks/useTheme';
+import { cn } from '@/lib/utils';
 
 export interface PersonSelectComboboxProps {
   candidates: Person[];
@@ -11,13 +13,14 @@ export interface PersonSelectComboboxProps {
 }
 
 export function PersonSelectCombobox({
-  candidates,
-  selectedId,
-  onSelect,
-  searchQuery,
-  onSearchChange,
-  emptyLabel
+  candidates, selectedId, onSelect, searchQuery, onSearchChange, emptyLabel
 }: PersonSelectComboboxProps) {
+  const isNeu = useIsNeumorphic();
+
+  const inputCls = isNeu
+    ? "shadow-neu-pressed rounded-xl border border-white/40 dark:border-white/5 bg-transparent text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
+    : "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500";
+
   return (
     <div className="space-y-2">
       <div className="relative">
@@ -27,11 +30,16 @@ export function PersonSelectCombobox({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Cari anggota yang ada..."
-          className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className={cn("w-full pl-9 pr-3 py-2 text-sm", inputCls)}
         />
       </div>
 
-      <div className="max-h-56 overflow-y-auto space-y-1 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+      <div className={cn(
+        "max-h-56 overflow-y-auto space-y-1 p-1 rounded-xl border",
+        isNeu
+          ? "shadow-neu-pressed-sm border-white/30 dark:border-white/5 bg-[#e6e9ef]/50 dark:bg-[#181b20]/50"
+          : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50"
+      )}>
         {candidates.length === 0 ? (
           <div className="text-center py-6 text-sm text-zinc-400">
             {emptyLabel}
@@ -41,18 +49,24 @@ export function PersonSelectCombobox({
             <div
               key={p.id}
               onClick={() => onSelect(p.id)}
-              className={`p-2.5 rounded-lg cursor-pointer flex items-center justify-between transition-all ${
-                selectedId === p.id 
-                  ? 'bg-blue-600 text-white font-semibold' 
-                  : 'hover:bg-white dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'
-              }`}
+              className={cn(
+                "p-2.5 rounded-xl cursor-pointer flex items-center justify-between transition-all",
+                selectedId === p.id
+                  ? isNeu
+                    ? "shadow-neu-pressed bg-indigo-600 text-white font-semibold"
+                    : "bg-blue-600 text-white font-semibold"
+                  : isNeu
+                    ? "hover:shadow-neu-raised-sm text-zinc-700 dark:text-zinc-300"
+                    : "hover:bg-white dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+              )}
             >
               <div className="flex items-center gap-2.5">
-                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                  selectedId === p.id 
-                    ? 'bg-white/20 text-white' 
-                    : p.gender === 'male' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'
-                }`}>
+                <span className={cn(
+                  "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold",
+                  selectedId === p.id
+                    ? "bg-white/20 text-white"
+                    : p.gender === 'male' ? "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300" : "bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300"
+                )}>
                   {p.name.charAt(0).toUpperCase()}
                 </span>
                 <span className="text-sm font-medium">{p.name}</span>

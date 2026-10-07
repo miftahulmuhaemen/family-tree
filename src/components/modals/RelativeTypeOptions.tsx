@@ -1,5 +1,6 @@
 import type { Person } from '@/types/family';
 import type { RelativeType } from '@/components/AddRelativeModal';
+import { useIsNeumorphic } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 
 export interface RelativeTypeOptionsProps {
@@ -31,6 +32,23 @@ export function RelativeTypeOptions({
   secondParent,
   terms
 }: RelativeTypeOptionsProps) {
+  const isNeu = useIsNeumorphic();
+
+  const selectCls = isNeu
+    ? "w-full px-3 py-2 text-sm rounded-xl border border-white/40 dark:border-white/5 bg-transparent shadow-neu-pressed text-zinc-900 dark:text-zinc-100 focus:outline-none"
+    : "w-full px-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500";
+
+  const fosterBtnCls = (active: boolean) => cn(
+    "py-2 px-3 rounded-xl border text-xs font-semibold transition-all text-center cursor-pointer",
+    active
+      ? isNeu
+        ? "shadow-neu-pressed bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-400/30 ring-1 ring-indigo-400/40"
+        : "border-blue-500 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500"
+      : isNeu
+        ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-600 dark:text-zinc-400 border-white/50 dark:border-white/5"
+        : "border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+  );
+
   return (
     <>
       {relativeType === 'spouse' && (
@@ -41,7 +59,7 @@ export function RelativeTypeOptions({
           <select
             value={relationshipStatus}
             onChange={(e) => setRelationshipStatus(e.target.value as any)}
-            className="w-full px-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className={selectCls}
           >
             <option value="married">{terms.married}</option>
             <option value="divorced">{terms.divorced}</option>
@@ -51,7 +69,12 @@ export function RelativeTypeOptions({
       )}
 
       {relativeType === 'parent' && (
-        <div className="space-y-1.5 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800">
+        <div className={cn(
+          "space-y-1.5 p-3 rounded-xl border",
+          isNeu
+            ? "shadow-neu-pressed-sm bg-[#e6e9ef]/60 dark:bg-[#181b20]/60 border-white/40 dark:border-white/5"
+            : "bg-zinc-50 dark:bg-zinc-800/40 border-zinc-200 dark:border-zinc-800"
+        )}>
           <div className="flex items-center justify-between">
             <div>
               <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 block">
@@ -69,7 +92,12 @@ export function RelativeTypeOptions({
                 onChange={(e) => setIsFoster(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-8 h-4 bg-zinc-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50" />
+              <div className={cn(
+                "w-8 h-4 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all disabled:opacity-50",
+                isNeu
+                  ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#181b20] peer-checked:bg-indigo-600"
+                  : "bg-zinc-200 peer-focus:outline-none dark:bg-zinc-700 peer-checked:bg-blue-600"
+              )} />
             </label>
           </div>
         </div>
@@ -77,7 +105,12 @@ export function RelativeTypeOptions({
 
       {relativeType === 'foster_child' && (
         <div className="space-y-3">
-          <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50">
+          <div className={cn(
+            "p-3 rounded-xl border",
+            isNeu
+              ? "shadow-neu-pressed-sm bg-amber-500/10 border-amber-400/20"
+              : "bg-amber-50/70 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50"
+          )}>
             <div className="text-xs font-semibold text-amber-800 dark:text-amber-300">
               Anak Angkat / Asuh
             </div>
@@ -94,7 +127,7 @@ export function RelativeTypeOptions({
               <select
                 value={secondParentId}
                 onChange={(e) => setSecondParentId(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={selectCls}
               >
                 <option value="">-- Hanya {targetPerson?.name} --</option>
                 {spousesOfTarget.map(s => (
@@ -109,7 +142,12 @@ export function RelativeTypeOptions({
       {relativeType === 'child' && (
         <div className="space-y-3">
           {secondParent ? (
-            <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60">
+            <div className={cn(
+              "p-3 rounded-xl border",
+              isNeu
+                ? "shadow-neu-pressed-sm bg-indigo-500/10 border-indigo-400/20"
+                : "bg-blue-50/70 dark:bg-blue-950/40 border-blue-200 dark:border-blue-900/60"
+            )}>
               <div className="text-[11px] font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wider">
                 Hubungan Orang Tua
               </div>
@@ -127,7 +165,7 @@ export function RelativeTypeOptions({
               <select
                 value={secondParentId}
                 onChange={(e) => setSecondParentId(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={selectCls}
               >
                 <option value="">-- Tanpa Pasangan --</option>
                 {spousesOfTarget.map(s => (
@@ -145,24 +183,14 @@ export function RelativeTypeOptions({
               <button
                 type="button"
                 onClick={() => setIsFoster(false)}
-                className={cn(
-                  "py-2 px-3 rounded-xl border text-xs font-semibold transition-all text-center",
-                  !isFoster
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500"
-                    : "border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
-                )}
+                className={fosterBtnCls(!isFoster)}
               >
                 Anak Kandung
               </button>
               <button
                 type="button"
                 onClick={() => setIsFoster(true)}
-                className={cn(
-                  "py-2 px-3 rounded-xl border text-xs font-semibold transition-all text-center",
-                  isFoster
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500"
-                    : "border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
-                )}
+                className={fosterBtnCls(isFoster)}
               >
                 Anak Angkat
               </button>
