@@ -51,7 +51,7 @@ function SegmentedSwitch<T extends string>({
     } else {
       gsap.to(thumbRef.current, { x: targetX, width: targetWidth, duration: 0.25, ease: 'power2.out' });
     }
-  }, { dependencies: [value, isNeu], scope: switchRef });
+  }, { dependencies: [value, isNeu, options], scope: switchRef });
 
   return (
     <div
@@ -97,21 +97,16 @@ function SegmentedSwitch<T extends string>({
 }
 
 export function ControlPanel({
-  language,
-  setLanguage,
-  accent,
-  setAccent,
-  mode = 'editor',
-  setMode,
-  canToggleMode = true,
-  theme = 'default',
-  setTheme,
+  language, setLanguage, accent, setAccent,
+  mode = 'editor', setMode, canToggleMode = true,
+  theme = 'default', setTheme,
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(true);
   const terms = TERMS[language];
   const isNeu = theme === 'neumorphism';
 
   const rootRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const isFirstVisible = useRef(true);
   const prevTheme = useRef(theme);
@@ -126,11 +121,16 @@ export function ControlPanel({
       isFirstVisible.current = false;
       return;
     }
-    if (isVisible && panelRef.current) {
-      gsap.fromTo(panelRef.current,
-        { opacity: 0, scale: 0.94, x: 16 },
-        { opacity: 1, scale: 1, x: 0, duration: 0.28, ease: 'back.out(1.5)', clearProps: 'transform' }
+    if (!wrapperRef.current) return;
+    if (isVisible) {
+      gsap.fromTo(wrapperRef.current,
+        { maxWidth: 0, opacity: 0, scale: 0.95 },
+        { maxWidth: 1000, opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out', clearProps: 'transform' }
       );
+    } else {
+      gsap.to(wrapperRef.current, {
+        maxWidth: 0, opacity: 0, scale: 0.95, duration: 0.22, ease: 'power2.in',
+      });
     }
   }, { dependencies: [isVisible], scope: rootRef });
 
@@ -150,7 +150,6 @@ export function ControlPanel({
 
   const dividerClass = isNeu ? 'w-px h-4 bg-zinc-300/80 dark:bg-zinc-800 shrink-0' : 'w-px h-4 bg-zinc-800 shrink-0';
   const labelClass = 'hidden sm:block text-[10px] font-bold tracking-widest text-zinc-500 dark:text-zinc-400 uppercase';
-  const iconClass = 'hidden sm:flex text-zinc-500 dark:text-zinc-400 items-center gap-2';
   const accentSelectClass = isNeu
     ? 'bg-[#e6e9ef] dark:bg-[#181b20] shadow-neu-pressed-sm border border-white/40 dark:border-white/5 rounded-full px-3 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500/50 outline-none cursor-pointer transition-colors appearance-none'
     : 'bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1 text-xs font-medium text-zinc-300 focus:ring-1 focus:ring-zinc-700 outline-none cursor-pointer hover:bg-zinc-800 transition-colors appearance-none';
@@ -164,9 +163,9 @@ export function ControlPanel({
       ref={rootRef}
       className={`flex items-center animate-in slide-in-from-bottom-4 fade-in duration-500 sm:scale-100 origin-bottom sm:origin-center ${isVisible ? 'gap-3' : 'gap-0'}`}
     >
-      <div className={`overflow-hidden transition-[width] duration-300 ease-in-out origin-right flex items-center ${isVisible ? 'w-auto' : 'w-0 pointer-events-none'}`}>
+      <div ref={wrapperRef} className={`overflow-hidden origin-right flex items-center ${isVisible ? 'max-w-[1000px]' : 'max-w-0 pointer-events-none'}`}>
         <div ref={panelRef} className={dockClass}>
-          <div className={iconClass}><Settings2 size={16} /></div>
+          <div className="hidden sm:flex text-zinc-500 dark:text-zinc-400 items-center gap-2"><Settings2 size={16} /></div>
           <div className={`hidden sm:block ${dividerClass}`} />
 
           {canToggleMode && setMode && (
