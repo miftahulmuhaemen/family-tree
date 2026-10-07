@@ -50,10 +50,10 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
     const card = cardRef.current;
     if (!card) return;
     const onEnter = () => gsap.to(card, { y: -2, duration: 0.18, ease: 'power2.out' });
-    const onLeave = () => gsap.to(card, { y: 0, duration: 0.18, ease: 'power2.out' });
+    const onLeave = () => gsap.to(card, { y: 0, duration: 0.18, ease: 'power2.out', clearProps: 'transform' });
     const onClick = () => gsap.timeline()
       .to(card, { scale: 0.98, duration: 0.08 })
-      .to(card, { scale: 1, duration: 0.14, ease: 'back.out(2)' });
+      .to(card, { scale: 1, duration: 0.14, ease: 'back.out(2)', clearProps: 'transform' });
 
     card.addEventListener('mouseenter', onEnter);
     card.addEventListener('mouseleave', onLeave);
@@ -122,14 +122,26 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
             cn(
               "border border-white/60 dark:border-white/5 rounded-2xl shadow-neu-raised bg-[#e6e9ef] dark:bg-[#1c2027]",
               isDeceased && "shadow-neu-pressed bg-zinc-200/50 dark:bg-zinc-800/50 text-zinc-500",
-              selected && "shadow-neu-pressed ring-2 ring-indigo-500 z-20"
+              selected && (
+                isDeceased
+                  ? "shadow-neu-pressed ring-2 ring-zinc-400 dark:ring-zinc-500 z-20"
+                  : gender === 'female'
+                    ? "shadow-neu-pressed ring-2 ring-rose-400 dark:ring-rose-500 z-20"
+                    : "shadow-neu-pressed ring-2 ring-sky-400 dark:ring-sky-500 z-20"
+              )
             )
           ) : (
             cn(
               "border-2 rounded-xl shadow-sm hover:shadow-md bg-white dark:bg-zinc-900",
               gender === 'male' ? "border-blue-500" : "border-pink-400",
               isDeceased && "opacity-80 grayscale bg-zinc-100 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-600",
-              selected && "ring-4 ring-blue-600 shadow-xl z-20"
+              selected && (
+                isDeceased
+                  ? "ring-4 ring-zinc-400 dark:ring-zinc-500 shadow-xl z-20"
+                  : gender === 'female'
+                    ? "ring-4 ring-pink-400 dark:ring-pink-500 shadow-xl z-20"
+                    : "ring-4 ring-blue-500 dark:ring-blue-600 shadow-xl z-20"
+              )
             )
           )
         )}
@@ -215,6 +227,8 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
 
       <NodeActionMenu
         personName={data.name || label}
+        gender={gender}
+        isDeceased={Boolean(isDeceased)}
         onOpenDetail={onOpenDetail ? () => onOpenDetail(data.id) : undefined}
         onDelete={onDeletePerson ? () => onDeletePerson(data.id) : undefined}
       />

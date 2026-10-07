@@ -34,14 +34,14 @@ export function GraphLines({ edges, povId, isDarkMode }: GraphLinesProps) {
             (e.children && e.children.includes(povId))
           );
 
-          // Strictly White, Black, and Blue palette:
+          // Strictly neutral palette for edges:
           // Unconnected lines: neutral slate-400 (#94a3b8) in light, zinc-600 (#52525b) in dark
-          // Active / POV highlighted lines: electric blue (#2563eb in light, #3b82f6 in dark)
+          // Active / POV highlighted lines: crisp neutral charcoal (#27272a) in light, bright neutral (#e4e4e7) in dark
           const strokeColor = isConnected 
-            ? (isDarkMode ? '#3b82f6' : '#2563eb') 
+            ? (isDarkMode ? '#e4e4e7' : '#27272a') 
             : (isDarkMode ? '#52525b' : '#94a3b8');
           const strokeWidth = isConnected ? 2.5 : 1.5;
-          const opacity = isConnected ? 1 : 0.45;
+          const opacity = isConnected ? 1 : 0.35;
 
           return (
             <path

@@ -9,12 +9,16 @@ gsap.registerPlugin(useGSAP);
 
 export interface NodeActionMenuProps {
   personName: string;
+  gender?: 'male' | 'female';
+  isDeceased?: boolean;
   onOpenDetail?: () => void;
   onDelete?: () => void;
 }
 
 export function NodeActionMenu({
   personName,
+  gender = 'male',
+  isDeceased = false,
   onOpenDetail,
   onDelete
 }: NodeActionMenuProps) {
@@ -116,8 +120,22 @@ export function NodeActionMenu({
         className={cn(
           "w-8 h-8 rounded-full flex items-center justify-center transition-all",
           isNeu
-            ? "bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-700 dark:text-zinc-200 shadow-neu-raised-sm border border-white/60 dark:border-white/5 hover:shadow-neu-raised active:shadow-neu-pressed"
-            : "bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 border-2 border-zinc-900 dark:border-zinc-200 shadow-md"
+            ? cn(
+                "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised-sm hover:shadow-neu-raised active:shadow-neu-pressed",
+                isDeceased
+                  ? "border border-zinc-400/40 text-zinc-500"
+                  : gender === 'female'
+                    ? "border border-rose-400/50 text-rose-500 hover:text-rose-600"
+                    : "border border-sky-400/50 text-sky-500 hover:text-sky-600"
+              )
+            : cn(
+                "bg-white dark:bg-zinc-900 border-2 shadow-md hover:scale-105",
+                isDeceased
+                  ? "border-zinc-400 dark:border-zinc-600 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  : gender === 'female'
+                    ? "border-pink-400 dark:border-pink-500 text-pink-500 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-950/40"
+                    : "border-blue-500 dark:border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40"
+              )
         )}
         title="Menu Tindakan"
       >

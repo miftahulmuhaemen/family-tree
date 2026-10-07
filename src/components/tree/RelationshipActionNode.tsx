@@ -28,7 +28,7 @@ export function RelationshipActionNode({ data }: NodeProps<RelationshipActionNod
     if (!btn) return;
 
     const onEnter = () => gsap.to(btn, { y: -1, duration: 0.15, ease: 'power2.out' });
-    const onLeave = () => gsap.to(btn, { y: 0, duration: 0.15, ease: 'power2.out' });
+    const onLeave = () => gsap.to(btn, { y: 0, duration: 0.15, ease: 'power2.out', clearProps: 'transform' });
 
     btn.addEventListener('mouseenter', onEnter);
     btn.addEventListener('mouseleave', onLeave);
@@ -45,7 +45,7 @@ export function RelationshipActionNode({ data }: NodeProps<RelationshipActionNod
     if (btnRef.current) {
       gsap.timeline()
         .to(btnRef.current, { scale: 0.92, duration: 0.08 })
-        .to(btnRef.current, { scale: 1, duration: 0.14, ease: 'back.out(2)' });
+        .to(btnRef.current, { scale: 1, duration: 0.14, ease: 'back.out(2)', clearProps: 'transform' });
     }
     data.onAddChild?.(data.parent1, data.parent2);
   });

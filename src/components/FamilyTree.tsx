@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { 
   ReactFlow, 
-  Controls, 
   Background, 
   useNodesState, 
   type Node, 
   MiniMap,
-  ReactFlowProvider,
   useReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -24,6 +22,7 @@ import { GraphLines } from './tree/GraphLines';
 interface FamilyTreeProps {
   data: any;
   isLoading?: boolean;
+  isLocked?: boolean;
   language: Language;
   accent: string;
   povId: string | null;
@@ -43,6 +42,7 @@ function FamilyTreeInner({
   povId,  
   setPovId,
   isDarkMode,
+  isLocked = false,
   onAddRelative,
   onEditPerson,
   onDeletePerson,
@@ -103,9 +103,9 @@ function FamilyTreeInner({
         fitView
         nodesConnectable={false}
         nodesDraggable={false}
-        panOnScroll
+        panOnScroll={!isLocked}
         selectionOnDrag={false}
-        panOnDrag={true}
+        panOnDrag={!isLocked}
         maxZoom={4}
         minZoom={0.1}
         colorMode={isDarkMode ? 'dark' : 'light'}
@@ -115,10 +115,6 @@ function FamilyTreeInner({
           color={isDarkMode ? '#27272a' : '#cbd5e1'} 
           gap={16} 
           size={1} 
-        />
-        <Controls 
-          style={{ bottom: '16px', left: '16px' }} 
-          className="dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200"
         />
         <MiniMap 
           style={{ width: 120, height: 80 }}
@@ -132,9 +128,5 @@ function FamilyTreeInner({
 }
 
 export default function FamilyTree(props: FamilyTreeProps) {
-  return (
-    <ReactFlowProvider>
-      <FamilyTreeInner {...props} />
-    </ReactFlowProvider>
-  );
+  return <FamilyTreeInner {...props} />;
 }

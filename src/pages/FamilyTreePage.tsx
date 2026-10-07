@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ReactFlowProvider } from '@xyflow/react';
 import FamilyTree from '@/components/FamilyTree';
 import { EditorSidebar } from '@/components/EditorSidebar';
 import { NotFound } from '@/components/NotFound';
@@ -16,6 +17,7 @@ export function FamilyTreePage() {
   const [language, setLanguage] = useState<'id' | 'en'>('id');
   const [accent, setAccent] = useState<string>('Indonesian');
   const [viewMode, setViewMode] = useState<'editor' | 'public'>('editor');
+  const [isLocked, setIsLocked] = useState(false);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const { theme, setTheme } = useTheme();
 
@@ -56,29 +58,26 @@ export function FamilyTreePage() {
       />
 
       <div className="flex-1 h-full relative">
-        <FamilyTree
-          data={treeData} isLoading={remote.isLoading} language={language} accent={accent}
-          povId={nav.povId} setPovId={nav.setPovId} isDarkMode={isDarkMode}
-          onAddRelative={isPublicPreview ? undefined : modals.openAddRelative}
-          onDeletePerson={isPublicPreview ? undefined : modals.handleDeletePerson}
-          onAddDirectRelationship={isPublicPreview ? undefined : modals.handleAddDirectRelationship}
-          onOpenDetail={nav.handleOpenDetail}
-          onAddChildToRelationship={isPublicPreview ? undefined : modals.openAddRelationshipChild}
-        />
-
-        <div className="absolute bottom-10 sm:bottom-12 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center animate-in slide-in-from-bottom-4 fade-in duration-500 pointer-events-auto">
-          <ControlPanel
-            language={language}
-            setLanguage={setLanguage}
-            accent={accent}
-            setAccent={setAccent}
-            mode={viewMode}
-            setMode={setViewMode}
-            canToggleMode={!remote.isReadOnly}
-            theme={theme}
-            setTheme={setTheme}
+        <ReactFlowProvider>
+          <FamilyTree
+            data={treeData} isLoading={remote.isLoading} language={language} accent={accent}
+            povId={nav.povId} setPovId={nav.setPovId} isDarkMode={isDarkMode} isLocked={isLocked}
+            onAddRelative={isPublicPreview ? undefined : modals.openAddRelative}
+            onDeletePerson={isPublicPreview ? undefined : modals.handleDeletePerson}
+            onAddDirectRelationship={isPublicPreview ? undefined : modals.handleAddDirectRelationship}
+            onOpenDetail={nav.handleOpenDetail}
+            onAddChildToRelationship={isPublicPreview ? undefined : modals.openAddRelationshipChild}
           />
-        </div>
+
+          <div className="absolute bottom-10 sm:bottom-12 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center animate-in slide-in-from-bottom-4 fade-in duration-500 pointer-events-auto">
+            <ControlPanel
+              language={language} setLanguage={setLanguage} accent={accent} setAccent={setAccent}
+              mode={viewMode} setMode={setViewMode} canToggleMode={!remote.isReadOnly}
+              theme={theme} setTheme={setTheme}
+              isLocked={isLocked} onToggleLock={() => setIsLocked(!isLocked)}
+            />
+          </div>
+        </ReactFlowProvider>
       </div>
 
       <WelcomeToast language={language} />
