@@ -3,6 +3,7 @@ import { Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Person, Relationship } from '@/types/family';
 import type { Language } from '@/utils/i18n';
+import { useIsNeumorphic } from '@/hooks/useTheme';
 import { RelativePills, type RelativeItem } from './RelativePills';
 import { PersonContactSection } from './PersonContactSection';
 import { PersonEditForm } from './PersonEditForm';
@@ -19,16 +20,12 @@ export interface PersonDetailViewProps {
 }
 
 export function PersonDetailView({
-  person,
-  people,
-  relationships,
-  onSelectPerson,
-  onEditPerson,
-  onAddChildToRelationship,
-  language,
-  terms
+  person, people, relationships, onSelectPerson,
+  onEditPerson, onAddChildToRelationship, language, terms
 }: PersonDetailViewProps) {
+  const isNeu = useIsNeumorphic();
   const [isEditing, setIsEditing] = useState(false);
+
   const relatives = useMemo(() => {
     const pId = person.id;
 
@@ -38,11 +35,7 @@ export function PersonDetailView({
         const spouseId = r.from === pId ? r.to : r.from;
         if (!acc.some(s => s.id === spouseId)) {
           const spousePerson = people.find(p => p.id === spouseId);
-          acc.push({
-            id: spouseId,
-            name: spousePerson?.name || spouseId,
-            type: r.type
-          });
+          acc.push({ id: spouseId, name: spousePerson?.name || spouseId, type: r.type });
         }
         return acc;
       }, []);
@@ -52,12 +45,7 @@ export function PersonDetailView({
       .reduce<RelativeItem[]>((acc, r) => {
         if (!acc.some(p => p.id === r.to)) {
           const parentPerson = people.find(p => p.id === r.to);
-          acc.push({
-            id: r.to,
-            name: parentPerson?.name || r.to,
-            type: r.type,
-            isFoster: r.type === 'foster_parent'
-          });
+          acc.push({ id: r.to, name: parentPerson?.name || r.to, type: r.type, isFoster: r.type === 'foster_parent' });
         }
         return acc;
       }, []);
@@ -67,12 +55,7 @@ export function PersonDetailView({
       .reduce<RelativeItem[]>((acc, r) => {
         if (!acc.some(c => c.id === r.from)) {
           const childPerson = people.find(p => p.id === r.from);
-          acc.push({
-            id: r.from,
-            name: childPerson?.name || r.from,
-            type: r.type,
-            isFoster: r.type === 'foster_parent'
-          });
+          acc.push({ id: r.from, name: childPerson?.name || r.from, type: r.type, isFoster: r.type === 'foster_parent' });
         }
         return acc;
       }, []);
@@ -80,13 +63,8 @@ export function PersonDetailView({
     return { spouses, parents, children };
   }, [person.id, people, relationships]);
 
-  const isDeceased = typeof person.deceased === 'boolean' 
-    ? person.deceased 
-    : person.deceased?.status;
-
-  const deceasedObj = typeof person.deceased === 'object' && person.deceased !== null 
-    ? person.deceased 
-    : null;
+  const isDeceased = typeof person.deceased === 'boolean' ? person.deceased : person.deceased?.status;
+  const deceasedObj = typeof person.deceased === 'object' && person.deceased !== null ? person.deceased : null;
 
   const age = (() => {
     if (!person.birthDate) return null;
@@ -94,9 +72,7 @@ export function PersonDetailView({
     const bDate = new Date(person.birthDate);
     let a = today.getFullYear() - bDate.getFullYear();
     const m = today.getMonth() - bDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < bDate.getDate())) {
-      a--;
-    }
+    if (m < 0 || (m === 0 && today.getDate() < bDate.getDate())) a--;
     return a;
   })();
 
@@ -117,8 +93,18 @@ export function PersonDetailView({
   return (
     <div className="flex-1 flex flex-col overflow-y-auto p-4 space-y-4">
       {/* Profile Card Header */}
-      <div className="flex flex-col items-center p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-center">
-        <div className="w-14 h-14 rounded-full flex items-center justify-center text-base font-bold bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 shadow-sm">
+      <div className={cn(
+        "flex flex-col items-center p-4 rounded-2xl text-center transition-all",
+        isNeu
+          ? "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] border border-white/60 dark:border-white/5"
+          : "bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"
+      )}>
+        <div className={cn(
+          "w-14 h-14 rounded-full flex items-center justify-center text-base font-bold",
+          isNeu
+            ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-800 dark:text-zinc-100 border border-white/40 dark:border-white/5"
+            : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 shadow-sm"
+        )}>
           {person.name.charAt(0).toUpperCase()}
         </div>
         <div className="mt-2.5">
@@ -130,14 +116,21 @@ export function PersonDetailView({
             <span className="text-zinc-300 dark:text-zinc-700">•</span>
             <span className={cn(
               "px-2.5 py-0.5 rounded-full text-xs font-semibold",
-              isDeceased 
-                ? "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400" 
-                : "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700"
+              isNeu
+                ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-700 dark:text-zinc-300 border border-white/40 dark:border-white/5"
+                : isDeceased 
+                  ? "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400" 
+                  : "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700"
             )}>
               {isDeceased ? terms.deceased : terms.alive}
             </span>
             {!isDeceased && age !== null && (
-              <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 text-xs font-semibold border border-blue-200 dark:border-blue-900/50">
+              <span className={cn(
+                "px-2.5 py-0.5 rounded-full text-xs font-semibold",
+                isNeu
+                  ? "shadow-neu-pressed-sm bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-400/20"
+                  : "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50"
+              )}>
                 {age} {terms.years}
               </span>
             )}
@@ -155,7 +148,12 @@ export function PersonDetailView({
           <button
             type="button"
             onClick={() => setIsEditing(true)}
-            className="mt-3 px-3 py-1.5 rounded-xl bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 border border-zinc-200 dark:border-zinc-700 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors"
+            className={cn(
+              "mt-3 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
+              isNeu
+                ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-700 dark:text-zinc-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-white/60 dark:border-white/5"
+                : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 border border-zinc-200 dark:border-zinc-700 shadow-2xs"
+            )}
           >
             <Pencil className="w-3.5 h-3.5 text-zinc-400" />
             <span>{terms.edit_person || "Edit Profil"}</span>
@@ -180,7 +178,12 @@ export function PersonDetailView({
 
       {/* Bio */}
       {person.short_bio && (
-        <div className="bg-zinc-50 dark:bg-zinc-900/60 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className={cn(
+          "transition-all",
+          isNeu
+            ? "shadow-neu-raised-sm rounded-xl p-4 bg-[#e6e9ef] dark:bg-[#1c2027] border border-white/60 dark:border-white/5"
+            : "bg-zinc-50 dark:bg-zinc-900/60 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800"
+        )}>
           <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">{terms.short_bio}</h4>
           <p className="text-zinc-700 dark:text-zinc-300 italic text-sm">
             "{person.short_bio}"
@@ -198,7 +201,12 @@ export function PersonDetailView({
       />
 
       {/* Metadata */}
-      <div className="space-y-2 text-sm text-zinc-500 pt-2 border-t border-zinc-200 dark:border-zinc-800">
+      <div className={cn(
+        "space-y-2 text-sm pt-2 transition-all",
+        isNeu
+          ? "shadow-neu-raised-sm rounded-xl p-4 bg-[#e6e9ef] dark:bg-[#1c2027] border border-white/60 dark:border-white/5 text-zinc-600 dark:text-zinc-400"
+          : "border-t border-zinc-200 dark:border-zinc-800 text-zinc-500"
+      )}>
         <div className="flex justify-between">
           <span>{terms.birth_date}:</span>
           <span className="font-medium text-zinc-900 dark:text-zinc-100">

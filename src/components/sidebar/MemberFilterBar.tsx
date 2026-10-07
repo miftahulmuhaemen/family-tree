@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { useIsNeumorphic } from '@/hooks/useTheme';
 import { BirthYearCombobox } from './BirthYearCombobox';
 
 export interface MemberFilterBarProps {
@@ -22,6 +23,7 @@ export function MemberFilterBar({
   availableYears,
   terms
 }: MemberFilterBarProps) {
+  const isNeu = useIsNeumorphic();
   const isFiltered = filterGender !== 'all' || filterStatus !== 'all' || filterYear !== 'all';
 
   const handleReset = () => {
@@ -31,22 +33,36 @@ export function MemberFilterBar({
   };
 
   return (
-    <div className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 space-y-2">
+    <div className={cn(
+      "p-2.5 rounded-xl space-y-2 transition-all",
+      isNeu
+        ? "shadow-neu-raised-sm rounded-xl bg-[#e6e9ef] dark:bg-[#1c2027] border border-white/60 dark:border-white/5"
+        : "bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800"
+    )}>
       <div className="grid grid-cols-2 gap-2 text-xs">
         {/* Gender filter */}
         <div className="flex flex-col gap-1 min-w-0">
           <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
             {terms.filter_gender}
           </span>
-          <div className="flex w-full bg-zinc-200/80 dark:bg-zinc-800 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
+          <div className={cn(
+            "flex w-full p-0.5 rounded-lg transition-all",
+            isNeu
+              ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] gap-0.5"
+              : "bg-zinc-200/80 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60"
+          )}>
             <button
               type="button"
               onClick={() => setFilterGender('all')}
               className={cn(
-                "flex-1 py-1 rounded-md font-semibold transition-all text-xs text-center",
-                filterGender === 'all'
-                  ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                "flex-1 py-1 rounded-md transition-all text-xs text-center cursor-pointer",
+                isNeu
+                  ? filterGender === 'all'
+                    ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-indigo-600 dark:text-indigo-400 font-semibold"
+                    : "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  : filterGender === 'all'
+                    ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs font-semibold"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               )}
               title={terms.filter_all}
             >
@@ -56,10 +72,14 @@ export function MemberFilterBar({
               type="button"
               onClick={() => setFilterGender('male')}
               className={cn(
-                "flex-1 py-1 rounded-md font-semibold transition-all text-xs text-center",
-                filterGender === 'male'
-                  ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                "flex-1 py-1 rounded-md transition-all text-xs text-center cursor-pointer",
+                isNeu
+                  ? filterGender === 'male'
+                    ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-indigo-600 dark:text-indigo-400 font-semibold"
+                    : "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  : filterGender === 'male'
+                    ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs font-semibold"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               )}
               title={terms.filter_male}
             >
@@ -69,10 +89,14 @@ export function MemberFilterBar({
               type="button"
               onClick={() => setFilterGender('female')}
               className={cn(
-                "flex-1 py-1 rounded-md font-semibold transition-all text-xs text-center",
-                filterGender === 'female'
-                  ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                "flex-1 py-1 rounded-md transition-all text-xs text-center cursor-pointer",
+                isNeu
+                  ? filterGender === 'female'
+                    ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-indigo-600 dark:text-indigo-400 font-semibold"
+                    : "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  : filterGender === 'female'
+                    ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs font-semibold"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               )}
               title={terms.filter_female}
             >
@@ -86,15 +110,24 @@ export function MemberFilterBar({
           <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
             {terms.filter_status}
           </span>
-          <div className="flex w-full bg-zinc-200/80 dark:bg-zinc-800 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
+          <div className={cn(
+            "flex w-full p-0.5 rounded-lg transition-all",
+            isNeu
+              ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] gap-0.5"
+              : "bg-zinc-200/80 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60"
+          )}>
             <button
               type="button"
               onClick={() => setFilterStatus('all')}
               className={cn(
-                "flex-1 py-1 rounded-md font-semibold transition-all text-xs text-center",
-                filterStatus === 'all'
-                  ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                "flex-1 py-1 rounded-md transition-all text-xs text-center cursor-pointer",
+                isNeu
+                  ? filterStatus === 'all'
+                    ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-indigo-600 dark:text-indigo-400 font-semibold"
+                    : "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  : filterStatus === 'all'
+                    ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs font-semibold"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               )}
               title={terms.filter_all}
             >
@@ -104,10 +137,14 @@ export function MemberFilterBar({
               type="button"
               onClick={() => setFilterStatus('alive')}
               className={cn(
-                "flex-1 py-1 rounded-md font-semibold transition-all text-xs text-center",
-                filterStatus === 'alive'
-                  ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                "flex-1 py-1 rounded-md transition-all text-xs text-center cursor-pointer",
+                isNeu
+                  ? filterStatus === 'alive'
+                    ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-indigo-600 dark:text-indigo-400 font-semibold"
+                    : "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  : filterStatus === 'alive'
+                    ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs font-semibold"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               )}
               title={terms.filter_alive}
             >
@@ -117,10 +154,14 @@ export function MemberFilterBar({
               type="button"
               onClick={() => setFilterStatus('deceased')}
               className={cn(
-                "flex-1 py-1 rounded-md font-semibold transition-all text-xs text-center",
-                filterStatus === 'deceased'
-                  ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                "flex-1 py-1 rounded-md transition-all text-xs text-center cursor-pointer",
+                isNeu
+                  ? filterStatus === 'deceased'
+                    ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-indigo-600 dark:text-indigo-400 font-semibold"
+                    : "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  : filterStatus === 'deceased'
+                    ? "bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs font-semibold"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               )}
               title={terms.filter_deceased}
             >
@@ -150,7 +191,10 @@ export function MemberFilterBar({
           <button
             type="button"
             onClick={handleReset}
-            className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline shrink-0 px-1"
+            className={cn(
+              "text-xs font-semibold hover:underline shrink-0 px-1 cursor-pointer",
+              isNeu ? "text-indigo-600 dark:text-indigo-400" : "text-blue-600 dark:text-blue-400"
+            )}
           >
             {terms.filter_reset}
           </button>

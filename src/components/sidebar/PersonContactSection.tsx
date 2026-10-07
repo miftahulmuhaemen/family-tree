@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils';
+import { useIsNeumorphic } from '@/hooks/useTheme';
 import type { PhoneNumber, Address } from '@/types/family';
 
 export interface PersonContactSectionProps {
@@ -15,6 +17,7 @@ export function PersonContactSection({
   locationLabel,
   viewMapsLabel
 }: PersonContactSectionProps) {
+  const isNeu = useIsNeumorphic();
   const hasPhones = phoneNumbers && phoneNumbers.length > 0;
   const hasAddresses = addresses && addresses.length > 0;
 
@@ -23,8 +26,18 @@ export function PersonContactSection({
   return (
     <>
       {hasPhones && (
-        <div className="space-y-2">
-          <h4 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800 pb-1">
+        <div className={cn(
+          "space-y-2 transition-all",
+          isNeu
+            ? "shadow-neu-raised-sm rounded-xl p-4 bg-[#e6e9ef] dark:bg-[#1c2027] border border-white/60 dark:border-white/5"
+            : ""
+        )}>
+          <h4 className={cn(
+            "text-[11px] font-bold uppercase tracking-wider pb-1",
+            isNeu
+              ? "text-zinc-500 border-b border-white/40 dark:border-white/5"
+              : "text-zinc-500 border-b border-zinc-200 dark:border-zinc-800"
+          )}>
             {phoneLabel}
           </h4>
           <div className="space-y-1.5">
@@ -36,10 +49,18 @@ export function PersonContactSection({
                     href={`https://wa.me/${phone.number.replace(/^0/, '62').replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center gap-1"
+                    className={cn(
+                      "font-medium flex items-center gap-1 hover:underline",
+                      isNeu ? "text-indigo-600 dark:text-indigo-400" : "text-blue-600 dark:text-blue-400"
+                    )}
                   >
                     {phone.number}
-                    <span className="text-[10px] bg-zinc-100 dark:bg-zinc-800 px-1 py-0.2 rounded text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
+                    <span className={cn(
+                      "text-[10px] px-1 py-0.2 rounded border",
+                      isNeu
+                        ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-600 dark:text-zinc-400 border-white/40 dark:border-white/5"
+                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700"
+                    )}>
                       (WA)
                     </span>
                   </a>
@@ -53,8 +74,18 @@ export function PersonContactSection({
       )}
 
       {hasAddresses && (
-        <div className="space-y-2">
-          <h4 className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800 pb-1">
+        <div className={cn(
+          "space-y-2 transition-all",
+          isNeu
+            ? "shadow-neu-raised-sm rounded-xl p-4 bg-[#e6e9ef] dark:bg-[#1c2027] border border-white/60 dark:border-white/5"
+            : ""
+        )}>
+          <h4 className={cn(
+            "text-[11px] font-bold uppercase tracking-wider pb-1",
+            isNeu
+              ? "text-zinc-500 border-b border-white/40 dark:border-white/5"
+              : "text-zinc-500 border-b border-zinc-200 dark:border-zinc-800"
+          )}>
             {locationLabel}
           </h4>
           <div className="space-y-1.5">
@@ -66,7 +97,10 @@ export function PersonContactSection({
                     href={addr.gmap_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-600 text-[11px] hover:underline"
+                    className={cn(
+                      "text-[11px] hover:underline",
+                      isNeu ? "text-indigo-600 dark:text-indigo-400" : "text-blue-500 hover:text-blue-600"
+                    )}
                   >
                     {viewMapsLabel}
                   </a>
