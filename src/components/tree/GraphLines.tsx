@@ -30,7 +30,8 @@ export function GraphLines({ edges, povId, isDarkMode }: GraphLinesProps) {
           const isConnected = Boolean(
             !povId ||
             (e.parents && e.parents.includes(povId)) ||
-            (e.childId === povId)
+            (e.childId === povId) ||
+            (e.children && e.children.includes(povId))
           );
 
           // Strictly White, Black, and Blue palette:
@@ -51,6 +52,9 @@ export function GraphLines({ edges, povId, isDarkMode }: GraphLinesProps) {
               strokeWidth={strokeWidth / viewport.zoom}
               strokeDasharray={e.isDashed ? '4,4' : 'none'}
               opacity={opacity}
+              style={{
+                transition: 'stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease',
+              }}
             />
           );
         })}

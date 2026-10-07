@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Handle, Position, type Node, type NodeProps } from '@xyflow/react';
+import { type Node, type NodeProps } from '@xyflow/react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { cn } from "@/lib/utils";
@@ -78,21 +78,21 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
   const age = getAge(birthDate);
   const parentBtnLabel = hasFather && !hasMother ? '+ Ibu' : hasMother && !hasFather ? '+ Ayah' : '+ Ortu';
   const initial = (label || '').trim().charAt(0).toUpperCase() || '?';
+  const cleanLabel = (label || '').trim();
+  const isLongName = cleanLabel.length > 18;
+  const isVeryLongName = cleanLabel.length > 30;
+  const nameFontSizeClass = isVeryLongName
+    ? "text-[11px] leading-snug"
+    : isLongName
+      ? "text-xs leading-snug"
+      : "text-sm leading-snug";
 
   const actionBtnClass = isNeu
     ? "bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-700 dark:text-zinc-200 shadow-neu-raised-sm border border-white/60 dark:border-white/5 hover:shadow-neu-raised active:shadow-neu-pressed text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-all"
     : "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-zinc-100 hover:bg-blue-600 dark:hover:bg-blue-600 dark:hover:text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-zinc-200 dark:border-zinc-700 transition-colors";
 
-  const handleClass = cn(
-    "hover:scale-150 transition-transform",
-    isNeu ? "!bg-zinc-400 dark:!bg-zinc-500 border border-white/60 dark:border-white/10 shadow-neu-raised-sm" : "!bg-zinc-400"
-  );
-
   return (
     <div ref={nodeRef} className="relative w-64 group select-none">
-      <Handle type="target" position={Position.Top} className={cn("!w-3 !h-3 !top-0 !left-1/2 !-translate-x-1/2", handleClass)} />
-      <Handle type="target" id="left" position={Position.Left} className={cn("!w-2.5 !h-2.5 !left-0 !top-1/2 !-translate-y-1/2", handleClass)} />
-      <Handle type="source" id="right" position={Position.Right} className={cn("!w-2.5 !h-2.5 !right-0 !top-1/2 !-translate-y-1/2", handleClass)} />
 
       {onAddRelative && (
         <>
@@ -167,8 +167,37 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
               {relationshipLabel}
             </div>
           )}
-          <div className={cn("text-sm sm:text-base font-bold truncate leading-tight", isNeu ? "text-zinc-800 dark:text-zinc-100" : "text-zinc-900 dark:text-zinc-100")} title={label}>
-            {label}
+          <div className="relative group/name max-w-full">
+            <div
+              className={cn(
+                "font-bold line-clamp-2 break-words transition-colors",
+                nameFontSizeClass,
+                isNeu ? "text-zinc-800 dark:text-zinc-100" : "text-zinc-900 dark:text-zinc-100"
+              )}
+            >
+              {cleanLabel}
+            </div>
+            {isLongName && (
+              <div
+                role="tooltip"
+                className={cn(
+                  "pointer-events-none absolute left-0 bottom-full mb-1.5 z-50 whitespace-normal min-w-max max-w-[220px] px-2.5 py-1.5 text-xs font-semibold rounded-xl opacity-0 scale-95 -translate-y-1 group-hover/name:opacity-100 group-hover/name:scale-100 group-hover/name:translate-y-0 transition-all duration-150 ease-out shadow-xl",
+                  isNeu
+                    ? "bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-800 dark:text-zinc-100 shadow-neu-raised border border-white/60 dark:border-white/5"
+                    : "bg-zinc-900/95 dark:bg-zinc-800/95 text-white dark:text-zinc-100 border border-zinc-700/60"
+                )}
+              >
+                {cleanLabel}
+                <div
+                  className={cn(
+                    "absolute -bottom-1 left-4 w-2 h-2 rotate-45",
+                    isNeu
+                      ? "bg-[#e6e9ef] dark:bg-[#1c2027] border-r border-b border-white/60 dark:border-white/5"
+                      : "bg-zinc-900/95 dark:bg-zinc-800/95 border-r border-b border-zinc-700/60"
+                  )}
+                />
+              </div>
+            )}
           </div>
           <div className={cn("text-xs mt-0.5 font-medium truncate", isNeu ? "text-zinc-500 dark:text-zinc-400" : "text-zinc-600 dark:text-zinc-400")}>
             {isDeceased ? (
@@ -189,8 +218,6 @@ export default function PersonNode({ data, selected }: NodeProps<PersonNode>) {
         onOpenDetail={onOpenDetail ? () => onOpenDetail(data.id) : undefined}
         onDelete={onDeletePerson ? () => onDeletePerson(data.id) : undefined}
       />
-
-      <Handle type="source" position={Position.Bottom} className={cn("!w-3 !h-3 !bottom-0 !left-1/2 !-translate-x-1/2", handleClass)} />
     </div>
   );
 }

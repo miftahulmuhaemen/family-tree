@@ -38,7 +38,7 @@ describe('getBranchLayout', () => {
     expect(layout.siblings.map(p => p.id)).toEqual(['p4']);
     expect(layout.spouses.map(s => s.person.id)).toEqual(['p5']);
     expect(layout.children.map(c => c.id)).toEqual(['p6']);
-    expect(layout.nodes.length).toBe(6);
+    expect(layout.nodes.length).toBe(5);
   });
 
   test('generates node positions without colliding or null coordinates', () => {

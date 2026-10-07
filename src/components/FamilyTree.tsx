@@ -7,13 +7,11 @@ import {
   type Node, 
   MiniMap,
   ReactFlowProvider,
-  useReactFlow,
-  type Connection
+  useReactFlow
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import PersonNode from './PersonNode';
 import { RelationshipActionNode } from './tree/RelationshipActionNode';
-import { ConnectNodesModal } from './ConnectNodesModal';
 import { getBranchLayout } from '../utils/branchLayout';
 import type { Language } from '@/utils/i18n';
 import type { RelativeType } from './AddRelativeModal';
@@ -48,13 +46,11 @@ function FamilyTreeInner({
   onAddRelative,
   onEditPerson,
   onDeletePerson,
-  onAddDirectRelationship,
   onOpenDetail,
   onAddChildToRelationship
 }: FamilyTreeProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges] = useState<any[]>([]);
-  const [pendingConnection, setPendingConnection] = useState<{ sourceId: string; targetId: string } | null>(null);
   const { setCenter } = useReactFlow();
 
   const nodeTypes = useMemo(() => ({ 
@@ -80,27 +76,18 @@ function FamilyTreeInner({
     setNodes(branch.nodes);
     setEdges(branch.edges);
 
-    // Center directly on the focused person node
+    // Center directly on the focused person node in sync with node glide animation
     const focusNode = branch.nodes.find(n => n.id === activeFocusId);
     if (focusNode) {
       const fX = focusNode.position.x + NODE_WIDTH / 2;
       const fY = focusNode.position.y + NODE_HEIGHT / 2;
-      setTimeout(() => {
-        setCenter(fX, fY, { zoom: 1.05, duration: 450 });
-      }, 100);
+      setCenter(fX, fY, { zoom: 1.05, duration: 450 });
     }
   }, [familyData, povId, setNodes, onAddRelative, onEditPerson, onDeletePerson, onOpenDetail, setCenter]);
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     setPovId(node.id);
   }, [setPovId]);
-
-  // Drag-and-drop edge connect
-  const onConnect = useCallback((connection: Connection) => {
-    if (!connection.source || !connection.target) return;
-    if (connection.source === connection.target) return;
-    setPendingConnection({ sourceId: connection.source, targetId: connection.target });
-  }, []);
 
   if (isLoading) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">Loading Family Tree...</div>;
   if (!familyData) return null;
@@ -113,9 +100,8 @@ function FamilyTreeInner({
         onNodesChange={onNodesChange}
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
-        onConnect={onConnect}
         fitView
-        nodesConnectable={true}
+        nodesConnectable={false}
         nodesDraggable={false}
         panOnScroll
         selectionOnDrag={false}
@@ -141,21 +127,6 @@ function FamilyTreeInner({
           maskColor={isDarkMode ? 'rgba(9, 9, 11, 0.75)' : 'rgba(240, 242, 245, 0.7)'}
         />
       </ReactFlow>
-
-      {/* Connect Nodes Modal for Drag-and-Drop */}
-      {pendingConnection && (
-        <ConnectNodesModal
-          isOpen={Boolean(pendingConnection)}
-          onClose={() => setPendingConnection(null)}
-          sourcePerson={familyData.people.find((p: any) => p.id === pendingConnection.sourceId) || null}
-          targetPerson={familyData.people.find((p: any) => p.id === pendingConnection.targetId) || null}
-          allRelationships={familyData.relationships || []}
-          onConnect={(rel) => {
-            onAddDirectRelationship?.(rel);
-            setPendingConnection(null);
-          }}
-        />
-      )}
     </div>
   );
 }

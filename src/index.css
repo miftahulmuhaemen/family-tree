@@ -155,3 +155,9 @@
   }
 }
 
+/* Smooth node movement during POV switching */
+.react-flow__node {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+  will-change: transform, opacity;
+}
+

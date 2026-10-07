@@ -66,7 +66,7 @@ export function FamilyTreePage() {
           onAddChildToRelationship={isPublicPreview ? undefined : modals.openAddRelationshipChild}
         />
 
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center animate-in slide-in-from-bottom-4 fade-in duration-500 pointer-events-auto">
+        <div className="absolute bottom-10 sm:bottom-12 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center animate-in slide-in-from-bottom-4 fade-in duration-500 pointer-events-auto">
           <ControlPanel
             language={language}
             setLanguage={setLanguage}

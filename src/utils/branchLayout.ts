@@ -246,6 +246,7 @@ export function getBranchLayout(
           path: `M ${leftX} ${lineY} L ${rightX} ${lineY}`,
           type: 'spouse',
           parents: [focusPerson.id, m.spouse.id],
+          children: m.children.map(c => c.id),
           isDashed: m.type === 'divorced'
         });
 
@@ -275,6 +276,7 @@ export function getBranchLayout(
           path: `M ${sMidX} ${middleY + NODE_HEIGHT} L ${sMidX} ${channelY} L ${fMidX} ${channelY} L ${fMidX} ${middleY + NODE_HEIGHT}`,
           type: 'spouse',
           parents: [focusPerson.id, m.spouse.id],
+          children: m.children.map(c => c.id),
           isDashed: m.type === 'divorced'
         });
       }
@@ -296,6 +298,7 @@ export function getBranchLayout(
           path: `M ${leftX} ${lineY} L ${rightX} ${lineY}`,
           type: 'spouse',
           parents: [focusPerson.id, m.spouse.id],
+          children: m.children.map(c => c.id),
           isDashed: m.type === 'divorced'
         });
 
@@ -325,6 +328,7 @@ export function getBranchLayout(
           path: `M ${sMidX} ${middleY + NODE_HEIGHT} L ${sMidX} ${channelY} L ${fMidX} ${channelY} L ${fMidX} ${middleY + NODE_HEIGHT}`,
           type: 'spouse',
           parents: [focusPerson.id, m.spouse.id],
+          children: m.children.map(c => c.id),
           isDashed: m.type === 'divorced'
         });
       }
@@ -372,7 +376,8 @@ export function getBranchLayout(
       id: `parents-union-${father.id}-${mother.id}`,
       path: `M ${f1X} ${topY + NODE_HEIGHT} L ${f1X} ${parentChannelY} L ${m1X} ${parentChannelY} L ${m1X} ${topY + NODE_HEIGHT}`,
       type: 'spouse',
-      parents: [father.id, mother.id]
+      parents: [father.id, mother.id],
+      children: [focusPerson.id]
     });
 
     edges.push({
@@ -485,7 +490,8 @@ export function getBranchLayout(
         id: `drop-${group.key}`,
         path: `M ${group.targetMidX} ${middleY + NODE_HEIGHT / 2} L ${group.targetMidX} ${childChannelY}`,
         type: 'parent-child',
-        parents: group.parents
+        parents: group.parents,
+        children: group.children.map(c => c.id)
       });
 
       group.children.forEach((c, cIdx) => {

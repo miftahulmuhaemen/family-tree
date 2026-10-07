@@ -4,8 +4,14 @@ test.describe('Member Filtering and Sorting in Sidebar', () => {
   test('allows searching members and filtering by birth year', async ({ page }) => {
     await page.goto('/');
 
+    // Open sidebar if collapsed
+    const menuButton = page.getByRole('button', { name: /menu/i });
+    if (await menuButton.isVisible()) {
+      await menuButton.click();
+    }
+
     // Switch to Members tab
-    const membersTab = page.getByRole('button', { name: /anggota/i });
+    const membersTab = page.getByRole('button', { name: /^anggota/i });
     if (await membersTab.isVisible()) {
       await membersTab.click();
     }
