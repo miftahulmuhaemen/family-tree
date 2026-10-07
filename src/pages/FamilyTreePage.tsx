@@ -10,12 +10,14 @@ import { useTreeRemote } from '@/hooks/useTreeRemote';
 import { useTreeNavigation } from '@/hooks/useTreeNavigation';
 import { useTreeModals } from '@/hooks/useTreeModals';
 import { useDarkMode } from '@/hooks/useDarkMode';
+import { useTheme } from '@/hooks/useTheme';
 
 export function FamilyTreePage() {
   const [language, setLanguage] = useState<'id' | 'en'>('id');
   const [accent, setAccent] = useState<string>('Indonesian');
   const [viewMode, setViewMode] = useState<'editor' | 'public'>('editor');
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { theme, setTheme } = useTheme();
 
   const { gedcomContent, setGedcomContent, treeData, isValid, errorMsg, updateTreeState } = useTreeData('');
   const remote = useTreeRemote({
@@ -73,6 +75,8 @@ export function FamilyTreePage() {
             mode={viewMode}
             setMode={setViewMode}
             canToggleMode={!remote.isReadOnly}
+            theme={theme}
+            setTheme={setTheme}
           />
         </div>
       </div>
