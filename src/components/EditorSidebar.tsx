@@ -20,6 +20,7 @@ gsap.registerPlugin(useGSAP);
 
 export interface EditorSidebarProps {
   fileName?: string;
+  onRenameFile?: (name: string) => void;
   gedcom?: string;
   onGedcomChange?: (value: string) => void;
   yaml?: string;
@@ -54,7 +55,7 @@ export interface EditorSidebarProps {
 
 export function EditorSidebar(props: EditorSidebarProps) {
   const {
-    fileName, gedcom, onGedcomChange, yaml, onYamlChange, isValid, errorMessage, onShare, isSharing,
+    fileName, onRenameFile, gedcom, onGedcomChange, yaml, onYamlChange, isValid, errorMessage, onShare, isSharing,
     isReadOnly, isDarkMode, toggleDarkMode, currentId, onOpenPicker, onOpenLoadModal, onNewTree,
     lastSaved, language = 'id', people = [], relationships = [], selectedPersonId = null,
     onSelectPerson, onAddPerson, onEditPerson, onAddChildToRelationship, onChangeRelationshipStatus,
@@ -118,29 +119,18 @@ export function EditorSidebar(props: EditorSidebarProps) {
   }, [selectedPersonId, people]);
   const isLocked = Boolean(isReadOnly);
 
-  const handleRightRailMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return;
-    e.preventDefault();
-    const startX = e.clientX;
-    let didDrag = false;
 
-    const onMouseMove = (moveEvent: MouseEvent) => {
-      if (Math.abs(moveEvent.clientX - startX) > 3) {
-        didDrag = true;
-        setIsResizing(true);
-      }
-    };
-
-    const onMouseUp = () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-      if (!didDrag) {
-        setIsCollapsed(true);
-      }
-    };
-
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
+  const handleDownloadLocalGedcom = () => {
+    if (!activeGedcom) return;
+    const blob = new Blob([activeGedcom], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName || 'family.ged';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -190,11 +180,13 @@ export function EditorSidebar(props: EditorSidebarProps) {
         >
           <SidebarHeader
             fileName={fileName}
+            onRenameFile={onRenameFile}
             currentId={currentId}
             onOpenPicker={onOpenPicker}
             onOpenLoadModal={onOpenLoadModal}
             onNewTree={onNewTree}
             onShare={onShare}
+            onDownloadLocal={handleDownloadLocalGedcom}
             isSharing={isSharing}
             isValid={isValid}
             errorMessage={errorMessage}
@@ -263,35 +255,44 @@ export function EditorSidebar(props: EditorSidebarProps) {
           </div>
         </div>
 
-        {/* Full-Height Right Edge Rail (Dedicated separate container) */}
+        {/* Divider line between sidebar and shrinking button */}
         <div
           className={cn(
-            "w-6 sm:w-7 hover:w-8 h-full shrink-0 flex items-center justify-center select-none group transition-all duration-200 cursor-col-resize",
+            "w-1.5 -mx-[3px] relative z-20 h-full shrink-0 cursor-col-resize select-none transition-colors",
+            "hover:bg-zinc-400/40 dark:hover:bg-zinc-600/40 active:bg-zinc-500/60"
+          )}
+          onMouseDown={(e) => {
+            if (e.button !== 0) return;
+            e.preventDefault();
+            setIsResizing(true);
+          }}
+          aria-label="Resize sidebar"
+        />
+
+        {/* Shrinking Button */}
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(true)}
+          className={cn(
+            "w-6 sm:w-7 hover:w-8 h-full shrink-0 flex items-center justify-center select-none group transition-all duration-200 cursor-pointer",
             isNeu
               ? "bg-[#e6e9ef] dark:bg-[#1c2027] border-r border-white/60 dark:border-white/5 shadow-neu-raised-sm hover:brightness-105"
               : "bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border-r border-zinc-200 dark:border-zinc-800 shadow-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
           )}
-          onMouseDown={handleRightRailMouseDown}
-          title={terms.minimize || "Tarik untuk mengubah ukuran, klik untuk menutup"}
-          aria-label="Collapse or resize sidebar"
+          aria-label="Collapse sidebar"
         >
           {/* Centered Chevron Icon */}
           <div
             className={cn(
-              "p-1 rounded-md flex items-center justify-center transition-all cursor-pointer pointer-events-auto",
+              "p-1 rounded-md flex items-center justify-center transition-all",
               isNeu
                 ? "text-zinc-400 dark:text-zinc-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
                 : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-800 dark:group-hover:text-zinc-100"
             )}
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsCollapsed(true);
-            }}
-            title={terms.minimize || "Tutup Sidebar"}
           >
             <ChevronLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
           </div>
-        </div>
+        </button>
       </div>
     </>
   );

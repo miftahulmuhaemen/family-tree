@@ -36,6 +36,9 @@ export const TERMS = {
     copied: "Copied!",
     save_to_drive: "Save to Google Drive",
     save_changes_drive: "Save Changes",
+    save_short: "Save",
+    download_file: "Download .ged",
+    download_file_desc: "Save file directly to your device",
     open_from_drive: "Open from Google Drive",
     share_drive: "Share File",
     open_in_drive: "Open in Google Drive",
@@ -76,7 +79,7 @@ export const TERMS = {
     years: "Years",
     
     // Welcome Toast
-    welcome_title: "Welcome to Family Tree!",
+    welcome_title: "Welcome to Sanak Keluarga!",
     welcome_message: "Interactive family visualization. Use controls to explore.",
     questions_email: "If you have questions, email",
     
@@ -218,6 +221,9 @@ export const TERMS = {
     copied: "Disalin!",
     save_to_drive: "Simpan ke Google Drive",
     save_changes_drive: "Simpan Perubahan",
+    save_short: "Simpan",
+    download_file: "Unduh Berkas (.ged)",
+    download_file_desc: "Simpan berkas langsung ke perangkat",
     open_from_drive: "Buka dari Google Drive",
     share_drive: "Bagikan Berkas",
     open_in_drive: "Buka di Google Drive",

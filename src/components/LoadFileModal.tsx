@@ -126,20 +126,20 @@ export function LoadFileModal({
             className={cn(
               "w-full text-left p-3.5 rounded-lg border transition-all flex items-start gap-3.5 cursor-pointer group",
               isNeu
-                ? "shadow-neu-raised-sm hover:shadow-neu-raised active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] border-white/60 dark:border-white/5 hover:border-indigo-500/40"
-                : "border-zinc-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 bg-white dark:bg-zinc-900/60"
+                ? "shadow-neu-raised-sm hover:shadow-neu-raised active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] border-white/60 dark:border-white/5 hover:border-zinc-400/40"
+                : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 bg-white dark:bg-zinc-900/60"
             )}
           >
             <div className={cn(
               "p-2.5 rounded-md shrink-0 transition-colors",
               isNeu
-                ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-indigo-600 dark:text-indigo-400"
-                : "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white"
+                ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-700 dark:text-zinc-300"
+                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 group-hover:bg-zinc-900 group-hover:text-white dark:group-hover:bg-zinc-100 dark:group-hover:text-zinc-900"
             )}>
               <Cloud className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-medium text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 transition-colors">
                 {terms.load_from_drive || "Google Drive"}
               </div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
@@ -155,20 +155,20 @@ export function LoadFileModal({
             className={cn(
               "w-full text-left p-3.5 rounded-lg border transition-all flex items-start gap-3.5 cursor-pointer group",
               isNeu
-                ? "shadow-neu-raised-sm hover:shadow-neu-raised active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] border-white/60 dark:border-white/5 hover:border-emerald-500/40"
-                : "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 bg-white dark:bg-zinc-900/60"
+                ? "shadow-neu-raised-sm hover:shadow-neu-raised active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] border-white/60 dark:border-white/5 hover:border-zinc-400/40"
+                : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 bg-white dark:bg-zinc-900/60"
             )}
           >
             <div className={cn(
               "p-2.5 rounded-md shrink-0 transition-colors",
               isNeu
-                ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-emerald-600 dark:text-emerald-400"
-                : "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white"
+                ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-700 dark:text-zinc-300"
+                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 group-hover:bg-zinc-900 group-hover:text-white dark:group-hover:bg-zinc-100 dark:group-hover:text-zinc-900"
             )}>
               <Upload className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-medium text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 transition-colors">
                 {terms.load_from_local || "Berkas Lokal (.ged)"}
               </div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
@@ -188,20 +188,20 @@ export function LoadFileModal({
               className={cn(
                 "w-full text-left p-3.5 rounded-lg border transition-all flex items-start gap-3.5 cursor-pointer group",
                 isNeu
-                  ? "shadow-neu-raised-sm hover:shadow-neu-raised active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] border-white/60 dark:border-white/5 hover:border-blue-500/40"
-                  : "border-zinc-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 bg-white dark:bg-zinc-900/60"
+                  ? "shadow-neu-raised-sm hover:shadow-neu-raised active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] border-white/60 dark:border-white/5 hover:border-zinc-400/40"
+                  : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 bg-white dark:bg-zinc-900/60"
               )}
             >
               <div className={cn(
                 "p-2.5 rounded-md shrink-0 transition-colors",
                 isNeu
                   ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-700 dark:text-zinc-300"
-                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-500"
+                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 group-hover:bg-zinc-900 group-hover:text-white dark:group-hover:bg-zinc-100 dark:group-hover:text-zinc-900"
               )}>
                 <Sparkles className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 transition-colors">
                   {terms.load_example || "Contoh Silsilah Keluarga"}
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">

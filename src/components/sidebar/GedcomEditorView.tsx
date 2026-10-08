@@ -76,7 +76,7 @@ export function GedcomEditorView({
           </span>
           {validationResult.status === 'bad' && (
             <span
-              className="text-xs text-zinc-600 dark:text-zinc-400 truncate cursor-help"
+              className="text-xs text-zinc-600 dark:text-zinc-400 truncate cursor-default"
               title={validationResult.message}
             >
               {validationResult.message.replace(/^Validation check, bad:\s*/, '')}

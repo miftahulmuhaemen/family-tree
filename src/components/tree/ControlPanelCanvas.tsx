@@ -37,7 +37,7 @@ export function ControlPanelCanvas({
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          onClick={() => fitView({ padding: 0.35, duration: 400 })}
+          onClick={() => fitView({ padding: 0.35, maxZoom: 1, duration: 400 })}
           className={iconBtnClass}
           title="Sesuaikan Tampilan (Fit View)"
           aria-label="Fit View"

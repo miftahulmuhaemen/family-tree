@@ -79,7 +79,9 @@ function FamilyTreeInner({
         {
           id: 'new-member-placeholder',
           type: 'newMember',
-          position: { x: 0, y: 0 },
+          position: { x: -NODE_WIDTH / 2, y: -NODE_HEIGHT / 2 },
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
           data: {
             onAddPerson,
             language,
@@ -88,7 +90,9 @@ function FamilyTreeInner({
         }
       ]);
       setEdges([]);
-      setCenter(NODE_WIDTH / 2, NODE_HEIGHT / 2, { zoom: 1, duration: 400 });
+      setTimeout(() => {
+        setCenter(0, 0, { zoom: 1, duration: 300 });
+      }, 50);
       return;
     }
 
@@ -112,7 +116,7 @@ function FamilyTreeInner({
     if (focusNode) {
       const fX = focusNode.position.x + NODE_WIDTH / 2;
       const fY = focusNode.position.y + NODE_HEIGHT / 2;
-      setCenter(fX, fY, { zoom: 1.05, duration: 450 });
+      setCenter(fX, fY, { zoom: 1, duration: 450 });
     }
   }, [familyData, povId, language, setNodes, onAddRelative, onEditPerson, onDeletePerson, onOpenDetail, setCenter, changeStatusCallback, onAddPerson, isDarkMode]);
 
@@ -146,7 +150,13 @@ function FamilyTreeInner({
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
         fitView
-        fitViewOptions={{ padding: 0.35 }}
+        fitViewOptions={{ padding: 0.35, maxZoom: 1 }}
+        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+        onInit={(instance) => {
+          if (familyData?.people?.length === 0) {
+            instance.setCenter(0, 0, { zoom: 1 });
+          }
+        }}
         nodesConnectable={false}
         nodesDraggable={false}
         panOnScroll={true}

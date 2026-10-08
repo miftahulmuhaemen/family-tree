@@ -154,7 +154,7 @@ export function ControlPanel({
           <div className="flex items-center gap-1.5 select-none shrink-0">
             {fileStatus === 'failed' ? (
               <div
-                className="flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100 cursor-help"
+                className="flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100 cursor-default"
                 title={fileErrorMessage || statusLabel}
               >
                 <AlertCircle className="w-4 h-4 text-zinc-700 dark:text-zinc-300 shrink-0" />
@@ -176,7 +176,7 @@ export function ControlPanel({
               </div>
             ) : (
               <div
-                className="flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100 cursor-help"
+                className="flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100 cursor-default"
                 title={timestampStr ? `${statusLabel} (${timestampStr})` : statusLabel}
               >
                 <Check className="w-4 h-4 text-zinc-700 dark:text-zinc-300 shrink-0" />

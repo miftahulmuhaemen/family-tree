@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
-  FileText, FolderOpen, Loader2, Plus,
-  Sun, Moon, Share2, Save, AlertCircle, ChevronDown
+  FileText, FolderOpen, Loader2, Plus, Download,
+  Sun, Moon, Save, AlertCircle, ChevronDown
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -12,11 +12,13 @@ gsap.registerPlugin(useGSAP);
 
 export interface SidebarHeaderProps {
   fileName?: string;
+  onRenameFile?: (name: string) => void;
   currentId?: string | null;
   onOpenLoadModal?: () => void;
   onOpenPicker?: () => void;
   onNewTree?: () => void;
   onShare?: () => void;
+  onDownloadLocal?: () => void;
   isSharing?: boolean;
   isValid?: boolean;
   errorMessage?: string;
@@ -30,11 +32,13 @@ export interface SidebarHeaderProps {
 
 export function SidebarHeader({
   fileName,
+  onRenameFile,
   currentId,
   onOpenLoadModal,
   onOpenPicker,
   onNewTree,
   onShare,
+  onDownloadLocal,
   isSharing = false,
   isValid = true,
   errorMessage,
@@ -45,8 +49,43 @@ export function SidebarHeader({
 }: SidebarHeaderProps) {
   const isNeu = useIsNeumorphic();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editName, setEditName] = useState(fileName || 'untitled.ged');
   const menuRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setEditName(fileName || 'untitled.ged');
+  }, [fileName]);
+
+  useEffect(() => {
+    if (isEditingName && nameInputRef.current) {
+      nameInputRef.current.focus();
+      nameInputRef.current.select();
+    }
+  }, [isEditingName]);
+
+  const handleCommitName = () => {
+    let finalName = editName.trim();
+    if (!finalName) {
+      finalName = 'untitled.ged';
+    } else if (!finalName.toLowerCase().endsWith('.ged')) {
+      finalName = `${finalName}.ged`;
+    }
+    setEditName(finalName);
+    onRenameFile?.(finalName);
+    setIsEditingName(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleCommitName();
+    } else if (e.key === 'Escape') {
+      setEditName(fileName || 'untitled.ged');
+      setIsEditingName(false);
+    }
+  };
 
   // Close popover on outside click
   useEffect(() => {
@@ -104,12 +143,38 @@ export function SidebarHeader({
       {/* Left Anchor: filename [status] in a single dynamic unit */}
       <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
         <FileText className="w-4 h-4 shrink-0 text-zinc-600 dark:text-zinc-400" />
-        <span
-          className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 truncate"
-          title={fileName || 'family.ged'}
-        >
-          {fileName || 'family.ged'}
-        </span>
+        {isEditingName && !isReadOnly ? (
+          <input
+            ref={nameInputRef}
+            type="text"
+            value={editName}
+            maxLength={60}
+            onChange={(e) => setEditName(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={handleCommitName}
+            className={cn(
+              "text-sm font-semibold text-zinc-900 dark:text-zinc-100 bg-transparent border rounded-md px-1.5 py-0.5 outline-none min-w-0 max-w-[150px] sm:max-w-[190px]",
+              isNeu
+                ? "border-zinc-400/50 shadow-neu-pressed-sm bg-[#e6e9ef]/80 dark:bg-[#1c2027]/80"
+                : "border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:border-zinc-500 shadow-xs"
+            )}
+          />
+        ) : (
+          <span
+            onDoubleClick={() => {
+              if (!isReadOnly) {
+                setEditName(fileName || 'untitled.ged');
+                setIsEditingName(true);
+              }
+            }}
+            className={cn(
+              "font-semibold text-sm text-zinc-900 dark:text-zinc-100 truncate max-w-[150px] sm:max-w-[190px] cursor-pointer hover:underline decoration-zinc-400/50"
+            )}
+            title={fileName || 'untitled.ged'}
+          >
+            {fileName || 'untitled.ged'}
+          </span>
+        )}
         <span className={cn(
           "text-[10px] px-2 py-0.5 rounded-md font-bold shrink-0 tracking-wide border",
           isNeu
@@ -125,7 +190,7 @@ export function SidebarHeader({
         )}
       </div>
 
-      {/* Right Anchor: Clean White 'File' Button with Popover */}
+      {/* Right Anchor: File Menu */}
       <div className="relative shrink-0" ref={menuRef}>
         <button
           type="button"
@@ -148,25 +213,46 @@ export function SidebarHeader({
           <ChevronDown className={cn("w-3 h-3 text-zinc-400 transition-transform duration-200", isMenuOpen && "rotate-180")} />
         </button>
 
-        {/* Popover Menu */}
-        {isMenuOpen && (
-          <div
-            ref={popupRef}
-            className={cn(
-              "absolute right-0 top-full mt-2 w-56 rounded-lg p-1.5 z-50 transition-all",
-              isNeu
-                ? "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5"
-                : "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl"
-            )}
-          >
-            {/* 1. New + Button */}
-            {onNewTree && (
+          {/* Popover Menu */}
+          {isMenuOpen && (
+            <div
+              ref={popupRef}
+              className={cn(
+                "absolute right-0 top-full mt-2 w-56 rounded-lg p-1.5 z-50 transition-all",
+                isNeu
+                  ? "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5"
+                  : "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl"
+              )}
+            >
+              {/* 1. New + Button */}
+              {onNewTree && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onNewTree();
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold transition-colors text-left cursor-pointer",
+                    isNeu
+                      ? "hover:bg-[#d9dce2] dark:hover:bg-[#232832] text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
+                      : "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
+                  )}
+                >
+                  <Plus className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0 stroke-[2.5]" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold">{terms.new_file || "Baru +"}</div>
+                    <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-normal truncate">
+                      {terms.new_file_desc || "Mulai silsilah baru yang kosong"}
+                    </div>
+                  </div>
+                </button>
+              )}
+
+              {/* 2. Load Button */}
               <button
                 type="button"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  onNewTree();
-                }}
+                onClick={handleOpenLoad}
                 className={cn(
                   "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold transition-colors text-left cursor-pointer",
                   isNeu
@@ -174,72 +260,74 @@ export function SidebarHeader({
                     : "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
                 )}
               >
-                <Plus className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0 stroke-[2.5]" />
+                <FolderOpen className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold">{terms.new_file || "Baru +"}</div>
-                  <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-normal truncate">
-                    {terms.new_file_desc || "Mulai silsilah baru yang kosong"}
-                  </div>
+                  <div className="font-bold">{terms.load_file || "Muat Berkas..."}</div>
+                  <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-normal truncate">Google Drive / Lokal</div>
                 </div>
               </button>
-            )}
 
-            {/* 2. Load Button */}
-            <button
-              type="button"
-              onClick={handleOpenLoad}
-              className={cn(
-                "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold transition-colors text-left cursor-pointer",
-                isNeu
-                  ? "hover:bg-[#d9dce2] dark:hover:bg-[#232832] text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
-                  : "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
+              {/* 3. Save to Google Drive Button */}
+              {onShare && (
+                <button
+                  type="button"
+                  onClick={handleShareClick}
+                  disabled={!isValid || isSharing}
+                  className={cn(
+                    "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold transition-colors text-left cursor-pointer",
+                    !isValid || isSharing
+                      ? "opacity-50 cursor-not-allowed text-zinc-400 dark:text-zinc-600"
+                      : isNeu
+                        ? "hover:bg-[#d9dce2] dark:hover:bg-[#232832] text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
+                        : "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
+                  )}
+                >
+                  {isSharing ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-zinc-600 dark:text-zinc-400 shrink-0" />
+                  ) : (
+                    <Save className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold truncate">
+                      {isSharing
+                        ? terms.saving
+                        : currentId
+                          ? (terms.save_changes_drive || "Simpan Perubahan")
+                          : (terms.save_to_drive || "Simpan ke Google Drive")}
+                    </div>
+                    <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-normal truncate">
+                      {currentId ? "Perbarui di Google Drive" : "Simpan berkas ke Google Drive"}
+                    </div>
+                  </div>
+                </button>
               )}
-            >
-              <FolderOpen className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0" />
-              <div className="flex-1 min-w-0">
-                <div>{terms.load_file || "Muat Berkas..."}</div>
-                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-normal truncate">Google Drive / Lokal</div>
-              </div>
-            </button>
 
-            {/* 2. Save / Share Button */}
-            {onShare && (
-              <button
-                type="button"
-                onClick={handleShareClick}
-                disabled={!isValid || isSharing}
-                className={cn(
-                  "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold transition-colors text-left cursor-pointer",
-                  !isValid || isSharing
-                    ? "opacity-50 cursor-not-allowed text-zinc-400 dark:text-zinc-600"
-                    : isNeu
+              {/* 4. Download Local .ged Button */}
+              {onDownloadLocal && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onDownloadLocal();
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold transition-colors text-left cursor-pointer",
+                    isNeu
                       ? "hover:bg-[#d9dce2] dark:hover:bg-[#232832] text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
                       : "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-zinc-100"
-                )}
-              >
-                {isSharing ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-zinc-600 dark:text-zinc-400 shrink-0" />
-                ) : currentId ? (
-                  <Save className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                ) : (
-                  <Share2 className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="truncate">
-                    {isSharing
-                      ? terms.saving
-                      : currentId
-                        ? (terms.save_changes_drive || "Simpan Perubahan")
-                        : (terms.share_drive || "Bagikan Berkas")}
+                  )}
+                >
+                  <Download className="w-4 h-4 text-zinc-600 dark:text-zinc-400 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold truncate">{terms.download_file || "Unduh Berkas (.ged)"}</div>
+                    <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-normal truncate">
+                      {terms.download_file_desc || "Simpan berkas langsung ke perangkat"}
+                    </div>
                   </div>
-                  <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-normal truncate">
-                    {currentId ? "Perbarui di Google Drive" : "Simpan & buat tautan"}
-                  </div>
-                </div>
-              </button>
-            )}
+                </button>
+              )}
 
-            <div className={cn("my-1 border-t", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")} />
+              <div className={cn("my-1 border-t", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")} />
 
             {/* 3. Dark/Light Mode Toggle */}
             <button

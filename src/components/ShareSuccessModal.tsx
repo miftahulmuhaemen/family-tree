@@ -66,7 +66,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData, language = 'id' 
             : "border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50"
         )}>
           <h3 className="font-semibold text-base text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <Check className={cn("w-5 h-5", isNeu ? "text-indigo-600 dark:text-indigo-400" : "text-blue-600")} />
+            <Check className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
             {terms.config_shared}
           </h3>
           <button 
@@ -125,10 +125,7 @@ export function ShareSuccessModal({ isOpen, onClose, shareData, language = 'id' 
                     ? "shadow-neu-pressed rounded-lg border border-white/40 dark:border-white/5 bg-transparent"
                     : "bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
                 )}>
-                  <code className={cn(
-                    "text-xs font-mono font-bold tracking-wide select-all",
-                    isNeu ? "text-indigo-600 dark:text-indigo-400" : "text-blue-600 dark:text-blue-400"
-                  )}>
+                  <code className="text-xs font-mono font-bold tracking-wide select-all text-zinc-900 dark:text-zinc-100">
                     {shareData.token}
                   </code>
                 </div>
@@ -143,8 +140,8 @@ export function ShareSuccessModal({ isOpen, onClose, shareData, language = 'id' 
               className={cn(
                 "w-full flex items-center justify-center gap-2 py-2 px-4 font-semibold text-xs transition-all cursor-pointer rounded-lg",
                 isNeu
-                  ? "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] hover:shadow-neu-raised active:shadow-neu-pressed text-indigo-600 dark:text-indigo-400 border border-white/60 dark:border-white/5"
-                  : "text-white shadow-sm bg-blue-600 hover:bg-blue-700"
+                  ? "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] hover:shadow-neu-raised active:shadow-neu-pressed text-zinc-900 dark:text-zinc-100 border border-white/60 dark:border-white/5 font-bold"
+                  : "text-zinc-900 dark:text-zinc-100 bg-white hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 shadow-xs font-bold"
               )}
             >
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}

@@ -12,6 +12,7 @@ export interface UseGoogleDriveTreeProps {
 export interface UseGoogleDriveTreeReturn {
   fileId: string | null;
   fileName: string | null;
+  setFileName: (name: string | null) => void;
   lastSaved: Date | null;
   lastAction: 'loaded' | 'saved';
   isSaving: boolean;
@@ -320,6 +321,7 @@ export function useGoogleDriveTree({
   return {
     fileId,
     fileName,
+    setFileName,
     lastSaved,
     lastAction,
     isSaving,

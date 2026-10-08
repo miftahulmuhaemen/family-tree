@@ -19,7 +19,7 @@ export function PersonSelectCombobox({
 
   const inputCls = isNeu
     ? "shadow-neu-pressed rounded-xl border border-white/40 dark:border-white/5 bg-transparent text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
-    : "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500";
+    : "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600";
 
   return (
     <div className="space-y-2">
@@ -64,8 +64,12 @@ export function PersonSelectCombobox({
                 <span className={cn(
                   "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold",
                   selectedId === p.id
-                    ? "bg-white/20 text-white"
-                    : p.gender === 'male' ? "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300" : "bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300"
+                    ? isNeu
+                      ? "bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900"
+                      : "bg-white/20 text-white"
+                    : isNeu
+                      ? "shadow-neu-pressed-sm bg-[#dde1e9] dark:bg-[#16181d] text-zinc-700 dark:text-zinc-300"
+                      : "bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
                 )}>
                   {p.name.charAt(0).toUpperCase()}
                 </span>

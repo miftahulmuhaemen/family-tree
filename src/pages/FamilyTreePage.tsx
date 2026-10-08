@@ -44,6 +44,7 @@ export function FamilyTreePage() {
     <div className="flex w-screen h-[100dvh] bg-background overflow-hidden relative">
       <EditorSidebar
         fileName={drive.fileName || 'untitled.ged'}
+        onRenameFile={drive.setFileName}
         gedcom={gedcomContent} onGedcomChange={setGedcomContent} isValid={isValid} errorMessage={errorMsg || drive.errorMessage}
         onShare={drive.handleSaveToDrive} isSharing={drive.isSaving} isReadOnly={isPublicPreview}
         isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} currentId={drive.fileId}
@@ -63,7 +64,7 @@ export function FamilyTreePage() {
       <div className="flex-1 h-full flex flex-col relative overflow-hidden min-w-0">
         <TopHeaderBar language={language} />
 
-        <div className="flex-1 w-full h-[calc(100%-2rem)] relative overflow-hidden">
+        <div className="flex-1 w-full min-h-0 relative overflow-hidden">
           <ReactFlowProvider>
             <FamilyTree
               data={treeData} isLoading={drive.isLoading} language={language} accent={accent}

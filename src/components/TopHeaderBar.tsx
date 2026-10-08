@@ -9,7 +9,7 @@ export interface TopHeaderBarProps {
 export function TopHeaderBar({ language = 'id' }: TopHeaderBarProps) {
   const terms = TERMS[language];
   const isNeu = useIsNeumorphic();
-  const supportEmail = import.meta.env.VITE_SUPPORT_EMAIL || 'support@familytree.com';
+  const supportEmail = import.meta.env.VITE_SUPPORT_EMAIL || 'sanak.support@muhaemen.my.id';
 
   return (
     <header

@@ -111,7 +111,7 @@ export function AddRelativeModal({
   const tabCls = (active: boolean) => cn(
     "flex-1 py-2 text-sm font-semibold rounded-xl transition-all cursor-pointer",
     active
-      ? isNeu ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#181b20] text-indigo-600 dark:text-indigo-400" : "bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 shadow-xs"
+      ? isNeu ? "shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-900 dark:text-zinc-100 font-bold border-transparent" : "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold shadow-xs"
       : isNeu ? "shadow-neu-raised-sm active:shadow-neu-pressed bg-[#e6e9ef] dark:bg-[#1c2027] text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 border border-white/50 dark:border-white/5" : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
   );
 
@@ -211,8 +211,8 @@ export function AddRelativeModal({
               className={cn(
                 "px-4 py-2 text-sm font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50",
                 isNeu
-                  ? "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] hover:shadow-neu-raised active:shadow-neu-pressed text-indigo-600 dark:text-indigo-400 border border-white/60 dark:border-white/5 font-bold"
-                  : "text-white bg-blue-600 hover:bg-blue-700 shadow-xs"
+                  ? "shadow-neu-raised-sm bg-[#e6e9ef] dark:bg-[#1c2027] hover:shadow-neu-raised active:shadow-neu-pressed text-zinc-900 dark:text-zinc-100 border border-white/60 dark:border-white/5 font-bold"
+                  : "text-zinc-900 dark:text-zinc-100 bg-white hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 shadow-xs font-bold"
               )}
             >
               Simpan Hubungan

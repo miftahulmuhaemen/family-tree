@@ -36,7 +36,7 @@ export function RelativeTypeOptions({
 
   const selectCls = isNeu
     ? "w-full px-3 py-2 text-sm rounded-xl border border-white/40 dark:border-white/5 bg-transparent shadow-neu-pressed text-zinc-900 dark:text-zinc-100 focus:outline-none"
-    : "w-full px-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-blue-500";
+    : "w-full px-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600";
 
   const fosterBtnCls = (active: boolean) => cn(
     "py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer",
