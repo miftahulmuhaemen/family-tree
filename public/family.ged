@@ -5,381 +5,381 @@
 2 VERS 5.5.1
 2 FORM LINEAGE-LINKED
 1 CHAR UTF-8
-0 @helda_rusmadi@ INDI
-1 NAME Helda /Rusmadi/
+0 @charles_bennett@ INDI
+1 NAME Charles /Bennett/
 1 SEX M
 1 BIRT
-2 DATE 6 NOV 1964
-1 FAMS @FAM_helda_rusmadi_rusidah@
-0 @rusidah@ INDI
-1 NAME Rusidah
+2 DATE 18 APR 1961
+1 FAMS @FAM_charles_bennett_victoria_sterling@
+0 @victoria_sterling@ INDI
+1 NAME Victoria /Sterling/
 1 SEX F
 1 BIRT
-2 DATE 11 AUG 1975
-1 FAMS @FAM_helda_rusmadi_rusidah@
-1 FAMC @FAM_tandarani_saprah@
-0 @miftahul_muhaemen@ INDI
-1 NAME Miftahul /Muhaemen/
+2 DATE 23 SEP 1965
+1 FAMS @FAM_charles_bennett_victoria_sterling@
+1 FAMC @FAM_william_sterling_margaret_hayes@
+0 @julian_bennett@ INDI
+1 NAME Julian /Bennett/
 1 SEX M
 1 BIRT
-2 DATE 9 MAY 1997
-1 FAMC @FAM_helda_rusmadi_rusidah@
-0 @maulanie_muhaemina@ INDI
-1 NAME Maulanie /Muhaemina/
+2 DATE 14 JUN 1992
+1 FAMC @FAM_charles_bennett_victoria_sterling@
+0 @clara_bennett@ INDI
+1 NAME Clara /Bennett/
 1 SEX F
 1 BIRT
-2 DATE 15 MAR 2005
-1 FAMC @FAM_helda_rusmadi_rusidah@
-0 @muslimin_muhaemen@ INDI
-1 NAME Muslimin /Muhaemen/
+2 DATE 30 NOV 1998
+1 FAMC @FAM_charles_bennett_victoria_sterling@
+0 @oliver_bennett@ INDI
+1 NAME Oliver /Bennett/
 1 SEX M
 1 BIRT
-2 DATE 12 JUL 1994
+2 DATE 19 AUG 1989
 1 DEAT Y
-2 DATE 22 APR 2013
-2 PLAC Jalan Mahligai (Kuburan Keluarga)
-1 FAMC @FAM_helda_rusmadi_rusidah@
-0 @tandarani@ INDI
-1 NAME Tandarani
+2 DATE 5 DEC 2011
+2 PLAC Oakridge Memorial Park
+1 FAMC @FAM_charles_bennett_victoria_sterling@
+0 @william_sterling@ INDI
+1 NAME William /Sterling/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1946
+2 DATE 11 FEB 1938
 1 DEAT Y
-2 DATE 1 JAN 2019
-2 PLAC Kuburan Muslimin, Muara Jaya
-1 FAMS @FAM_tandarani_saprah@
-1 FAMS @FAM_tandarani_bini_pertama_tandarani@
-1 FAMS @FAM_S_tandarani@
-0 @saprah@ INDI
-1 NAME Saprah
+2 DATE 14 AUG 2016
+2 PLAC Highland Cemetery, Glenview
+1 FAMS @FAM_william_sterling_margaret_hayes@
+1 FAMS @FAM_william_sterling_elizabeth_thorne@
+1 FAMS @FAM_S_william_sterling@
+0 @margaret_hayes@ INDI
+1 NAME Margaret /Hayes/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1953
+2 DATE 19 MAY 1941
 1 DEAT Y
-2 DATE 1 JAN 2022
-2 PLAC Kuburan Muslimin, Muara Jaya
-1 FAMS @FAM_tandarani_saprah@
-1 FAMS @FAM_abah_ikis_saprah@
-1 FAMS @FAM_laki_kedua_saprah_saprah@
-0 @abah_ikis@ INDI
-1 NAME Abah /Ikis/
+2 DATE 22 MAR 2020
+2 PLAC Highland Cemetery, Glenview
+1 FAMS @FAM_william_sterling_margaret_hayes@
+1 FAMS @FAM_george_pendleton_margaret_hayes@
+1 FAMS @FAM_harold_finch_margaret_hayes@
+0 @george_pendleton@ INDI
+1 NAME George /Pendleton/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1950
+2 DATE 8 OCT 1936
 1 DEAT Y
-2 PLAC Pematang
-1 FAMS @FAM_abah_ikis_saprah@
-1 FAMS @FAM_S_abah_ikis@
-0 @laki_kedua_saprah@ INDI
-1 NAME Laki Kedua /Saprah/
+2 PLAC Sunnyvale Memorial
+1 FAMS @FAM_george_pendleton_margaret_hayes@
+1 FAMS @FAM_S_george_pendleton@
+0 @harold_finch@ INDI
+1 NAME Harold /Finch/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1950
+2 DATE 15 DEC 1939
 1 DEAT Y
-2 PLAC Binjai
-1 FAMS @FAM_laki_kedua_saprah_saprah@
-0 @kisransyah@ INDI
-1 NAME Kisransyah
+2 PLAC Westfield Gardens
+1 FAMS @FAM_harold_finch_margaret_hayes@
+0 @edward_pendleton@ INDI
+1 NAME Edward /Pendleton/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1960
-1 FAMS @FAM_kisransyah_bini_kisransyah@
-1 FAMC @FAM_S_abah_ikis@
-0 @bini_kisransyah@ INDI
-1 NAME Bini
+2 DATE 25 MAR 1958
+1 FAMS @FAM_edward_pendleton_susan_clarke@
+1 FAMC @FAM_S_george_pendleton@
+0 @susan_clarke@ INDI
+1 NAME Susan /Clarke/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1960
-1 FAMS @FAM_kisransyah_bini_kisransyah@
-0 @agus_kisransyah@ INDI
-1 NAME Agus
+2 DATE 14 JUL 1962
+1 FAMS @FAM_edward_pendleton_susan_clarke@
+0 @lucas_pendleton@ INDI
+1 NAME Lucas /Pendleton/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1985
-1 FAMC @FAM_kisransyah_bini_kisransyah@
-0 @siti_kisransyah@ INDI
-1 NAME Siti
+2 DATE 12 SEP 1984
+1 FAMC @FAM_edward_pendleton_susan_clarke@
+0 @charlotte_pendleton@ INDI
+1 NAME Charlotte /Pendleton/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1987
-1 FAMC @FAM_kisransyah_bini_kisransyah@
-0 @sari_kisransyah@ INDI
-1 NAME Sari
+2 DATE 3 NOV 1986
+1 FAMC @FAM_edward_pendleton_susan_clarke@
+0 @hannah_pendleton@ INDI
+1 NAME Hannah /Pendleton/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1992
-1 FAMC @FAM_kisransyah_bini_kisransyah@
-0 @yana_kisransyah@ INDI
-1 NAME Yana
+2 DATE 17 APR 1991
+1 FAMC @FAM_edward_pendleton_susan_clarke@
+0 @grace_pendleton@ INDI
+1 NAME Grace /Pendleton/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 2003
-1 FAMC @FAM_kisransyah_bini_kisransyah@
-0 @muhammad_aini@ INDI
-1 NAME Muhammad /Aini/
+2 DATE 29 AUG 2001
+1 FAMC @FAM_edward_pendleton_susan_clarke@
+0 @robert_sterling@ INDI
+1 NAME Robert /Sterling/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1967
+2 DATE 19 JAN 1963
 1 DEAT Y
-2 PLAC Muara Jaya
-1 FAMC @FAM_S_tandarani@
-0 @anak_kelima_dari_tandarani@ INDI
-1 NAME Anak /Kelima/
+2 PLAC Glenview Cemetery
+1 FAMC @FAM_S_william_sterling@
+0 @david_sterling@ INDI
+1 NAME David /Sterling/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1970
+2 DATE 25 JUN 1967
 1 DEAT Y
-2 PLAC Muara Jaya
-1 FAMC @FAM_S_tandarani@
-0 @ardiansyah@ INDI
-1 NAME Ardiansyah
+2 PLAC Glenview Cemetery
+1 FAMC @FAM_S_william_sterling@
+0 @henry_sterling@ INDI
+1 NAME Henry /Sterling/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1960
-1 FAMC @FAM_tandarani_bini_pertama_tandarani@
-0 @bini_pertama_tandarani@ INDI
-1 NAME Bini Pertama /Tandarani/
+2 DATE 12 OCT 1959
+1 FAMC @FAM_william_sterling_elizabeth_thorne@
+0 @elizabeth_thorne@ INDI
+1 NAME Elizabeth /Thorne/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1950
-1 FAMS @FAM_tandarani_bini_pertama_tandarani@
-0 @rusimah@ INDI
-1 NAME Rusimah
+2 DATE 1 MAR 1940
+1 FAMS @FAM_william_sterling_elizabeth_thorne@
+0 @catherine_sterling@ INDI
+1 NAME Catherine /Sterling/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1964
-1 FAMS @FAM_laki_pertama_rusimah_rusimah@
-1 FAMS @FAM_masri_rusimah@
-1 FAMC @FAM_S_tandarani@
-0 @laki_pertama_rusimah@ INDI
-1 NAME Laki /Pertama/
+2 DATE 16 AUG 1960
+1 FAMS @FAM_richard_cole_catherine_sterling@
+1 FAMS @FAM_benjamin_morris_catherine_sterling@
+1 FAMC @FAM_S_william_sterling@
+0 @richard_cole@ INDI
+1 NAME Richard /Cole/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1964
-1 FAMS @FAM_laki_pertama_rusimah_rusimah@
-0 @masri@ INDI
-1 NAME Masri
+2 DATE 20 FEB 1958
+1 FAMS @FAM_richard_cole_catherine_sterling@
+0 @benjamin_morris@ INDI
+1 NAME Benjamin /Morris/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1968
-1 FAMS @FAM_masri_rusimah@
-0 @muhammad_rifansyah@ INDI
-1 NAME Muhammad /Rifansyah/
+2 DATE 5 NOV 1962
+1 FAMS @FAM_benjamin_morris_catherine_sterling@
+0 @daniel_morris@ INDI
+1 NAME Daniel /Morris/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1983
-1 FAMS @FAM_muhammad_rifansyah_bini_pertama_rifansyah@
-1 FAMS @FAM_muhammad_rifansyah_bini_kedua_rifansyah@
-1 FAMS @FAM_S_muhammad_rifansyah@
-1 FAMC @FAM_masri_rusimah@
-0 @bini_pertama_rifansyah@ INDI
-1 NAME Alifah
+2 DATE 18 APR 1982
+1 FAMS @FAM_daniel_morris_alicia_vance@
+1 FAMS @FAM_daniel_morris_rebecca_stone@
+1 FAMS @FAM_S_daniel_morris@
+1 FAMC @FAM_benjamin_morris_catherine_sterling@
+0 @alicia_vance@ INDI
+1 NAME Alicia /Vance/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1983
-1 FAMS @FAM_muhammad_rifansyah_bini_pertama_rifansyah@
-0 @bini_kedua_rifansyah@ INDI
-1 NAME Nia
+2 DATE 9 SEP 1983
+1 FAMS @FAM_daniel_morris_alicia_vance@
+0 @rebecca_stone@ INDI
+1 NAME Rebecca /Stone/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1985
-1 FAMS @FAM_muhammad_rifansyah_bini_kedua_rifansyah@
-0 @nurul_hikmah@ INDI
-1 NAME Nurul /Hikmah/
+2 DATE 1 DEC 1986
+1 FAMS @FAM_daniel_morris_rebecca_stone@
+0 @sophia_morris@ INDI
+1 NAME Sophia /Morris/
 1 SEX F
 1 BIRT
-2 DATE 1 JUN 1997
-1 FAMS @FAM_dylan_nasir_nurul_hikmah@
-1 FAMC @FAM_masri_rusimah@
-0 @dylan_nasir@ INDI
-1 NAME Dylan /Nasir/
+2 DATE 15 MAY 1994
+1 FAMS @FAM_liam_brooks_sophia_morris@
+1 FAMC @FAM_benjamin_morris_catherine_sterling@
+0 @liam_brooks@ INDI
+1 NAME Liam /Brooks/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1990
-1 FAMS @FAM_dylan_nasir_nurul_hikmah@
-0 @muhammad_ilham@ INDI
-1 NAME Muhammad /Ilham/
+2 DATE 28 OCT 1991
+1 FAMS @FAM_liam_brooks_sophia_morris@
+0 @ethan_morris@ INDI
+1 NAME Ethan /Morris/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 2010
-1 FAMC @FAM_S_muhammad_rifansyah@
-0 @rifansyah_amelia@ INDI
-1 NAME Amelia
-1 SEX M
-1 BIRT
-2 DATE 1 JAN 2018
-1 FAMC @FAM_S_muhammad_rifansyah@
-0 @norma@ INDI
-1 NAME Norma /(Inur)/
+2 DATE 21 JUL 2008
+1 FAMC @FAM_S_daniel_morris@
+0 @emma_morris@ INDI
+1 NAME Emma /Morris/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1957
-1 FAMS @FAM_johansyah_norma@
-1 FAMC @FAM_S_abah_ikis@
-0 @johansyah@ INDI
-1 NAME Johansyah
+2 DATE 10 MAR 2016
+1 FAMC @FAM_S_daniel_morris@
+0 @evelyn_pendleton@ INDI
+1 NAME Evelyn /Pendleton/
+1 SEX F
+1 BIRT
+2 DATE 18 JUN 1955
+1 FAMS @FAM_james_harrison_evelyn_pendleton@
+1 FAMC @FAM_S_george_pendleton@
+0 @james_harrison@ INDI
+1 NAME James /Harrison/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1952
+2 DATE 24 JAN 1950
 1 DEAT Y
-1 FAMS @FAM_johansyah_norma@
-0 @muhammad_adrianor@ INDI
-1 NAME Muhammad /Adrianor/
+1 FAMS @FAM_james_harrison_evelyn_pendleton@
+0 @alexander_harrison@ INDI
+1 NAME Alexander /Harrison/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1980
-1 FAMS @FAM_muhammad_adrianor_bini_pertama_adrianor@
-1 FAMS @FAM_S_muhammad_adrianor@
-1 FAMC @FAM_johansyah_norma@
-0 @bini_pertama_adrianor@ INDI
-1 NAME Bini /Pertama/
+2 DATE 12 MAY 1978
+1 FAMS @FAM_alexander_harrison_laura_mitchell@
+1 FAMS @FAM_S_alexander_harrison@
+1 FAMC @FAM_james_harrison_evelyn_pendleton@
+0 @laura_mitchell@ INDI
+1 NAME Laura /Mitchell/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1980
-1 FAMS @FAM_muhammad_adrianor_bini_pertama_adrianor@
-0 @adrianor_zahra@ INDI
-1 NAME Zahra
+2 DATE 22 AUG 1980
+1 FAMS @FAM_alexander_harrison_laura_mitchell@
+0 @mia_harrison@ INDI
+1 NAME Mia /Harrison/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 2009
-1 FAMC @FAM_S_muhammad_adrianor@
-0 @adrianor_rasyid@ INDI
-1 NAME Rasyid
+2 DATE 14 FEB 2007
+1 FAMC @FAM_S_alexander_harrison@
+0 @noah_harrison@ INDI
+1 NAME Noah /Harrison/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 2017
-1 FAMC @FAM_muhammad_adrianor_bini_pertama_adrianor@
-0 @zulkarnaen@ INDI
-1 NAME Zulkarnaen
+2 DATE 5 SEP 2014
+1 FAMC @FAM_alexander_harrison_laura_mitchell@
+0 @marcus_harrison@ INDI
+1 NAME Marcus /Harrison/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1985
-1 FAMS @FAM_zulkarnaen_bini_pertama_zulkarnaen@
-1 FAMC @FAM_johansyah_norma@
-0 @bini_pertama_zulkarnaen@ INDI
-1 NAME Bini /Pertama/
+2 DATE 30 NOV 1981
+1 FAMS @FAM_marcus_harrison_sarah_jenkins@
+1 FAMC @FAM_james_harrison_evelyn_pendleton@
+0 @sarah_jenkins@ INDI
+1 NAME Sarah /Jenkins/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1985
-1 FAMS @FAM_zulkarnaen_bini_pertama_zulkarnaen@
-0 @zulkarnaen_adelia@ INDI
-1 NAME Adelia
+2 DATE 17 APR 1983
+1 FAMS @FAM_marcus_harrison_sarah_jenkins@
+0 @zoe_harrison@ INDI
+1 NAME Zoe /Harrison/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 2013
-1 FAMC @FAM_zulkarnaen_bini_pertama_zulkarnaen@
-0 @muhammad_saeful@ INDI
-1 NAME Muhammad /Saeful/
+2 DATE 9 OCT 2011
+1 FAMC @FAM_marcus_harrison_sarah_jenkins@
+0 @samuel_harrison@ INDI
+1 NAME Samuel /Harrison/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 1990
-1 FAMS @FAM_muhammad_saeful_bini_pertama_saeful@
-1 FAMC @FAM_johansyah_norma@
-0 @bini_pertama_saeful@ INDI
-1 NAME Bini /Pertama/
+2 DATE 3 DEC 1987
+1 FAMS @FAM_samuel_harrison_chloe_davis@
+1 FAMC @FAM_james_harrison_evelyn_pendleton@
+0 @chloe_davis@ INDI
+1 NAME Chloe /Davis/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 1990
-1 FAMS @FAM_muhammad_saeful_bini_pertama_saeful@
-0 @anak_pertama_saeful@ INDI
-1 NAME Anak /Pertama/
+2 DATE 27 MAR 1989
+1 FAMS @FAM_samuel_harrison_chloe_davis@
+0 @lily_harrison@ INDI
+1 NAME Lily /Harrison/
 1 SEX F
 1 BIRT
-2 DATE 1 JAN 2019
-1 FAMC @FAM_muhammad_saeful_bini_pertama_saeful@
-0 @FAM_johansyah_norma@ FAM
-1 HUSB @johansyah@
-1 WIFE @norma@
+2 DATE 15 JUN 2018
+1 FAMC @FAM_samuel_harrison_chloe_davis@
+0 @FAM_james_harrison_evelyn_pendleton@ FAM
+1 HUSB @james_harrison@
+1 WIFE @evelyn_pendleton@
 1 MARR
-1 CHIL @muhammad_adrianor@
-1 CHIL @zulkarnaen@
-1 CHIL @muhammad_saeful@
-0 @FAM_muhammad_saeful_bini_pertama_saeful@ FAM
-1 HUSB @muhammad_saeful@
-1 WIFE @bini_pertama_saeful@
+1 CHIL @alexander_harrison@
+1 CHIL @marcus_harrison@
+1 CHIL @samuel_harrison@
+0 @FAM_samuel_harrison_chloe_davis@ FAM
+1 HUSB @samuel_harrison@
+1 WIFE @chloe_davis@
 1 MARR
-1 CHIL @anak_pertama_saeful@
-0 @FAM_muhammad_adrianor_bini_pertama_adrianor@ FAM
-1 HUSB @muhammad_adrianor@
-1 WIFE @bini_pertama_adrianor@
+1 CHIL @lily_harrison@
+0 @FAM_alexander_harrison_laura_mitchell@ FAM
+1 HUSB @alexander_harrison@
+1 WIFE @laura_mitchell@
 1 MARR
-1 CHIL @adrianor_rasyid@
-0 @FAM_zulkarnaen_bini_pertama_zulkarnaen@ FAM
-1 HUSB @zulkarnaen@
-1 WIFE @bini_pertama_zulkarnaen@
+1 CHIL @noah_harrison@
+0 @FAM_marcus_harrison_sarah_jenkins@ FAM
+1 HUSB @marcus_harrison@
+1 WIFE @sarah_jenkins@
 1 MARR
-1 CHIL @zulkarnaen_adelia@
-0 @FAM_helda_rusmadi_rusidah@ FAM
-1 HUSB @helda_rusmadi@
-1 WIFE @rusidah@
+1 CHIL @zoe_harrison@
+0 @FAM_charles_bennett_victoria_sterling@ FAM
+1 HUSB @charles_bennett@
+1 WIFE @victoria_sterling@
 1 MARR
-1 CHIL @miftahul_muhaemen@
-1 CHIL @maulanie_muhaemina@
-1 CHIL @muslimin_muhaemen@
-0 @FAM_tandarani_saprah@ FAM
-1 HUSB @tandarani@
-1 WIFE @saprah@
+1 CHIL @julian_bennett@
+1 CHIL @clara_bennett@
+1 CHIL @oliver_bennett@
+0 @FAM_william_sterling_margaret_hayes@ FAM
+1 HUSB @william_sterling@
+1 WIFE @margaret_hayes@
 1 MARR
-1 CHIL @rusidah@
-0 @FAM_abah_ikis_saprah@ FAM
-1 HUSB @abah_ikis@
-1 WIFE @saprah@
+1 CHIL @victoria_sterling@
+0 @FAM_george_pendleton_margaret_hayes@ FAM
+1 HUSB @george_pendleton@
+1 WIFE @margaret_hayes@
 1 MARR
-0 @FAM_laki_kedua_saprah_saprah@ FAM
-1 HUSB @laki_kedua_saprah@
-1 WIFE @saprah@
+0 @FAM_harold_finch_margaret_hayes@ FAM
+1 HUSB @harold_finch@
+1 WIFE @margaret_hayes@
 1 MARR
-0 @FAM_tandarani_bini_pertama_tandarani@ FAM
-1 HUSB @tandarani@
-1 WIFE @bini_pertama_tandarani@
+0 @FAM_william_sterling_elizabeth_thorne@ FAM
+1 HUSB @william_sterling@
+1 WIFE @elizabeth_thorne@
 1 MARR
-1 CHIL @ardiansyah@
-0 @FAM_kisransyah_bini_kisransyah@ FAM
-1 HUSB @kisransyah@
-1 WIFE @bini_kisransyah@
+1 CHIL @henry_sterling@
+0 @FAM_edward_pendleton_susan_clarke@ FAM
+1 HUSB @edward_pendleton@
+1 WIFE @susan_clarke@
 1 MARR
-1 CHIL @yana_kisransyah@
-1 CHIL @sari_kisransyah@
-1 CHIL @agus_kisransyah@
-1 CHIL @siti_kisransyah@
-0 @FAM_laki_pertama_rusimah_rusimah@ FAM
-1 HUSB @laki_pertama_rusimah@
-1 WIFE @rusimah@
+1 CHIL @grace_pendleton@
+1 CHIL @hannah_pendleton@
+1 CHIL @lucas_pendleton@
+1 CHIL @charlotte_pendleton@
+0 @FAM_richard_cole_catherine_sterling@ FAM
+1 HUSB @richard_cole@
+1 WIFE @catherine_sterling@
 1 MARR
 1 DIV
-0 @FAM_masri_rusimah@ FAM
-1 HUSB @masri@
-1 WIFE @rusimah@
+0 @FAM_benjamin_morris_catherine_sterling@ FAM
+1 HUSB @benjamin_morris@
+1 WIFE @catherine_sterling@
 1 MARR
-1 CHIL @muhammad_rifansyah@
-1 CHIL @nurul_hikmah@
-0 @FAM_dylan_nasir_nurul_hikmah@ FAM
-1 HUSB @dylan_nasir@
-1 WIFE @nurul_hikmah@
+1 CHIL @daniel_morris@
+1 CHIL @sophia_morris@
+0 @FAM_liam_brooks_sophia_morris@ FAM
+1 HUSB @liam_brooks@
+1 WIFE @sophia_morris@
 1 MARR
-0 @FAM_muhammad_rifansyah_bini_pertama_rifansyah@ FAM
-1 HUSB @muhammad_rifansyah@
-1 WIFE @bini_pertama_rifansyah@
+0 @FAM_daniel_morris_alicia_vance@ FAM
+1 HUSB @daniel_morris@
+1 WIFE @alicia_vance@
 1 MARR
 1 DIV
-0 @FAM_muhammad_rifansyah_bini_kedua_rifansyah@ FAM
-1 HUSB @muhammad_rifansyah@
-1 WIFE @bini_kedua_rifansyah@
+0 @FAM_daniel_morris_rebecca_stone@ FAM
+1 HUSB @daniel_morris@
+1 WIFE @rebecca_stone@
 1 MARR
-0 @FAM_S_muhammad_adrianor@ FAM
-1 HUSB @muhammad_adrianor@
-1 CHIL @adrianor_zahra@
-0 @FAM_S_abah_ikis@ FAM
-1 HUSB @abah_ikis@
-1 CHIL @norma@
-1 CHIL @kisransyah@
-0 @FAM_S_tandarani@ FAM
-1 HUSB @tandarani@
-1 CHIL @rusimah@
-1 CHIL @muhammad_aini@
-1 CHIL @anak_kelima_dari_tandarani@
-0 @FAM_S_muhammad_rifansyah@ FAM
-1 HUSB @muhammad_rifansyah@
-1 CHIL @muhammad_ilham@
-1 CHIL @rifansyah_amelia@
+0 @FAM_S_alexander_harrison@ FAM
+1 HUSB @alexander_harrison@
+1 CHIL @mia_harrison@
+0 @FAM_S_george_pendleton@ FAM
+1 HUSB @george_pendleton@
+1 CHIL @evelyn_pendleton@
+1 CHIL @edward_pendleton@
+0 @FAM_S_william_sterling@ FAM
+1 HUSB @william_sterling@
+1 CHIL @catherine_sterling@
+1 CHIL @robert_sterling@
+1 CHIL @david_sterling@
+0 @FAM_S_daniel_morris@ FAM
+1 HUSB @daniel_morris@
+1 CHIL @ethan_morris@
+1 CHIL @emma_morris@
 0 TRLR
