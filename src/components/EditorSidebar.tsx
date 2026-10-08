@@ -1,13 +1,30 @@
-import { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Share2, AlertCircle, CheckCircle, Moon, Sun, Save, FolderDown, Loader2, Lock, Unlock, Key, Copy } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { cn } from '@/lib/utils';
-import Editor from '@monaco-editor/react';
-import { TERMS } from '@/utils/i18n';
-import type { Language } from '@/utils/i18n';
+import { TERMS, type Language } from '@/utils/i18n';
+import type { Person, Relationship } from '@/types/family';
+import { useIsNeumorphic } from '@/hooks/useTheme';
+import { useMemberFilters } from '@/hooks/useMemberFilters';
+import { useSidebarResize } from '@/hooks/useSidebarResize';
+import { SidebarHeader } from './sidebar/SidebarHeader';
+import { SidebarTabs, type SidebarTabType } from './sidebar/SidebarTabs';
+import { PersonDetailView } from './sidebar/PersonDetailView';
+import { MembersView } from './sidebar/MembersView';
+import { GedcomEditorView } from './sidebar/GedcomEditorView';
+import { NotificationsView } from './sidebar/NotificationsView';
+import { useNotifications } from '@/context/NotificationContext';
 
-interface EditorSidebarProps {
-  yaml: string;
-  onYamlChange: (value: string) => void;
+gsap.registerPlugin(useGSAP);
+
+export interface EditorSidebarProps {
+  fileName?: string;
+  onRenameFile?: (name: string) => void;
+  gedcom?: string;
+  onGedcomChange?: (value: string) => void;
+  yaml?: string;
+  onYamlChange?: (value: string) => void;
   isValid: boolean;
   errorMessage?: string;
   onShare: () => void;
@@ -15,341 +32,268 @@ interface EditorSidebarProps {
   isReadOnly?: boolean;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
-  currentId: string | null;
-  onLoad: (id: string, token?: string) => Promise<void>;
-  editToken: string | null;
-  onUnlock: (token: string) => void;
-  lastSaved: Date | null;
+  currentId?: string | null;
+  onLoad?: (id: string, token?: string) => Promise<void>;
+  onOpenPicker?: () => void;
+  onOpenLoadModal?: () => void;
+  onNewTree?: () => void;
+  editToken?: string | null;
+  onUnlock?: (token: string) => void;
+  lastSaved?: Date | null;
   language?: Language;
+  people?: Person[];
+  relationships?: Relationship[];
+  selectedPersonId?: string | null;
+  onSelectPerson?: (personId: string) => void;
+  onAddPerson?: () => void;
+  onEditPerson?: (person: Person) => void;
+  onAddChildToRelationship?: (parent1: Person, parent2: Person) => void;
+  onChangeRelationshipStatus?: (person1Id: string, person2Id: string, type: 'married' | 'divorced' | 'not_married') => void;
+  isCollapsed?: boolean;
+  setIsCollapsed?: (val: boolean) => void;
 }
 
-export function EditorSidebar({
-  yaml,
-  onYamlChange,
-  isValid,
-  errorMessage,
-  onShare,
-  isSharing,
-  isReadOnly,
-  isDarkMode,
-  toggleDarkMode,
-  currentId,
-  onLoad,
-  editToken,
-  onUnlock,
-  lastSaved,
-  language = 'id'
-}: EditorSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  // Initial width should not exceed screen width
-  const [width, setWidth] = useState(() => {
-    if (typeof window === 'undefined') return 400;
-    return Math.min(400, window.innerWidth);
-  });
-  const [isResizing, setIsResizing] = useState(false);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  
-  const terms = TERMS[language];
+export function EditorSidebar(props: EditorSidebarProps) {
+  const {
+    fileName, onRenameFile, gedcom, onGedcomChange, yaml, onYamlChange, isValid, errorMessage, onShare, isSharing,
+    isReadOnly, isDarkMode, toggleDarkMode, currentId, onOpenPicker, onOpenLoadModal, onNewTree,
+    lastSaved, language = 'id', people = [], relationships = [], selectedPersonId = null,
+    onSelectPerson, onAddPerson, onEditPerson, onAddChildToRelationship, onChangeRelationshipStatus,
+    isCollapsed: controlledIsCollapsed, setIsCollapsed: controlledSetIsCollapsed
+  } = props;
 
-  // Load Popover Logic
-  const [showLoadInput, setShowLoadInput] = useState(false);
-  const [loadIdInput, setLoadIdInput] = useState('');
-  const [isLoadingId, setIsLoadingId] = useState(false);
+  const isNeu = useIsNeumorphic();
+  const [internalIsCollapsed, setInternalIsCollapsed] = useState(true);
+  const isCollapsed = controlledIsCollapsed !== undefined ? controlledIsCollapsed : internalIsCollapsed;
+  const setIsCollapsed = controlledSetIsCollapsed || setInternalIsCollapsed;
 
-  // Unlock Popover Logic
-  const [showUnlockInput, setShowUnlockInput] = useState(false);
-  const [unlockTokenInput, setUnlockTokenInput] = useState('');
+  const activeGedcom = gedcom ?? yaml ?? '';
+  const handleGedcomChange = onGedcomChange ?? onYamlChange ?? (() => {});
+  const [activeTab, setActiveTab] = useState<SidebarTabType>('members');
+  const { unseenCount } = useNotifications();
 
+  const {
+    searchQuery, setSearchQuery, filterGender, setFilterGender,
+    filterStatus, setFilterStatus, filterYear, setFilterYear,
+    availableBirthYears, filteredPeople
+  } = useMemberFilters(people);
 
-  // Resize Logic
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isResizing) return;
-      const newWidth = e.clientX;
-      // Min: 300, Max: 800 but never more than screen width
-      const maxWidth = typeof window !== 'undefined' ? window.innerWidth : 800;
-      if (newWidth >= 300 && newWidth <= 800 && newWidth <= maxWidth) {
-        setWidth(newWidth);
-      }
-    };
+  const { width, isResizing, setIsResizing, sidebarRef } = useSidebarResize(440);
+  const isFirstRender = useRef(true);
 
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      document.body.style.cursor = 'default';
-      document.body.style.userSelect = 'auto'; // Re-enable text selection
-    };
-
+  useGSAP(() => {
+    const el = sidebarRef.current;
+    if (!el) return;
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      gsap.set(el, { width: isCollapsed ? 0 : width });
+      return;
+    }
     if (isResizing) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none'; // Prevent text selection while resizing
+      gsap.set(el, { width: isCollapsed ? 0 : width });
+      return;
     }
+    gsap.to(el, { width: isCollapsed ? 0 : width, duration: 0.3, ease: "power3.inOut" });
+  }, { dependencies: [isCollapsed] });
 
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isResizing]);
-
-  const handleLoadSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!loadIdInput.trim()) return;
-    
-    setIsLoadingId(true);
-    try {
-      await onLoad(loadIdInput.trim());
-      setShowLoadInput(false);
-      setLoadIdInput('');
-    } catch (err) {
-      alert("Failed to load ID. Please check if it exists.");
-    } finally {
-      setIsLoadingId(false);
+  useEffect(() => {
+    if (isResizing && sidebarRef.current && !isCollapsed) {
+      sidebarRef.current.style.width = `${width}px`;
     }
-  };
+  }, [width, isResizing, isCollapsed]);
 
-  const handleUnlockSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!unlockTokenInput.trim()) return;
-    onUnlock(unlockTokenInput.trim());
-    setShowUnlockInput(false);
-    setUnlockTokenInput('');
-  };
+  useEffect(() => {
+    if (selectedPersonId) setActiveTab('detail');
+  }, [selectedPersonId]);
 
-  const copyToken = async () => {
-    if (editToken) {
-      await navigator.clipboard.writeText(editToken);
-      alert("Edit Token copied to clipboard! Keep this safe.");
+  useEffect(() => {
+    if (isReadOnly && (activeTab === 'gedcom' || activeTab === 'yaml')) {
+      setActiveTab(selectedPersonId ? 'detail' : 'members');
     }
+  }, [isReadOnly, activeTab, selectedPersonId]);
+
+  const terms = TERMS[language];
+  const selectedPerson = useMemo(() => {
+    if (!selectedPersonId) return null;
+    return people.find(p => p.id === selectedPersonId) || null;
+  }, [selectedPersonId, people]);
+  const isLocked = Boolean(isReadOnly);
+
+
+  const handleDownloadLocalGedcom = () => {
+    if (!activeGedcom) return;
+    const blob = new Blob([activeGedcom], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const base = fileName ? fileName.replace(/\.ged$/i, '').trim() : 'family';
+    a.download = `${base || 'family'}.ged`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
-
-
-  // If read-only, don't render anything
-  if (isReadOnly) return null;
-
-  const isLocked = Boolean(currentId && !editToken);
 
   return (
     <>
-      {/* Toggle Button (Visible when collapsed) */}
-      <div 
+      {/* Full-Height Collapsed Bar */}
+      <button
+        type="button"
+        onClick={() => setIsCollapsed(false)}
         className={cn(
-          "fixed top-4 left-4 z-40 transition-all duration-300",
+          "fixed top-0 left-0 h-full z-40 flex items-center justify-center cursor-pointer group select-none",
+          "w-6 sm:w-7 hover:w-8 sm:hover:w-9 transition-all duration-200 ease-out",
           isCollapsed ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full pointer-events-none",
+          isNeu
+            ? "bg-[#e6e9ef] dark:bg-[#1c2027] border-r border-white/60 dark:border-white/5 shadow-neu-raised-sm hover:brightness-105"
+            : "bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border-r border-zinc-200 dark:border-zinc-800 shadow-sm hover:bg-zinc-100 dark:hover:bg-zinc-800",
           isDarkMode && "dark"
         )}
+        title={terms.open_editor || "Buka Menu"}
+        aria-label="Open Sidebar"
       >
-        <button
-          onClick={() => setIsCollapsed(false)}
-          className="bg-white/90 dark:bg-gray-800/90 backdrop-blur shadow-lg p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          title={terms.open_editor}
-        >
-          <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-        </button>
-      </div>
+        <ChevronRight className={cn(
+          "w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5",
+          isNeu
+            ? "text-zinc-400 dark:text-zinc-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
+            : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-800 dark:group-hover:text-zinc-200"
+        )} />
+      </button>
 
-      {/* Sidebar Panel */}
+      {/* Sidebar Panel Wrapper */}
       <div
         ref={sidebarRef}
-        style={{ width: isCollapsed ? 0 : width, maxWidth: '100vw' }}
         className={cn(
-          "fixed top-0 left-0 h-full bg-white dark:bg-[#1e1e1e] border-r border-gray-200 dark:border-gray-700 shadow-xl z-[70] transition-[transform] duration-300 flex flex-col overflow-hidden",
-          isCollapsed ? "-translate-x-full" : "translate-x-0",
+          "h-full flex flex-row overflow-hidden shrink-0",
+          "max-md:fixed max-md:top-0 max-md:left-0 max-md:z-[70] md:relative md:z-30",
+          isCollapsed ? "max-md:-translate-x-full pointer-events-none" : "max-md:translate-x-0 pointer-events-auto",
           isDarkMode && "dark"
         )}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-[#1e1e1e] relative z-20">
-          <div className="flex flex-col overflow-hidden mr-2">
-            <h2 className="font-semibold text-lg text-gray-800 dark:text-gray-100 whitespace-nowrap">{terms.configuration}</h2>
-            {currentId && (
-              <div className="flex items-center gap-2 text-xs font-mono mt-0.5 max-w-full">
-                 <div className="flex items-center gap-1 text-green-600 dark:text-green-400 min-w-0" title={currentId}>
-                    <span className="shrink-0">{terms.id}</span>
-                    <span className="truncate max-w-[120px]">{currentId}</span>
-                 </div>
-                 {editToken ? (
-                    <div className="flex items-center gap-1 text-amber-600 dark:text-amber-500 cursor-pointer" onClick={copyToken} title="Click to copy Edit Token">
-                       <Unlock className="w-3 h-3" />
-                       <span className="truncate max-w-[80px]">{terms.unlocked}</span>
-                       <Copy className="w-2.5 h-2.5 opacity-50"/>
-                    </div>
-                 ) : (
-                    <div className="flex items-center gap-1 text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors" onClick={() => setShowUnlockInput(!showUnlockInput)}>
-                       <Lock className="w-3 h-3" />
-                       <span>{terms.locked}</span>
-                    </div>
-                 )}
-              </div>
-            )}
-             
-             {/* Unlock Popover */}
-             {showUnlockInput && (
-                  <div className="absolute top-14 left-4 w-60 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-50">
-                     <div className="flex items-center gap-2 mb-2 text-xs text-gray-500 dark:text-gray-400">
-                        <Key className="w-3 h-3" />
-                        <span>{terms.enter_token}</span>
-                     </div>
-                     <form onSubmit={handleUnlockSubmit} className="flex gap-2">
-                        <input 
-                           type="password" 
-                           value={unlockTokenInput}
-                           onChange={(e) => setUnlockTokenInput(e.target.value)}
-                           placeholder="Token..."
-                           className="flex-1 px-2 py-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono"
-                           autoFocus
-                        />
-                        <button 
-                          type="submit"
-                          className="px-2 py-1 text-xs font-medium bg-amber-600 text-white rounded hover:bg-amber-700"
-                        >
-                          {terms.unlock}
-                        </button>
-                     </form>
-                  </div>
-              )}
-          </div>
-
-          <div className="flex items-center gap-1">
-             {/* Load Button */}
-             <div className="relative">
-                <button
-                  onClick={() => setShowLoadInput(!showLoadInput)}
-                  className={cn(
-                    "p-1.5 rounded-md transition-colors",
-                    showLoadInput ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
-                  )}
-                  title={terms.load_config}
-                >
-                  <FolderDown className="w-5 h-5" />
-                </button>
-
-                {/* Load Popover */}
-                {showLoadInput && (
-                  <div className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-50">
-                     <form onSubmit={handleLoadSubmit} className="flex gap-2">
-                        <input 
-                           type="text" 
-                           value={loadIdInput}
-                           onChange={(e) => setLoadIdInput(e.target.value)}
-                           placeholder="Enter ID..."
-                           className="flex-1 px-2 py-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                           autoFocus
-                        />
-                        <button 
-                          type="submit"
-                          disabled={isLoadingId}
-                          className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                        >
-                          {isLoadingId ? <Loader2 className="w-3 h-3 animate-spin"/> : terms.sync}
-                        </button>
-                     </form>
-                  </div>
-                )}
-             </div>
-
-             <button
-              onClick={toggleDarkMode}
-              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
-              title={terms.toggle_dark_mode}
-            >
-              {isDarkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-500" />}
-            </button>
-            <button
-              onClick={() => setIsCollapsed(true)}
-              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
-              title={terms.minimize}
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            </button>
-          </div>
-        </div>
-
-        {/* Editor Area (Monaco) */}
-        <div className="flex-1 relative overflow-hidden">
-          <Editor
-            height="100%"
-            language="yaml"
-            theme={isDarkMode ? "vs-dark" : "light"}
-            value={yaml}
-            onChange={(value) => onYamlChange(value || '')}
-            options={{
-              minimap: { enabled: true },
-              fontSize: 14,
-              wordWrap: 'on',
-              lineNumbers: 'on',
-              scrollBeyondLastLine: false,
-              automaticLayout: true,
-              readOnly: isLocked // Disable typing if locked
-            }}
+        {/* Main Sidebar Content Container (completely isolated from the rail) */}
+        <div
+          className={cn(
+            "flex-1 h-full flex flex-col overflow-hidden min-w-0",
+            isNeu
+              ? "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border-r border-white/60 dark:border-white/5"
+              : "bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 shadow-xl"
+          )}
+        >
+          <SidebarHeader
+            fileName={fileName}
+            onRenameFile={onRenameFile}
+            currentId={currentId}
+            onOpenPicker={onOpenPicker}
+            onOpenLoadModal={onOpenLoadModal}
+            onNewTree={onNewTree}
+            onShare={onShare}
+            onDownloadLocal={handleDownloadLocalGedcom}
+            isSharing={isSharing}
+            isValid={isValid}
+            errorMessage={errorMessage}
+            lastSaved={lastSaved}
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+            onCollapse={() => setIsCollapsed(true)}
+            terms={terms}
+            isReadOnly={isReadOnly}
           />
-        </div>
 
-        {/* Status Bar */}
-        <div className="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-[#1e1e1e] space-y-4">
-          
-          {/* Validation Status & Last Saved */}
-          <div className="flex items-center justify-between gap-2 min-h-[20px]">
-            <div className="flex items-center gap-2 text-sm flex-1">
-              {isValid ? (
-                <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                  <CheckCircle className="w-4 h-4 shrink-0" />
-                  <span className="whitespace-nowrap font-medium">{terms.valid_config}</span>
-                </div>
-              ) : (
-                <div className="flex items-start gap-2 text-red-600 dark:text-red-400 animate-in slide-in-from-bottom-2 fade-in">
-                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span className="text-xs break-all leading-tight">{errorMessage || terms.invalid_config}</span>
-                </div>
-              )}
-            </div>
-            
-            {/* Last Saved Info */}
-            {lastSaved && (
-              <div className="text-xs text-gray-400 dark:text-gray-500 text-right shrink-0">
-                {terms.last_saved} {lastSaved.toLocaleDateString()}
-              </div>
-            )}
-          </div>
+          <SidebarTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            hasSelectedPerson={Boolean(selectedPerson)}
+            peopleCount={people.length}
+            terms={terms}
+            isReadOnly={isReadOnly}
+            unseenCount={unseenCount}
+          />
 
-          {/* Share/Save Button */}
-          <button
-            onClick={onShare}
-            disabled={!isValid || isSharing || isLocked}
-            className={cn(
-              "w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium transition-all whitespace-nowrap",
-              (isValid && !isSharing && !isLocked)
-                ? "bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg"
-                : "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
-            )}
-            title={isLocked ? terms.enter_token : ""}
-          >
-             {isSharing ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : isLocked ? (
-              <Lock className="w-4 h-4" />
-            ) : currentId ? (
-              <Save className="w-4 h-4" />
+          {/* Body Area */}
+          <div className="flex-1 relative overflow-hidden flex flex-col">
+            {activeTab === 'detail' && selectedPerson ? (
+              <PersonDetailView
+                person={selectedPerson}
+                people={people}
+                relationships={relationships}
+                onSelectPerson={onSelectPerson}
+                onEditPerson={onEditPerson}
+                onAddChildToRelationship={onAddChildToRelationship}
+                onChangeRelationshipStatus={onChangeRelationshipStatus}
+                language={language}
+                terms={terms}
+              />
+            ) : activeTab === 'members' ? (
+              <MembersView
+                people={people}
+                filteredPeople={filteredPeople}
+                selectedPersonId={selectedPersonId}
+                onSelectPerson={onSelectPerson}
+                onAddPerson={onAddPerson}
+                onSwitchToDetail={() => setActiveTab('detail')}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                filterGender={filterGender}
+                setFilterGender={setFilterGender}
+                filterStatus={filterStatus}
+                setFilterStatus={setFilterStatus}
+                filterYear={filterYear}
+                setFilterYear={setFilterYear}
+                availableYears={availableBirthYears}
+                terms={terms}
+              />
+            ) : activeTab === 'notifications' ? (
+              <NotificationsView terms={terms} />
             ) : (
-              <Share2 className="w-4 h-4" />
+              <GedcomEditorView
+                gedcom={activeGedcom}
+                onGedcomChange={handleGedcomChange}
+                isDarkMode={isDarkMode}
+                isLocked={isLocked}
+                terms={terms}
+              />
             )}
-            
-            {isSharing ? (currentId ? terms.saving : terms.generating_link) 
-              : isLocked ? terms.locked_readonly
-              : currentId ? terms.save_config : terms.share_config}
-          </button>
+          </div>
         </div>
 
-        {/* Drag Handle */}
-        {!isCollapsed && (
+        {/* Divider line between sidebar and shrinking button */}
+        <div
+          className={cn(
+            "w-1.5 -mx-[3px] relative z-20 h-full shrink-0 cursor-col-resize select-none transition-colors",
+            "hover:bg-zinc-400/40 dark:hover:bg-zinc-600/40 active:bg-zinc-500/60"
+          )}
+          onMouseDown={(e) => {
+            if (e.button !== 0) return;
+            e.preventDefault();
+            setIsResizing(true);
+          }}
+          aria-label="Resize sidebar"
+        />
+
+        {/* Shrinking Button */}
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(true)}
+          className={cn(
+            "w-6 sm:w-7 hover:w-8 h-full shrink-0 flex items-center justify-center select-none group transition-all duration-200 cursor-pointer",
+            isNeu
+              ? "bg-[#e6e9ef] dark:bg-[#1c2027] border-r border-white/60 dark:border-white/5 shadow-neu-raised-sm hover:brightness-105"
+              : "bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border-r border-zinc-200 dark:border-zinc-800 shadow-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          )}
+          aria-label="Collapse sidebar"
+        >
+          {/* Centered Chevron Icon */}
           <div
-            className="absolute right-0 top-0 w-1.5 h-full cursor-col-resize hover:bg-blue-500/50 transition-colors z-50 group"
-            onMouseDown={() => setIsResizing(true)}
+            className={cn(
+              "p-1 rounded-md flex items-center justify-center transition-all",
+              isNeu
+                ? "text-zinc-400 dark:text-zinc-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
+                : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-800 dark:group-hover:text-zinc-100"
+            )}
           >
-             {/* Visual indicator on hover */}
-             <div className="absolute right-0 top-0 w-1 h-full bg-transparent group-hover:bg-blue-400/30 transition-colors" />
+            <ChevronLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
           </div>
-        )}
+        </button>
       </div>
     </>
   );

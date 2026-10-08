@@ -25,7 +25,9 @@ export type RelationshipType =
   | 'Cousin-in-Law'
   | 'Grandchild-in-Law' | 'Great-Grandchild-in-Law'
   | 'Great-Grandfather' | 'Great-Grandmother'
-  | 'Relative' | '';
+  | 'Relative'
+  | 'Step-Father' | 'Step-Mother' 
+  | 'Step-Child' | 'Step-Son' | 'Step-Daughter' | '';
 
 // --- Graph Helpers ---
 
@@ -248,6 +250,10 @@ export function calculateRelationship(
 
       const term = mapBloodToTerm(bloodCoords.up, bloodCoords.down, targetGender);
       if (term && term !== 'Relative') return term;
+      // if 'Relative', we continue to see if there is a more specific Affinal term? 
+      // Actually usually Blood is stronger. But maybe Step-Parent/Child could overlap if we define adoption as Blood?
+      // For now, let's stick to returning 'Relative' or continue?
+      // If I return Relative, I stop looking. 
       return 'Relative';
   }
 
@@ -314,10 +320,16 @@ export function calculateRelationship(
           // Target is Cousin of Spouse (2,2) -> Sepupu Ipar
           if (coords.up === 2 && coords.down === 2) return 'Cousin-in-Law';
           
-          // Target is Child of Spouse (0,1) -> Anak Tiri? 
-          // If we have children together, they are 0,1 to me too. 
-          // If step-child (0,1 to spouse, but unknown to me), usually "Anak".
-          if (coords.up === 0 && coords.down === 1) return targetGender === 'female' ? 'Daughter' : 'Son';
+          // Target is Child of Spouse (0,1) -> Anak Tiri if not my blood child
+          if (coords.up === 0 && coords.down === 1) {
+             // Check if this child is ALSO my blood child. 
+             // We already did "Blood Check" earlier. If we are here, it means Blood Check failed (or we want to override?)
+             // The main function flow is: 1. Spouse, 2. Blood, 3. Affinal.
+             // If Blood returned something, we returned early.
+             // SO if we are here, it means I am NOT blood-related to this child.
+             // Thus, it MUST be a Step-Child.
+             return targetGender === 'female' ? 'Step-Daughter' : 'Step-Son';
+          }
       }
   }
 

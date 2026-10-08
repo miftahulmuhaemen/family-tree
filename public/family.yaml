@@ -1,460 +1,383 @@
 people:
-  # Generasi 1
-  - id: "raden_soedirman"
-    name: "Raden Soedirman"
+  - id: "helda_rusmadi"
+    name: "Helda Rusmadi"
     gender: "male"
-    birthDate: "1930-05-12"
+    birthDate: "1964-11-06"
+  - id: "rusidah"
+    name: "Rusidah"
+    gender: "female"
+    birthDate: "1975-08-11"
+  - id: "miftahul_muhaemen"
+    name: "Miftahul Muhaemen"
+    gender: "male"
+    birthDate: "1997-05-09"
+  - id: "maulanie_muhaemina"
+    name: "Maulanie Muhaemina"
+    gender: "female"
+    birthDate: "2005-03-15"
+  - id: "muslimin_muhaemen"
+    name: "Muslimin Muhaemen"
+    gender: "male"
+    birthDate: "1994-07-12"
     deceased:
       status: true
-      date: "2010-10-10"
-      place: "Makam Pahlawan Kusuma Negara"
-    address:
-      - address: "Yogyakarta, Indonesia"
-        gmap_link: "https://maps.google.com/?q=Yogyakarta"
-    phone_number:
-      - number: "0811223344"
-        is_whatsapp_number: false
-    short_bio: "Pensiunan Guru, mencintai wayang kulit."
-    additionals:
-      hobi: "Mendengarkan Gending Jawa setiap sore sambil minum teh tubruk kental manis."
-      lorem_ipsum: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
-  - id: "siti_hartini"
-    name: "Siti Hartini"
-    gender: "female"
-    birthDate: "1935-08-17"
-    deceased: true
-    address: []
-    phone_number: []
-    short_bio: "Ibu rumah tangga yang gemar memasak gudeg."
-  
-  # Kakek Mertua Rina
-  - id: "mbah_sastro"
-    name: "Mbah Sastro"
+      date: "2013-04-22"
+      place: "Jalan Mahligai (Kuburan Keluarga)"
+  - id: "tandarani"
+    name: "Tandarani"
     gender: "male"
-    birthDate: "1928-02-02"
-    deceased: true
-    address: []
-    phone_number: []
-    short_bio: "Petani tembakau."
-  - id: "mbah_putri"
-    name: "Mbah Suminah"
+    birthDate: "1946-01-01"
+    deceased:
+      status: true
+      date: "2019-01-01"
+      place: "Kuburan Muslimin, Muara Jaya"
+  - id: "saprah"
+    name: "Saprah"
     gender: "female"
-    birthDate: "1932-04-21"
-    deceased: true
-    address: []
-    phone_number: []
-    short_bio: "Penjual Jamu Gendong."
+    birthDate: "1953-01-01"
+    deceased:
+      status: true
+      date: "2022-01-01"
+      place: "Kuburan Muslimin, Muara Jaya"
+  - id: "abah_ikis"
+    name: "Abah Ikis"
+    gender: "male"
+    birthDate: "1950-01-01"
+    deceased:
+      status: true
+      place: "Pematang"
+  - id: "laki_kedua_saprah"
+    name: "Laki Kedua Saprah"
+    gender: "male"
+    birthDate: "1950-01-01"
+    deceased:
+      status: true
+      place: "Binjai"
+  - id: "kisransyah"
+    name: "Kisransyah"
+    gender: "male"
+    birthDate: "1960-01-01"
+  - id: "bini_kisransyah"
+    name: "Bini"
+    gender: "female"
+    birthDate: "1960-01-01"
+  - id: "agus_kisransyah"
+    name: "Agus"
+    gender: "male"
+    birthDate: "1985-01-01"
+  - id: "siti_kisransyah"
+    name: "Siti"
+    gender: "female"
+    birthDate: "1987-01-01"
+  - id: "sari_kisransyah"
+    name: "Sari"
+    gender: "female"
+    birthDate: "1992-01-01"
+  - id: "yana_kisransyah"
+    name: "Yana"
+    gender: "female"
+    birthDate: "2003-01-01"
+  - id: "muhammad_aini"
+    name: "Muhammad Aini"
+    gender: "male"
+    birthDate: "1967-01-01"
+    deceased:
+      status: true
+      place: "Muara Jaya"
+  - id: "anak_kelima_dari_tandarani"
+    name: "Anak Kelima"
+    gender: "male"
+    birthDate: "1970-01-01"
+    deceased:
+      status: true
+      place: "Muara Jaya"
+  - id: "ardiansyah"
+    name: "Ardiansyah"
+    gender: "male"
+    birthDate: "1960-01-01"
+  - id: "bini_pertama_tandarani"
+    name: "Bini Pertama Tandarani"
+    gender: "female"
+    birthDate: "1950-01-01"
 
-  # Generasi 2
-  - id: "budi_santoso"
-    name: "Budi Santoso"
-    gender: "male"
-    birthDate: "1960-03-10"
-    deceased: false
-    address:
-      - address: "Jakarta Selatan, Indonesia"
-        gmap_link: "https://maps.google.com/?q=Jakarta+Selatan"
-    phone_number:
-      - number: "0812345678"
-        is_whatsapp_number: true
-      - number: "0217654321"
-        is_whatsapp_number: false
-    short_bio: "Wiraswasta, hobi memancing."
-    additionals:
-        pekerjaan: "Wiraswasta"
-  - id: "sri_wahyuni"
-    name: "Sri Wahyuni"
+  # Keluarga Rusimah
+  - id: "rusimah"
+    name: "Rusimah"
     gender: "female"
-    birthDate: "1965-06-25"
-    deceased: false
-    address:
-      - address: "Jakarta Selatan, Indonesia"
-        gmap_link: "https://maps.google.com/?q=Jakarta+Selatan"
-    phone_number:
-      - number: "0812987654"
-        is_whatsapp_number: true
-    short_bio: "Mantan perawat, aktif di kegiatan sosial."
-  - id: "agus_pratama"
-    name: "Agus Pratama"
+    birthDate: "1964-01-01"
+  - id: "laki_pertama_rusimah"
+    name: "Laki Pertama"
     gender: "male"
-    birthDate: "1962-11-20"
-    deceased: false
-    address:
-      - address: "Surabaya, Indonesia"
-        gmap_link: "https://maps.google.com/?q=Surabaya"
-    phone_number:
-      - number: "081355556666"
-        is_whatsapp_number: true
-    short_bio: "Dosen Teknik Sipil."
-  
-  # Mertua Rina
-  - id: "pak_herman"
-    name: "Pak Herman"
+    birthDate: "1964-01-01"
+  - id: "masri"
+    name: "Masri"
     gender: "male"
-    birthDate: "1961-05-05"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Pensiunan Pegawai Bank."
-  - id: "bu_herman"
-    name: "Bu Herman"
-    gender: "female"
-    birthDate: "1963-06-15"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Ibu Rumah Tangga."
-  - id: "bu_agus"
-    name: "Bu Agus"
-    gender: "female"
-    birthDate: "1964-12-12"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Guru TK."
-  - id: "anto_sudirman"
-    name: "Anto Sudirman"
+    birthDate: "1968-01-01"
+  - id: "muhammad_rifansyah"
+    name: "Muhammad Rifansyah"
     gender: "male"
-    birthDate: "1970-02-02"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Musisi."
-  - id: "nurlina_sari"
-    name: "Nurlina Sari"
+    birthDate: "1983-01-01"
+  - id: "bini_pertama_rifansyah"
+    name: "Alifah"
     gender: "female"
-    birthDate: "1972-03-15"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Penyanyi."
+    birthDate: "1983-01-01"
+  - id: "bini_kedua_rifansyah"
+    name: "Nia"
+    gender: "female"
+    birthDate: "1985-01-01"
+  - id: "nurul_hikmah"
+    name: "Nurul Hikmah"
+    gender: "female"
+    birthDate: "1997-06-01"
+  - id: "dylan_nasir"
+    name: "Dylan Nasir"
+    gender: "male"
+    birthDate: "1990-01-01"
+  - id: "muhammad_ilham"
+    name: "Muhammad Ilham"
+    gender: "male"
+    birthDate: "2010-01-01"
+  - id: "rifansyah_amelia"
+    name: "Amelia"
+    gender: "male"
+    birthDate: "2018-01-01"
 
-  # Generasi 3
-  - id: "eko_prasetyo"
-    name: "Eko Prasetyo"
-    gender: "male"
-    birthDate: "1990-01-15"
-    deceased: false
-    address:
-      - address: "Bandung, Indonesia"
-        gmap_link: "https://maps.google.com/?q=Bandung"
-    phone_number:
-      - number: "08567890123"
-        is_whatsapp_number: true
-    short_bio: "Software Engineer di startup unicorn."
-  - id: "dewi_lestari"
-    name: "Dewi Lestari"
-    gender: "female"
-    birthDate: "1992-04-20"
-    deceased: false
-    address:
-      - address: "Bandung, Indonesia"
-        gmap_link: "https://maps.google.com/?q=Bandung"
-    phone_number:
-      - number: "081700009999"
-        is_whatsapp_number: true
-    short_bio: "Desainer Grafis Freelance."
-  - id: "doni_pratama"
-    name: "Doni Pratama"
-    gender: "male"
-    birthDate: "1994-11-20"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Mahasiswa Arsitektur."
-  - id: "rina_indah"
-    name: "Rina Indah"
-    gender: "female"
-    birthDate: "1995-09-09"
-    deceased: false
-    address:
-      - address: "Denpasar, Bali"
-        gmap_link: "https://maps.google.com/?q=Denpasar"
-    phone_number:
-      - number: "081988887777"
-        is_whatsapp_number: true
-    short_bio: "Instruktur Yoga."
-  
-  # Suami & Ipar Rina
-  - id: "dika_mahendra"
-    name: "Dika Mahendra"
-    gender: "male"
-    birthDate: "1993-03-03"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Chef."
-  - id: "sari_mahendra"
-    name: "Sari Mahendra"
-    gender: "female"
-    birthDate: "1998-08-08"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Mahasiswa."
-  - id: "fitria_anto"
-    name: "Fitria"
-    gender: "female"
-    birthDate: "1999-01-01"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Model."
-  - id: "sondang_anto"
-    name: "Sondang"
-    gender: "female"
-    birthDate: "2000-05-05"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Penulis Lagu."
-  - id: "tita_karo"
-    name: "Tita Karo"
-    gender: "male"
-    birthDate: "1998-12-12"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Produser Musik."
 
-  # Generasi 4 (Anak-anak Eko & Dewi)
-  - id: "rizky_ramadhan"
-    name: "Rizky Ramadhan"
-    gender: "male"
-    birthDate: "2018-05-20"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Suka bermain bola."
-  - id: "alya_zahra"
-    name: "Alya Zahra"
-    gender: "female"
-    birthDate: "2020-02-14"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Suka bernyanyi."
   
-  # Anak Rina & Dika
-  - id: "rini_kecil"
-    name: "Rini Kecil"
+  # Keluarga Norma
+  - id: "norma"
+    name: "Norma (Inur)"
     gender: "female"
-    birthDate: "2023-01-01"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Bayi lucu."
-  - id: "bonar_sondang"
-    name: "Bonar"
+    birthDate: "1957-01-01"
+  - id: "johansyah"
+    name: "Johansyah"
     gender: "male"
-    birthDate: "2024-01-01"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Bayi."
-
-  # New Wives for Anto
-  - id: "wendy_wife"
-    name: "Wendy"
+    birthDate: "1952-01-01"
+    deceased:
+      status: true
+  - id: "muhammad_adrianor"
+    name: "Muhammad Adrianor"
+    gender: "male"
+    birthDate: "1980-01-01"
+  - id: "bini_pertama_adrianor"
+    name: "Bini Pertama"
     gender: "female"
     birthDate: "1980-01-01"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Istri kedua Anto."
-  - id: "mulan_wife"
-    name: "Mulan"
+  - id: "adrianor_zahra"
+    name: "Zahra"
     gender: "female"
-    birthDate: "1985-02-02"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Istri ketiga Anto."
-  
-  # New Child (Wendy & Anto)
-  - id: "bruno_son"
-    name: "Bruno"
+    birthDate: "2009-01-01"
+  - id: "adrianor_rasyid"
+    name: "Rasyid"
     gender: "male"
-    birthDate: "2010-05-05"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Anak Anto dan Wendy."
-  
-  # Foster Children
-  - id: "gilang_foster"
-    name: "Gilang"
+    birthDate: "2017-01-01"
+  - id: "zulkarnaen"
+    name: "Zulkarnaen"
     gender: "male"
-    birthDate: "2015-06-01"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Anak asuh Dika dan Rina."
-  - id: "sri_ningsih_foster"
-    name: "Sri Ningsih"
+    birthDate: "1985-01-01"
+  - id: "bini_pertama_zulkarnaen"
+    name: "Bini Pertama"
     gender: "female"
-    birthDate: "2016-07-07"
-    deceased: false
-    address: []
-    phone_number: []
-    short_bio: "Anak asuh Sari."
+    birthDate: "1985-01-01"
+  - id: "zulkarnaen_adelia"
+    name: "Adelia"
+    gender: "female"
+    birthDate: "2013-01-01"
+  - id: "muhammad_saeful"
+    name: "Muhammad Saeful"
+    gender: "male"
+    birthDate: "1990-01-01"
+  - id: "bini_pertama_saeful"
+    name: "Bini Pertama"
+    gender: "female"
+    birthDate: "1990-01-01"
+  - id: "anak_pertama_saeful"
+    name: "Anak Pertama"
+    gender: "female"
+    birthDate: "2019-01-01"
 
 relationships:
-  # Gen 2 -> Gen 1 (Child -> Parent)
-  - type: "parent"
-    from: "budi_santoso"
-    to: "raden_soedirman"
-  - type: "parent"
-    from: "budi_santoso"
-    to: "siti_hartini"
-  - type: "parent"
-    from: "agus_pratama"
-    to: "raden_soedirman"
-  - type: "parent"
-    from: "agus_pratama"
-    to: "siti_hartini"
 
-  # Gen 3 -> Gen 2
+
+# Keluarga Norma - Johansyah
+  - type: "married"
+    from: "norma"
+    to: "johansyah"
   - type: "parent"
-    from: "eko_prasetyo"
-    to: "budi_santoso"
+    from: "muhammad_adrianor"
+    to: "johansyah"
   - type: "parent"
-    from: "eko_prasetyo"
-    to: "sri_wahyuni"
+    from: "zulkarnaen"
+    to: "johansyah"
   - type: "parent"
-    from: "rina_indah"
-    to: "budi_santoso" 
+    from: "muhammad_saeful"
+    to: "johansyah"
   - type: "parent"
-    from: "rina_indah"
-    to: "sri_wahyuni"
+    from: "muhammad_adrianor"
+    to: "norma"
+  - type: "parent"
+    from: "zulkarnaen"
+    to: "norma"
+  - type: "parent"
+    from: "muhammad_saeful"
+    to: "norma"
+  - type: "married"
+    from: "muhammad_saeful"
+    to: "bini_pertama_saeful"
+  - type: "married"
+    from: "muhammad_adrianor"
+    to: "bini_pertama_adrianor"
+  - type: "married"
+    from: "zulkarnaen"
+    to: "bini_pertama_zulkarnaen"
+  - type: "parent"
+    from: "zulkarnaen_adelia"
+    to: "zulkarnaen"
+  - type: "parent"
+    from: "zulkarnaen_adelia"
+    to: "bini_pertama_zulkarnaen"
+  - type: "parent"
+    from: "adrianor_zahra"
+    to: "muhammad_adrianor"
+  - type: "parent"
+    from: "adrianor_rasyid"
+    to: "muhammad_adrianor"
+  - type: "parent"
+    from: "adrianor_rasyid"
+    to: "bini_pertama_adrianor"
+  - type: "parent"
+    from: "anak_pertama_saeful"
+    to: "muhammad_saeful"
+  - type: "parent"
+    from: "anak_pertama_saeful"
+    to: "bini_pertama_saeful"
+
+# Keluarga Rusidah - Helda Rusmadi
+  - type: "parent"
+    from: "miftahul_muhaemen"
+    to: "helda_rusmadi"
+  - type: "parent"
+    from: "miftahul_muhaemen"
+    to: "rusidah"
+  - type: "parent"
+    from: "maulanie_muhaemina"
+    to: "helda_rusmadi"
+  - type: "parent"
+    from: "maulanie_muhaemina"
+    to: "rusidah"
+  - type: "parent"
+    from: "muslimin_muhaemen"
+    to: "helda_rusmadi"
+  - type: "parent"
+    from: "muslimin_muhaemen"
+    to: "rusidah"
+
+  ## KeluargaSaprah  
+  - type: "parent"
+    from: "rusidah"
+    to: "saprah"
+  - type: "parent"
+    from: "rusidah"
+    to: "tandarani"
+  - type: "married"
+    from: "helda_rusmadi"
+    to: "rusidah"
+  - type: "married"
+    from: "tandarani"
+    to: "saprah"
+  - type: "married"
+    from: "abah_ikis"
+    to: "saprah"
+  - type: "married"
+    from: "laki_kedua_saprah"
+    to: "saprah"
+  - type: "parent"
+    from: "norma"
+    to: "abah_ikis"
+  - type: "parent"
+    from: "kisransyah"
+    to: "abah_ikis"
+  - type: "parent"
+    from: "rusimah"
+    to: "tandarani"
+  - type: "parent"
+    from: "muhammad_aini"
+    to: "tandarani"
+  - type: "parent"
+    from: "anak_kelima_dari_tandarani"
+    to: "tandarani"
 
   - type: "parent"
-    from: "doni_pratama"
-    to: "agus_pratama" 
+    from: "ardiansyah"
+    to: "tandarani"
   - type: "parent"
-    from: "doni_pratama"
-    to: "bu_agus"
-  
-  - type: "parent"
-    from: "rizky_ramadhan"
-    to: "eko_prasetyo"
-  - type: "parent"
-    from: "rizky_ramadhan"
-    to: "dewi_lestari"
-  - type: "parent"
-    from: "alya_zahra"
-    to: "eko_prasetyo"
-  - type: "parent"
-    from: "alya_zahra"
-    to: "dewi_lestari"
+    from: "ardiansyah"
+    to: "bini_pertama_tandarani"
+  - type: "married"
+    from: "bini_pertama_tandarani"
+    to: "tandarani"
 
+## Keluarga Kisransyah
+  - type: "married"
+    from: "bini_kisransyah"
+    to: "kisransyah"
   - type: "parent"
-    from: "rini_kecil"
-    to: "rina_indah"
+    from: "yana_kisransyah"
+    to: "kisransyah"
   - type: "parent"
-    from: "rini_kecil"
-    to: "dika_mahendra"
-  
+    from: "sari_kisransyah"
+    to: "kisransyah"
   - type: "parent"
-    from: "dika_mahendra"
-    to: "pak_herman"
+    from: "agus_kisransyah"
+    to: "kisransyah"
   - type: "parent"
-    from: "pak_herman"
-    to: "mbah_sastro"
+    from: "siti_kisransyah"
+    to: "kisransyah"
+    
   - type: "parent"
-    from: "pak_herman"
-    to: "mbah_putri"
-  
+    from: "yana_kisransyah"
+    to: "bini_kisransyah"
   - type: "parent"
-    from: "sari_mahendra"
-    to: "pak_herman"
+    from: "sari_kisransyah"
+    to: "bini_kisransyah"
   - type: "parent"
-    from: "dika_mahendra"
-    to: "bu_herman"
+    from: "agus_kisransyah"
+    to: "bini_kisransyah"
   - type: "parent"
-    from: "sari_mahendra"
-    to: "bu_herman"
-  
-  - type: "parent"
-    from: "anto_sudirman"
-    to: "raden_soedirman"
-  - type: "parent"
-    from: "anto_sudirman"
-    to: "siti_hartini"
-  - type: "parent"
-    from: "fitria_anto"
-    to: "anto_sudirman"
-  - type: "parent"
-    from: "fitria_anto"
-    to: "nurlina_sari"
-  - type: "parent"
-    from: "sondang_anto"
-    to: "anto_sudirman"
-  - type: "parent"
-    from: "sondang_anto"
-    to: "nurlina_sari"
-  - type: "parent"
-    from: "bonar_sondang"
-    to: "sondang_anto"
-  - type: "parent"
-    from: "bonar_sondang"
-    to: "tita_karo"
+    from: "siti_kisransyah"
+    to: "bini_kisransyah"
 
-  - type: "parent"
-    from: "bruno_son"
-    to: "anto_sudirman"
-  - type: "parent"
-    from: "bruno_son"
-    to: "wendy_wife"
-
-  # Explicit Spouse Relationships
-  - type: "married"
-    from: "raden_soedirman"
-    to: "siti_hartini"
-  - type: "married"
-    from: "mbah_sastro"
-    to: "mbah_putri"
-  - type: "married"
-    from: "budi_santoso"
-    to: "sri_wahyuni"
-  - type: "married"
-    from: "agus_pratama"
-    to: "bu_agus"
-  - type: "married"
-    from: "pak_herman"
-    to: "bu_herman"
-  - type: "married"
-    from: "eko_prasetyo"
-    to: "dewi_lestari"
-  - type: "married"
-    from: "rina_indah"
-    to: "dika_mahendra"
-  
-  # Divorced
+  # Keluarga Rusimah
   - type: "divorced"
-    from: "anto_sudirman"
-    to: "nurlina_sari"
-
-  # Not Married
-  - type: "not_married"
-    from: "sondang_anto"
-    to: "tita_karo"
-
-  # New Marriages
+    from: "rusimah"
+    to: "laki_pertama_rusimah"
   - type: "married"
-    from: "anto_sudirman"
-    to: "wendy_wife"
+    from: "rusimah"
+    to: "masri"
+  - type: "parent"
+    from: "muhammad_rifansyah"
+    to: "masri"
+  - type: "parent"
+    from: "nurul_hikmah"
+    to: "masri"
+  - type: "parent"
+    from: "muhammad_rifansyah"
+    to: "rusimah"
+  - type: "parent"
+    from: "nurul_hikmah"
+    to: "rusimah"
   - type: "married"
-    from: "anto_sudirman"
-    to: "mulan_wife"
-
-  # Foster Relationships
-  - type: "foster_parent"
-    from: "gilang_foster"
-    to: "dika_mahendra"
-  - type: "foster_parent"
-    from: "gilang_foster"
-    to: "rina_indah"
-  - type: "foster_parent"
-    from: "sri_ningsih_foster"
-    to: "sari_mahendra"
+    from: "nurul_hikmah"
+    to: "dylan_nasir"
+  - type: "divorced"
+    from: "muhammad_rifansyah"
+    to: "bini_pertama_rifansyah"
+  - type: "married"
+    from: "muhammad_rifansyah"
+    to: "bini_kedua_rifansyah"
+  - type: "parent"
+    from: "muhammad_ilham"
+    to: "muhammad_rifansyah"
+  - type: "parent"
+    from: "rifansyah_amelia"
+    to: "muhammad_rifansyah"

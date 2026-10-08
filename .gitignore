@@ -17,13 +17,25 @@ dist-ssr
 .dev.vars
 wrangler.toml
 
+# Testing & Coverage Artifacts
+test-results/
+playwright-report/
+blob-report/
+coverage/
+*.test.log
+
+# Temporary & Scratch
+scratch/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/launch.json
 .idea
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+# Graphify
+graphify-out/

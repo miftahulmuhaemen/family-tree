@@ -3,187 +3,296 @@ import ELK, { type ElkNode } from 'elkjs/lib/elk.bundled';
 const elk = new ELK();
 
 export type GraphData = {
-  nodes: { id: string; width?: number; height?: number }[];
-  edges: { id: string; source: string; target: string }[];
-  unions?: { parents: string[], children: string[], type?: string }[];
+  nodes: { id: string; width?: number; height?: number; gender?: 'male' | 'female' }[];
+  edges: { id: string; source: string; target: string; type?: string }[];
+  unions?: { parents: string[]; children: string[]; type?: string }[];
   fosterChildren?: string[];
+  relationships?: { type: string; from: string; to: string }[];
 };
 
-export async function getLayoutedElements(graph: GraphData, direction = 'DOWN') {
-  const isHorizontal = direction === 'RIGHT';
-  
-  // Maps to track container assignment
-  const nodeContainerMap: Record<string, string> = {}; // personId -> containerId
-  const containerNodes: Record<string, ElkNode> = {};
-  
+export async function getLayoutedElements(graph: GraphData) {
+  const NODE_WIDTH = 256;
+  const NODE_HEIGHT = 120;
+
+  const elkNodes: ElkNode[] = graph.nodes.map(n => ({
+    id: n.id,
+    width: n.width || NODE_WIDTH,
+    height: n.height || NODE_HEIGHT
+  }));
+
+  const elkEdges: any[] = [];
+
   if (graph.unions) {
-    // 1. Identify "Spouse Hubs" (people with multiple spouses)
-    const personSpouseCount: Record<string, Set<string>> = {};
-    graph.unions.forEach(u => {
-      if (u.parents.length === 2) {
-         if (!personSpouseCount[u.parents[0]]) personSpouseCount[u.parents[0]] = new Set();
-         if (!personSpouseCount[u.parents[1]]) personSpouseCount[u.parents[1]] = new Set();
-         personSpouseCount[u.parents[0]].add(u.parents[1]);
-         personSpouseCount[u.parents[1]].add(u.parents[0]);
-      }
-    });
+    graph.unions.forEach((u, idx) => {
+      const uId = `union_${idx}`;
 
-    const multiSpouseHubs = new Set<string>();
-    Object.entries(personSpouseCount).forEach(([id, spouses]) => {
-        if (spouses.size > 1) multiSpouseHubs.add(id);
-    });
-    
-    // 2. Create Hub Groups (Vertical Layout)
-    multiSpouseHubs.forEach(hubId => {
-        const groupId = `group-hub-${hubId}`;
-        const spouses = personSpouseCount[hubId];
-        
-        containerNodes[groupId] = {
-            id: groupId,
-            children: [],
-            layoutOptions: {
-                'elk.direction': 'DOWN', 
-                'elk.spacing.nodeNode': '60', 
-                'elk.algorithm': 'layered',
-                'elk.padding': '[top=20,left=20,bottom=20,right=20]' 
-            }
-        };
-        
-        nodeContainerMap[hubId] = groupId;
-        spouses.forEach(sId => nodeContainerMap[sId] = groupId);
-    });
+      // Virtual union junction node
+      elkNodes.push({
+        id: uId,
+        width: 12,
+        height: 12
+      });
 
-    // 3. Process Standard Unions (Horizontal Layout)
-    graph.unions.forEach((union) => {
-        if (union.parents.length === 2) {
-             const p1 = union.parents[0];
-             const p2 = union.parents[1];
-             
-             // If either is in a hub group, skip standard union container
-             if (nodeContainerMap[p1] || nodeContainerMap[p2]) {
-                 return;
-             }
-
-             const unionId = `union-${union.parents.sort().join('-')}`;
-             
-             if (!containerNodes[unionId]) {
-                containerNodes[unionId] = {
-                    id: unionId,
-                    children: [],
-                    layoutOptions: {
-                        'elk.direction': 'RIGHT',
-                        'elk.spacing.nodeNode': '150',
-                        'elk.algorithm': 'layered',
-                    }
-                };
-             }
-             
-             union.parents.forEach(pId => {
-                 nodeContainerMap[pId] = unionId;
-             });
-        }
-    });
-
-    // 4. Add explicit edges for Hub -> Spouse to force vertical layout INSIDE the Hub Group
-    if (multiSpouseHubs.size > 0) {
-        graph.unions.forEach(union => {
-            if (union.parents.length === 2) {
-                const p1 = union.parents[0];
-                const p2 = union.parents[1];
-                
-                if (multiSpouseHubs.has(p1)) {
-                    graph.edges.push({ id: `spouse-hier-${p1}-${p2}`, source: p1, target: p2 });
-                } else if (multiSpouseHubs.has(p2)) {
-                    graph.edges.push({ id: `spouse-hier-${p2}-${p1}`, source: p2, target: p1 });
-                }
-            }
+      // Parents -> Union
+      u.parents.forEach(pId => {
+        elkEdges.push({
+          id: `e_${pId}_${uId}`,
+          sources: [pId],
+          targets: [uId],
+          layoutOptions: {
+            'elk.layered.priority.direction': '5'
+          }
         });
-    }
+      });
+
+      // Union -> Children
+      u.children.forEach(cId => {
+        elkEdges.push({
+          id: `e_${uId}_${cId}`,
+          sources: [uId],
+          targets: [cId]
+        });
+      });
+    });
   }
 
-  // Build children for ELK root
-  const rootChildren: ElkNode[] = [];
-  
-  graph.nodes.forEach(node => {
-      const containerId = nodeContainerMap[node.id];
-      if (containerId && containerNodes[containerId]) {
-          containerNodes[containerId].children?.push({
-              id: node.id,
-              width: node.width || 280,
-              height: node.height || 200,
-          });
-      } else {
-          // Standalone
-          rootChildren.push({
-              id: node.id,
-              width: node.width || 280,
-              height: node.height || 200,
-          });
-      }
-  });
-
-  // Add containers to root
-  Object.values(containerNodes).forEach(group => {
-      rootChildren.push(group);
-  });
-
-  const elkGraph: ElkNode = {
+  // Root ELK graph
+  const rootGraph: ElkNode = {
     id: 'root',
     layoutOptions: {
       'elk.algorithm': 'layered',
-      'elk.direction': isHorizontal ? 'RIGHT' : 'DOWN',
+      'elk.direction': 'DOWN',
+      'elk.spacing.nodeNode': '60',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '90',
       'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
-      'elk.spacing.nodeNode': '80', // Back to standard spacing
-      'elk.layered.spacing.nodeNodeBetweenLayers': '60',
-      'elk.layered.spacing.edgeNodeBetweenLayers': '25',
-      'elk.hierarchyHandling': 'INCLUDE_CHILDREN', // Important for hierarchy
+      'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP'
     },
-    children: rootChildren,
-    edges: graph.edges.map((edge) => ({
-      id: edge.id,
-      sources: [edge.source],
-      targets: [edge.target],
-    })),
+    children: elkNodes,
+    edges: elkEdges
   };
 
-  const layoutedGraph = await elk.layout(elkGraph);
+  const layoutedGraph = await elk.layout(rootGraph);
 
-  // function to recursively flatten nodes
-  const flattenedNodes: { id: string, position: { x: number, y: number }, width?: number, height?: number }[] = [];
-  
-  const collectNodes = (node: ElkNode, parentX = 0, parentY = 0) => {
-      const currentX = parentX + (node.x || 0);
-      const currentY = parentY + (node.y || 0);
-      
-      // If it's a leaf node (our person node)
-      if (!node.children || node.children.length === 0) {
-          // We only care about nodes that were in our original list (person IDs)
-          // Simple check: does it look like a union ID or group ID? 
-          if (!node.id.startsWith('union-') && !node.id.startsWith('group-hub-')) {
-            // Apply offset for foster children
-            let y = currentY;
-            if (graph.fosterChildren?.includes(node.id)) {
-                 y += 70; // Push down by 70px to create space for label
-            }
+  // Position map
+  const positionMap = new Map<string, { x: number; y: number; width: number; height: number }>();
+  (layoutedGraph.children || []).forEach(child => {
+    positionMap.set(child.id, {
+      x: child.x || 0,
+      y: child.y || 0,
+      width: child.width || NODE_WIDTH,
+      height: child.height || NODE_HEIGHT
+    });
+  });
 
-            flattenedNodes.push({
-                id: node.id,
-                position: { x: currentX, y: y },
-                width: node.width,
-                height: node.height
-            });
-          }
+  // Extract person nodes with gender
+  const personNodes = graph.nodes.map(n => {
+    const pos = positionMap.get(n.id) || { x: 0, y: 0, width: NODE_WIDTH, height: NODE_HEIGHT };
+    return {
+      id: n.id,
+      x: pos.x,
+      y: pos.y,
+      width: pos.width,
+      height: pos.height,
+      gender: (n as any).gender
+    };
+  });
+
+  // Map parents and explicit couples
+  const childToParents: Record<string, string[]> = {};
+  const explicitCouples: Record<string, string> = {};
+
+  if (graph.unions) {
+    graph.unions.forEach(u => {
+      u.children.forEach(cId => {
+        if (!childToParents[cId]) childToParents[cId] = [];
+        u.parents.forEach(pId => {
+          if (!childToParents[cId].includes(pId)) childToParents[cId].push(pId);
+        });
+      });
+      if (u.parents.length >= 2) {
+        const key = [...u.parents].sort().join('-');
+        explicitCouples[key] = u.type || 'married';
       }
-      
-      // Recurse
-      if (node.children) {
-          node.children.forEach(child => collectNodes(child, currentX, currentY));
-      }
-  };
-
-  if (layoutedGraph.children) {
-      layoutedGraph.children.forEach(node => collectNodes(node));
+    });
   }
 
-  return { nodes: flattenedNodes, width: layoutedGraph.width, height: layoutedGraph.height };
+  // Group person nodes into generational layers (y-clusters within 50px)
+  const layers: { y: number; nodes: typeof personNodes }[] = [];
+  personNodes.forEach(node => {
+    let layer = layers.find(l => Math.abs(l.y - node.y) < 50);
+    if (!layer) {
+      layer = { y: node.y, nodes: [] };
+      layers.push(layer);
+    }
+    layer.nodes.push(node);
+  });
+  layers.sort((a, b) => a.y - b.y);
+
+  const SPACING_X = 60;
+
+  // Process layers top-down to enforce spouse adjacency and parent-child alignment
+  layers.forEach((layer, layerIdx) => {
+    const nodes = layer.nodes;
+
+    // For layers below root, pull children initial x toward their parents' midpoint
+    if (layerIdx > 0) {
+      nodes.forEach(n => {
+        const parents = childToParents[n.id];
+        if (parents && parents.length > 0) {
+          const pXs = parents.map(pid => {
+            const ppos = positionMap.get(pid);
+            return ppos ? ppos.x + ppos.width / 2 : null;
+          }).filter((x): x is number => x !== null);
+          if (pXs.length > 0) {
+            const midX = pXs.reduce((a, b) => a + b, 0) / pXs.length;
+            n.x = midX - n.width / 2;
+          }
+        }
+      });
+    }
+
+    nodes.sort((a, b) => a.x - b.x);
+
+    // Enforce spouse adjacency: ensure married couples are placed immediately side-by-side
+    const couplePairs: [string, string][] = [];
+    Object.keys(explicitCouples).forEach(key => {
+      const [p1, p2] = key.split('-');
+      if (nodes.some(n => n.id === p1) && nodes.some(n => n.id === p2)) {
+        couplePairs.push([p1, p2]);
+      }
+    });
+
+    couplePairs.forEach(([p1, p2]) => {
+      const idx1 = nodes.findIndex(n => n.id === p1);
+      const idx2 = nodes.findIndex(n => n.id === p2);
+      if (idx1 !== -1 && idx2 !== -1 && Math.abs(idx1 - idx2) > 1) {
+        // Anchor the spouse who has parents in the tree; move the in-law spouse
+        const p1HasParents = Boolean(childToParents[p1] && childToParents[p1].length > 0);
+        const p2HasParents = Boolean(childToParents[p2] && childToParents[p2].length > 0);
+
+        let anchor = p1;
+        let mover = p2;
+        if (!p1HasParents && p2HasParents) {
+          anchor = p2;
+          mover = p1;
+        }
+
+        const moverIdx = nodes.findIndex(n => n.id === mover);
+        const [moverNode] = nodes.splice(moverIdx, 1);
+        const newAnchorIdx = nodes.findIndex(n => n.id === anchor);
+        const anchorNode = nodes[newAnchorIdx];
+
+        if (moverNode.gender === 'female' || anchorNode.gender === 'male') {
+          nodes.splice(newAnchorIdx + 1, 0, moverNode);
+        } else {
+          nodes.splice(newAnchorIdx, 0, moverNode);
+        }
+      }
+    });
+
+    // Space out nodes to completely eliminate overlaps
+    for (let i = 1; i < nodes.length; i++) {
+      const prev = nodes[i - 1];
+      const minX = prev.x + prev.width + SPACING_X;
+      if (nodes[i].x < minX) {
+        nodes[i].x = minX;
+      }
+    }
+
+    // Sync updated positions back into positionMap
+    nodes.forEach(n => {
+      positionMap.set(n.id, { x: n.x, y: n.y, width: n.width, height: n.height });
+    });
+  });
+
+  // Extract finalized person nodes
+  const flattenedNodes = graph.nodes.map(n => {
+    const pos = positionMap.get(n.id) || { x: 0, y: 0, width: NODE_WIDTH, height: NODE_HEIGHT };
+    return {
+      id: n.id,
+      position: { x: pos.x, y: pos.y },
+      width: pos.width,
+      height: pos.height
+    };
+  });
+
+  // Build clean orthogonal SVG path edges in inter-layer channels
+  // NEVER cut through person cards horizontally!
+  const layoutEdges: any[] = [];
+
+  if (graph.unions) {
+    graph.unions.forEach((u, idx) => {
+      const uId = `union_${idx}`;
+      const unionPos = positionMap.get(uId);
+      if (!unionPos) return;
+
+      const uCenterY = unionPos.y + unionPos.height / 2;
+
+      // Calculate exact midpoint between parents for the union knot
+      const parentXList = u.parents.map(pId => {
+        const pPos = positionMap.get(pId);
+        return pPos ? pPos.x + pPos.width / 2 : null;
+      }).filter((x): x is number => x !== null);
+
+      const knotX = parentXList.length > 0 
+        ? parentXList.reduce((sum, val) => sum + val, 0) / parentXList.length 
+        : unionPos.x + unionPos.width / 2;
+
+      // 1. Route each parent into the union knot through the whitespace channel below the row
+      u.parents.forEach(pId => {
+        const parentPos = positionMap.get(pId);
+        if (!parentPos) return;
+
+        const pBottomX = parentPos.x + parentPos.width / 2;
+        const pBottomY = parentPos.y + parentPos.height;
+
+        // Path drops from bottom of card down to uCenterY, then moves horizontally to union knot
+        const path = `M ${pBottomX} ${pBottomY} L ${pBottomX} ${uCenterY} L ${knotX} ${uCenterY}`;
+
+        layoutEdges.push({
+          id: `union-parent-${pId}-${uId}`,
+          source: pId,
+          target: uId,
+          type: 'spouse',
+          parents: u.parents,
+          children: u.children,
+          path,
+          isDashed: u.type === 'divorced'
+        });
+      });
+
+      // 2. Route from union knot to each child through the whitespace channel
+      u.children.forEach(cId => {
+        const childPos = positionMap.get(cId);
+        if (!childPos) return;
+
+        const cTopX = childPos.x + childPos.width / 2;
+        const cTopY = childPos.y;
+        const isFoster = graph.fosterChildren?.includes(cId);
+
+        // Path moves horizontally along uCenterY from union knot to child center X, then drops down into child's top
+        const path = `M ${knotX} ${uCenterY} L ${cTopX} ${uCenterY} L ${cTopX} ${cTopY}`;
+
+        layoutEdges.push({
+          id: `union-child-${uId}-${cId}`,
+          source: uId,
+          target: cId,
+          type: 'parent-child',
+          parents: u.parents,
+          children: u.children,
+          childId: cId,
+          path,
+          isFoster,
+          isDashed: isFoster
+        });
+      });
+    });
+  }
+
+  return {
+    nodes: flattenedNodes,
+    edges: layoutEdges,
+    width: layoutedGraph.width || 3000,
+    height: layoutedGraph.height || 2000
+  };
 }
