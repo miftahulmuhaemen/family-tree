@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   FileText, FolderOpen, Loader2, Plus, Download,
   Sun, Moon, Save, AlertCircle, ChevronDown
@@ -50,14 +50,20 @@ export function SidebarHeader({
   const isNeu = useIsNeumorphic();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
-  const [editName, setEditName] = useState(fileName || 'untitled.ged');
+
+  const cleanName = useMemo(() => {
+    if (!fileName) return 'untitled';
+    return fileName.replace(/\.ged$/i, '').trim() || 'untitled';
+  }, [fileName]);
+
+  const [editName, setEditName] = useState(cleanName);
   const menuRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setEditName(fileName || 'untitled.ged');
-  }, [fileName]);
+    setEditName(cleanName);
+  }, [cleanName]);
 
   useEffect(() => {
     if (isEditingName && nameInputRef.current) {
@@ -67,12 +73,7 @@ export function SidebarHeader({
   }, [isEditingName]);
 
   const handleCommitName = () => {
-    let finalName = editName.trim();
-    if (!finalName) {
-      finalName = 'untitled.ged';
-    } else if (!finalName.toLowerCase().endsWith('.ged')) {
-      finalName = `${finalName}.ged`;
-    }
+    const finalName = editName.replace(/\.ged$/i, '').trim() || 'untitled';
     setEditName(finalName);
     onRenameFile?.(finalName);
     setIsEditingName(false);
@@ -82,7 +83,7 @@ export function SidebarHeader({
     if (e.key === 'Enter') {
       handleCommitName();
     } else if (e.key === 'Escape') {
-      setEditName(fileName || 'untitled.ged');
+      setEditName(cleanName);
       setIsEditingName(false);
     }
   };
@@ -163,16 +164,16 @@ export function SidebarHeader({
           <span
             onDoubleClick={() => {
               if (!isReadOnly) {
-                setEditName(fileName || 'untitled.ged');
+                setEditName(cleanName);
                 setIsEditingName(true);
               }
             }}
             className={cn(
               "font-semibold text-sm text-zinc-900 dark:text-zinc-100 truncate max-w-[150px] sm:max-w-[190px] cursor-pointer hover:underline decoration-zinc-400/50"
             )}
-            title={fileName || 'untitled.ged'}
+            title={cleanName}
           >
-            {fileName || 'untitled.ged'}
+            {cleanName}
           </span>
         )}
         <span className={cn(

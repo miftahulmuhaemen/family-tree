@@ -48,7 +48,16 @@ export function useGoogleDriveTree({
   configFailedMessage = "Gagal memuat konfigurasi dari Google Drive"
 }: UseGoogleDriveTreeProps): UseGoogleDriveTreeReturn {
   const [fileId, setFileId] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [fileName, setRawFileName] = useState<string | null>(null);
+
+  const setFileName = useCallback((name: string | null) => {
+    if (name === null) {
+      setRawFileName(null);
+    } else {
+      setRawFileName(name.replace(/\.ged$/i, '').trim() || 'untitled');
+    }
+  }, []);
+
   const [lastSaved, setLastSaved] = useState<Date | null>(() => new Date());
   const [lastAction, setLastAction] = useState<'loaded' | 'saved'>('loaded');
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -85,13 +94,13 @@ export function useGoogleDriveTree({
             console.warn("Could not load from Google Drive, falling back to blank project:", e);
             if (isMounted) {
               setErrorMessage(e.message || configFailedMessage);
-              setFileName('untitled.ged');
+              setFileName('untitled');
               onGedcomLoaded(BLANK_GEDCOM);
             }
           }
         } else {
           if (isMounted) {
-            setFileName('untitled.ged');
+            setFileName('untitled');
             setFileId(null);
             onGedcomLoaded(BLANK_GEDCOM);
           }
@@ -155,7 +164,8 @@ export function useGoogleDriveTree({
     setErrorMessage('');
 
     try {
-      const targetName = fileName || 'family.ged';
+      const base = (fileName && fileName.trim()) ? fileName.replace(/\.ged$/i, '').trim() : 'family';
+      const targetName = `${base || 'family'}.ged`;
       const result = await googleDriveService.saveFile(targetName, gedcomContent, fileId || undefined);
 
       setFileId(result.id);
@@ -168,7 +178,7 @@ export function useGoogleDriveTree({
 
       notify({
         title: "Tersimpan ke Google Drive",
-        message: result.name,
+        message: base || 'family',
         type: "success"
       });
 
@@ -212,7 +222,9 @@ export function useGoogleDriveTree({
       }
       setIsSaving(true);
       try {
-        const result = await googleDriveService.saveFile(fileName || 'family.ged', gedcomContent);
+        const base = (fileName && fileName.trim()) ? fileName.replace(/\.ged$/i, '').trim() : 'family';
+        const targetName = `${base || 'family'}.ged`;
+        const result = await googleDriveService.saveFile(targetName, gedcomContent);
         currentTargetId = result.id;
         setFileId(result.id);
         setFileName(result.name);
@@ -259,7 +271,7 @@ export function useGoogleDriveTree({
 
   const handleNewProject = useCallback(() => {
     setFileId(null);
-    setFileName('untitled.ged');
+    setFileName('untitled');
     setShareUrl(null);
     setErrorMessage('');
     setLastSaved(new Date());
@@ -288,7 +300,7 @@ export function useGoogleDriveTree({
       if (!response.ok) throw new Error('Gagal mengunduh berkas contoh');
       const text = await response.text();
       setFileId(null);
-      setFileName('family.ged');
+      setFileName('family');
       setLastSaved(new Date());
       setLastAction('loaded');
       onGedcomLoaded(text);
@@ -302,7 +314,7 @@ export function useGoogleDriveTree({
 
       notify({
         title: "Contoh Silsilah Dimuat",
-        message: "family.ged",
+        message: "family",
         type: "success"
       });
     } catch (e: any) {

@@ -43,8 +43,11 @@ export function FamilyTreePage() {
   return (
     <div className="flex w-screen h-[100dvh] bg-background overflow-hidden relative">
       <EditorSidebar
-        fileName={drive.fileName || 'untitled.ged'}
-        onRenameFile={drive.setFileName}
+        fileName={drive.fileName ? drive.fileName.replace(/\.ged$/i, '').trim() : 'untitled'}
+        onRenameFile={(name) => {
+          const cleanName = name.replace(/\.ged$/i, '').trim();
+          drive.setFileName(cleanName || 'untitled');
+        }}
         gedcom={gedcomContent} onGedcomChange={setGedcomContent} isValid={isValid} errorMessage={errorMsg || drive.errorMessage}
         onShare={drive.handleSaveToDrive} isSharing={drive.isSaving} isReadOnly={isPublicPreview}
         isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} currentId={drive.fileId}

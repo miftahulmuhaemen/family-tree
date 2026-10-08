@@ -126,7 +126,8 @@ export function EditorSidebar(props: EditorSidebarProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = fileName || 'family.ged';
+    const base = fileName ? fileName.replace(/\.ged$/i, '').trim() : 'family';
+    a.download = `${base || 'family'}.ged`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
