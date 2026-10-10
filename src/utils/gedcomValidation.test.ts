@@ -9,12 +9,12 @@ describe('validateGedcomDetailed', () => {
 2 VERS 5.5.1
 1 CHAR UTF-8
 0 @I1@ INDI
-1 NAME Helda /Rusmadi/
+1 NAME John /Doe/
 1 SEX M
 1 BIRT
-2 DATE 6 NOV 1964
+2 DATE 1 JAN 1970
 0 @I2@ INDI
-1 NAME Saprah
+1 NAME Jane /Doe/
 1 SEX F
 0 @I3@ INDI
 1 NAME Child One

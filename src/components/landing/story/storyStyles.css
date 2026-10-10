@@ -1,0 +1,236 @@
+/* Storytelling Stages Shared Vector & HUD Styles */
+
+/* Light Mode Defaults */
+.story-svg .sil { stroke: #09090b; stroke-width: 1.35px; fill: hsl(var(--background)); stroke-linejoin: round; }
+.story-svg .hi { stroke: #09090b; stroke-width: 2px; }
+.story-svg .lo { stroke: #52525b; stroke-width: 1px; fill: none; stroke-linecap: round; }
+.story-svg .nf { fill: none; }
+.story-svg .dot { fill: #09090b; stroke: none; }
+.story-svg .dot.m { fill: #52525b; stroke: none; }
+.story-svg .dot.off { fill: #cbd5e1; stroke: none; }
+.story-svg .wall { fill: hsl(var(--background) / 0.85); stroke: #09090b; stroke-width: 1.35px; stroke-linejoin: round; }
+.story-svg .pedestal { fill: hsl(var(--background)); stroke: #09090b; stroke-width: 1.2px; stroke-linejoin: round; }
+.story-svg .beam-dashed { stroke: #94a3b8; stroke-width: 1.5px; stroke-dasharray: 4 3; fill: none; stroke-linecap: round; }
+.story-svg .beam-bg { stroke: #cbd5e1; stroke-width: 2px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.story-svg .beam-active { stroke: #2563eb; stroke-width: 2.2px; fill: none; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px #3b82f6); transition: opacity 0.3s ease; }
+
+.story-svg .node-plate { fill: hsl(var(--background)); stroke: #09090b; stroke-width: 1.2px; stroke-linejoin: round; transition: all 0.25s ease; }
+.story-svg .node-plate.active { stroke: #2563eb; fill: #eff6ff; filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.35)); }
+.story-svg .marriage-line { stroke: #f472b6; stroke-width: 1.8px; fill: none; stroke-linecap: round; transition: all 0.3s ease; }
+.story-svg .marriage-line.active { stroke: #ec4899; stroke-width: 2.2px; filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.6)); }
+.story-svg .tree-line { stroke: #94a3b8; stroke-width: 1.5px; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: all 0.3s ease; }
+.story-svg .tree-line.active { stroke: #2563eb; stroke-width: 2px; filter: drop-shadow(0 0 6px #3b82f6); }
+
+/* Dark Mode Overrides */
+.dark .story-svg .sil { stroke: #d0d6e0; stroke-width: 1.35px; fill: hsl(var(--background)); stroke-linejoin: round; }
+.dark .story-svg .hi { stroke: #ffffff; stroke-width: 2px; }
+.dark .story-svg .lo { stroke: #4a4d56; stroke-width: 1px; fill: none; stroke-linecap: round; }
+.dark .story-svg .dot { fill: #ffffff; stroke: none; }
+.dark .story-svg .dot.m { fill: #d0d6e0; stroke: none; }
+.dark .story-svg .dot.off { fill: #2c2e35; stroke: none; }
+.dark .story-svg .wall { fill: hsl(var(--background) / 0.85); stroke: #d0d6e0; stroke-width: 1.35px; stroke-linejoin: round; }
+.dark .story-svg .pedestal { fill: hsl(var(--background)); stroke: #5b5d64; stroke-width: 1.2px; stroke-linejoin: round; }
+.dark .story-svg .beam-dashed { stroke: #3b4252; stroke-width: 1.5px; stroke-dasharray: 4 3; fill: none; stroke-linecap: round; }
+.dark .story-svg .beam-bg { stroke: #262830; stroke-width: 2px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.dark .story-svg .beam-active { stroke: #3b82f6; stroke-width: 2.2px; fill: none; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px #3b82f6); transition: opacity 0.3s ease; }
+
+.dark .story-svg .node-plate { fill: hsl(var(--background)); stroke: #3a3e4a; stroke-width: 1.2px; stroke-linejoin: round; transition: all 0.25s ease; }
+.dark .story-svg .node-plate.active { stroke: #3b82f6; fill: #131722; filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4)); }
+.dark .story-svg .marriage-line { stroke: #5b2848; stroke-width: 1.8px; fill: none; stroke-linecap: round; transition: all 0.3s ease; }
+.dark .story-svg .marriage-line.active { stroke: #ec4899; stroke-width: 2.2px; filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.6)); }
+.dark .story-svg .tree-line { stroke: #3a3e4a; stroke-width: 1.5px; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: all 0.3s ease; }
+.dark .story-svg .tree-line.active { stroke: #60a5fa; stroke-width: 2px; filter: drop-shadow(0 0 6px #3b82f6); }
+
+/* HUD Question Badge */
+.question-badge {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  background: #0e1014;
+  border: 1.5px solid #60a5fa;
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.4);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  z-index: 40;
+  transition: all 0.3s ease;
+}
+.question-badge.unlocked {
+  background: #2563eb;
+  border-color: #ffffff;
+  box-shadow: 0 0 22px rgba(37, 99, 235, 0.7);
+}
+
+/* Floating labels and tags */
+.char-label, .node-label, .canvas-tag {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  z-index: 30;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Neutral Fallback for generic labels (e.g. lineage labels in slide 2) */
+.char-label:not(.tag-blue):not(.tag-pink) {
+  background: rgba(8, 9, 10, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #cbd5e1;
+}
+.dark .char-label:not(.tag-blue):not(.tag-pink) {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
+}
+
+/* Blue Tag (Default / Male / Direct Kin — e.g. Anda, David, Henry) */
+.tag-blue,
+.node-label:not(.tag-pink),
+.canvas-tag:not(.tag-pink) {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+}
+.tag-blue.active,
+.node-label.active:not(.tag-pink),
+.canvas-tag.active:not(.tag-pink) {
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  background: #dbeafe;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.35), 0 2px 4px rgba(37, 99, 235, 0.12);
+}
+
+/* Pink Tag (Female / Collateral Kin — e.g. Tante Sarah, Nenek Eleanor) */
+.tag-pink {
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  color: #db2777;
+  box-shadow: 0 1px 3px rgba(219, 39, 119, 0.08);
+}
+.tag-pink.active {
+  border-color: #ec4899;
+  color: #be185d;
+  background: #fce7f3;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.35), 0 2px 4px rgba(219, 39, 119, 0.12);
+}
+
+/* Dark Mode Overrides for Tags */
+.dark .tag-blue,
+.dark .node-label:not(.tag-pink),
+.dark .canvas-tag:not(.tag-pink) {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #93c5fd;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.dark .tag-blue.active,
+.dark .node-label.active:not(.tag-pink),
+.dark .canvas-tag.active:not(.tag-pink) {
+  border-color: #60a5fa;
+  color: #ffffff;
+  background: rgba(30, 64, 175, 0.5);
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.5);
+}
+
+.dark .tag-pink {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(244, 114, 182, 0.4);
+  color: #f9a8d4;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.dark .tag-pink.active {
+  border-color: #f472b6;
+  color: #ffffff;
+  background: rgba(157, 23, 77, 0.5);
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.5);
+}
+
+/* Slide 1 Dialogue Tags - High Contrast Brutalist Editorial */
+.story-chat-wrap {
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+}
+.story-chat-wrap.story-elder {
+  transform: translate(-15%, -100%) translateY(4px);
+  align-items: flex-end;
+}
+.story-chat-wrap.story-elder.show {
+  opacity: 1;
+  transform: translate(-15%, -100%) translateY(-6px);
+}
+.story-chat-wrap.story-you {
+  transform: translate(-85%, -100%) translateY(4px);
+  align-items: flex-start;
+}
+.story-chat-wrap.story-you.show {
+  opacity: 1;
+  transform: translate(-85%, -100%) translateY(-6px);
+}
+
+.story-chat-name {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.story-hl-m .story-chat-name {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.1);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+}
+.dark .story-hl-m .story-chat-name {
+  color: #60a5fa;
+  background: rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+}
+.story-hl-f .story-chat-name {
+  color: #db2777;
+  background: rgba(219, 39, 119, 0.1);
+  border: 1px solid rgba(219, 39, 119, 0.3);
+}
+.dark .story-hl-f .story-chat-name {
+  color: #f472b6;
+  background: rgba(236, 72, 153, 0.2);
+  border: 1px solid rgba(244, 114, 182, 0.4);
+}
+
+.story-chat-box {
+  position: relative;
+  max-width: 200px;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: normal;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.dark .story-chat-box {
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+

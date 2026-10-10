@@ -39,3 +39,10 @@ scratch/
 *.sln
 # Graphify
 graphify-out/
+
+# agent
+.agents
+.superpowers
+.vscode
+anti-slop
+docs
