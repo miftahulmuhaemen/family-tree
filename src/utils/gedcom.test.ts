@@ -13,11 +13,11 @@ import type { FamilyData, Relationship } from '@/types/family';
 describe('gedcom utilities', () => {
   describe('formatGedcomDate and parseGedcomDate', () => {
     test('converts ISO YYYY-MM-DD to standard GEDCOM DD MMM YYYY and back', () => {
-      const iso = '1964-11-06';
+      const iso = '1980-05-15';
       const ged = formatGedcomDate(iso);
-      expect(ged).toBe('6 NOV 1964');
+      expect(ged).toBe('15 MAY 1980');
       const parsed = parseGedcomDate(ged);
-      expect(parsed).toBe('1964-11-06');
+      expect(parsed).toBe('1980-05-15');
     });
 
     test('preserves YYYY when only year is given', () => {
@@ -36,14 +36,14 @@ describe('gedcom utilities', () => {
 
   describe('formatGedcomName and parseGedcomName', () => {
     test('encloses surname in slashes when formatting multi-word name', () => {
-      expect(formatGedcomName('Helda Rusmadi')).toBe('Helda /Rusmadi/');
-      expect(formatGedcomName('Muhammad Aini')).toBe('Muhammad /Aini/');
-      expect(formatGedcomName('Saprah')).toBe('Saprah');
+      expect(formatGedcomName('John Doe')).toBe('John /Doe/');
+      expect(formatGedcomName('Mary Jane Watson')).toBe('Mary Jane /Watson/');
+      expect(formatGedcomName('Cher')).toBe('Cher');
     });
 
     test('strips surname slashes when parsing', () => {
-      expect(parseGedcomName('Helda /Rusmadi/')).toBe('Helda Rusmadi');
-      expect(parseGedcomName('Saprah')).toBe('Saprah');
+      expect(parseGedcomName('John /Doe/')).toBe('John Doe');
+      expect(parseGedcomName('Cher')).toBe('Cher');
       expect(parseGedcomName('')).toBe('Unknown');
     });
   });

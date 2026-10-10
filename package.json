@@ -1,8 +1,13 @@
 {
   "name": "sanak-keluarga",
-  "private": true,
   "version": "0.0.0",
+  "description": "Interactive family tree management and visualization platform",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miftahulmuhaemen/family-tree.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -26,6 +31,7 @@
     "lucide-react": "^0.561.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-router-dom": "^7.18.4",
     "tailwind-merge": "^3.4.0",
     "yaml": "^2.8.2"
   },
