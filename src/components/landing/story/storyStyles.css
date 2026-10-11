@@ -103,63 +103,63 @@
 .tag-blue,
 .node-label:not(.tag-pink),
 .canvas-tag:not(.tag-pink) {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #2563eb;
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+  background: #3b82f6;
+  border: 1px solid #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
 }
 .tag-blue.active,
 .node-label.active:not(.tag-pink),
 .canvas-tag.active:not(.tag-pink) {
-  border-color: #3b82f6;
-  color: #1d4ed8;
-  background: #dbeafe;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.35), 0 2px 4px rgba(37, 99, 235, 0.12);
+  border-color: #ffffff;
+  color: #ffffff;
+  background: #2563eb;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.6), 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 /* Pink Tag (Female / Collateral Kin — e.g. Tante Sarah, Nenek Eleanor) */
 .tag-pink {
-  background: #fdf2f8;
-  border: 1px solid #fbcfe8;
-  color: #db2777;
-  box-shadow: 0 1px 3px rgba(219, 39, 119, 0.08);
+  background: #f472b6;
+  border: 1px solid #f472b6;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(244, 114, 182, 0.35);
 }
 .tag-pink.active {
-  border-color: #ec4899;
-  color: #be185d;
-  background: #fce7f3;
-  box-shadow: 0 0 12px rgba(236, 72, 153, 0.35), 0 2px 4px rgba(219, 39, 119, 0.12);
+  border-color: #ffffff;
+  color: #ffffff;
+  background: #ec4899;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.6), 0 2px 4px rgba(219, 39, 119, 0.2);
 }
 
 /* Dark Mode Overrides for Tags */
 .dark .tag-blue,
 .dark .node-label:not(.tag-pink),
 .dark .canvas-tag:not(.tag-pink) {
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(96, 165, 250, 0.4);
-  color: #93c5fd;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  background: #3b82f6;
+  border: 1px solid #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.5);
 }
 .dark .tag-blue.active,
 .dark .node-label.active:not(.tag-pink),
 .dark .canvas-tag.active:not(.tag-pink) {
-  border-color: #60a5fa;
+  border-color: #ffffff;
   color: #ffffff;
-  background: rgba(30, 64, 175, 0.5);
-  box-shadow: 0 0 14px rgba(59, 130, 246, 0.5);
+  background: #2563eb;
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.7);
 }
 
 .dark .tag-pink {
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(244, 114, 182, 0.4);
-  color: #f9a8d4;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  background: #f472b6;
+  border: 1px solid #f472b6;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(244, 114, 182, 0.5);
 }
 .dark .tag-pink.active {
-  border-color: #f472b6;
+  border-color: #ffffff;
   color: #ffffff;
-  background: rgba(157, 23, 77, 0.5);
-  box-shadow: 0 0 14px rgba(236, 72, 153, 0.5);
+  background: #ec4899;
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.7);
 }
 
 /* Slide 1 Dialogue Tags - High Contrast Brutalist Editorial */
@@ -206,29 +206,35 @@
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 3px;
-  padding: 1px 6px;
-  border-radius: 4px;
+  margin-bottom: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  color: #ffffff;
+  display: inline-block;
 }
 .story-hl-m .story-chat-name {
-  color: #2563eb;
-  background: rgba(37, 99, 235, 0.1);
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  color: #ffffff;
+  background: #3b82f6;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
 }
 .dark .story-hl-m .story-chat-name {
-  color: #60a5fa;
-  background: rgba(37, 99, 235, 0.2);
-  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #ffffff;
+  background: #3b82f6;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.5);
 }
 .story-hl-f .story-chat-name {
-  color: #db2777;
-  background: rgba(219, 39, 119, 0.1);
-  border: 1px solid rgba(219, 39, 119, 0.3);
+  color: #ffffff;
+  background: #f472b6;
+  border: 1px solid #f472b6;
+  box-shadow: 0 2px 8px rgba(244, 114, 182, 0.35);
 }
 .dark .story-hl-f .story-chat-name {
-  color: #f472b6;
-  background: rgba(236, 72, 153, 0.2);
-  border: 1px solid rgba(244, 114, 182, 0.4);
+  color: #ffffff;
+  background: #f472b6;
+  border: 1px solid #f472b6;
+  box-shadow: 0 2px 10px rgba(244, 114, 182, 0.5);
 }
 
 .story-chat-box {
