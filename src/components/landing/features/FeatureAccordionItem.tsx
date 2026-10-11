@@ -70,7 +70,7 @@ export function FeatureAccordionItem({
             ) : statusNotice ? (
               <div className="w-full py-3.5 px-4 sm:py-4 sm:px-5 rounded-xl border border-dashed border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 select-none data-[theme=neumorphism]:shadow-[var(--neu-pressed-sm)] data-[theme=neumorphism]:bg-[var(--neu-surface)] data-[theme=neumorphism]:border-[var(--neu-border)]">
                 <div className="flex items-center gap-2.5 shrink-0">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#3b82f6] dark:bg-[#f472b6] shrink-0" />
                   <span className="font-sans text-sm font-bold uppercase tracking-wider text-black dark:text-white">
                     {statusBadge || 'In Development'}
                   </span>

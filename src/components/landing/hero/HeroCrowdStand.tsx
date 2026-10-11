@@ -181,9 +181,20 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
     }
 
     function updateBubbles() {
+      if (!svg || !stage) return;
+      const ctm = svg.getScreenCTM();
+      const sRect = stage.getBoundingClientRect();
+      const toStage = (svgX: number, svgY: number): [number, number] => {
+        if (!ctm) return [(svgX / 400) * sRect.width, (svgY / 320) * sRect.height];
+        const screenX = svgX * ctm.a + svgY * ctm.c + ctm.e;
+        const screenY = svgX * ctm.b + svgY * ctm.d + ctm.f;
+        return [screenX - sRect.left, screenY - sRect.top];
+      };
+
       if (!touched && bubbleEl.classList.contains("show")) {
-        bubbleEl.style.left = (topGuy.headPos[0] / 4) + "%";
-        bubbleEl.style.top = (topGuy.headPos[1] / 3.2) + "%";
+        const [x, y] = toStage(topGuy.headPos[0], topGuy.headPos[1]);
+        bubbleEl.style.left = `${x}px`;
+        bubbleEl.style.top = `${y}px`;
       }
       if (focused && partner && touched) {
         bubbleA.classList.remove("hl-hide");
@@ -193,10 +204,12 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
         const aTop = focused.headPos[1] <= partner.headPos[1];
         bubbleA.classList.toggle("hl-top", aTop);
         bubbleB.classList.toggle("hl-top", !aTop);
-        bubbleA.style.left = `${focused.headPos[0] / 4}%`;
-        bubbleA.style.top = `${Math.max(16, focused.headPos[1] / 3.2)}%`;
-        bubbleB.style.left = `${partner.headPos[0] / 4}%`;
-        bubbleB.style.top = `${Math.max(16, partner.headPos[1] / 3.2)}%`;
+        const [xA, yA] = toStage(focused.headPos[0], Math.max(51.2, focused.headPos[1]));
+        const [xB, yB] = toStage(partner.headPos[0], Math.max(51.2, partner.headPos[1]));
+        bubbleA.style.left = `${xA}px`;
+        bubbleA.style.top = `${yA}px`;
+        bubbleB.style.left = `${xB}px`;
+        bubbleB.style.top = `${yB}px`;
       } else {
         bubbleA.classList.add("hl-hide");
         bubbleB.classList.add("hl-hide");
@@ -281,8 +294,16 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
     animId = requestAnimationFrame(tick);
 
     const getStagePt = (e: PointerEvent): [number, number] => {
-      const r = stage.getBoundingClientRect();
-      return [(e.clientX - r.left) / r.width * 400, (e.clientY - r.top) / r.height * 320];
+      const ctm = svg.getScreenCTM();
+      if (!ctm) {
+        const r = stage.getBoundingClientRect();
+        return [(e.clientX - r.left) / r.width * 400, (e.clientY - r.top) / r.height * 320];
+      }
+      const inv = ctm.inverse();
+      return [
+        e.clientX * inv.a + e.clientY * inv.c + inv.e,
+        e.clientX * inv.b + e.clientY * inv.d + inv.f
+      ];
     };
 
     const handlePointerMove = (e: PointerEvent) => {

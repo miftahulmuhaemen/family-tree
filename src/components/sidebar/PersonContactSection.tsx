@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, isSafeExternalUrl } from '@/lib/utils';
 import { useIsNeumorphic } from '@/hooks/useTheme';
 import type { PhoneNumber, Address } from '@/types/family';
 
@@ -89,7 +89,7 @@ export function PersonContactSection({
             {addresses.map((addr, idx) => (
               <div key={idx} className="flex flex-col gap-0.5 text-xs">
                 <span className="text-zinc-900 dark:text-zinc-100 font-medium">{addr.address}</span>
-                {addr.gmap_link && (
+                {addr.gmap_link && isSafeExternalUrl(addr.gmap_link) && (
                   <a
                     href={addr.gmap_link}
                     target="_blank"
