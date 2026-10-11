@@ -70,11 +70,11 @@ export function LoadFileModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-xs p-3 sm:p-4 animate-in fade-in duration-200">
       <div
         ref={modalRef}
         className={cn(
-          "w-full max-w-md overflow-hidden shadow-2xl transition-all",
+          "w-full max-w-md max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden shadow-2xl transition-all",
           isNeu
             ? "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5 rounded-2xl"
             : "bg-white dark:bg-[#1e1e1e] rounded-xl border border-zinc-200 dark:border-zinc-800"
@@ -82,7 +82,7 @@ export function LoadFileModal({
       >
         {/* Header */}
         <div className={cn(
-          "flex items-center justify-between p-4 border-b",
+          "flex items-center justify-between p-4 border-b shrink-0",
           isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800"
         )}>
           <div>
@@ -118,7 +118,7 @@ export function LoadFileModal({
         />
 
         {/* Source Selection Options */}
-        <div className="p-4 space-y-3">
+        <div className="p-4 space-y-3 flex-1 overflow-y-auto">
           {/* Option 1: Google Drive */}
           <button
             type="button"

@@ -72,18 +72,18 @@ export function PersonFormModal({
   );
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
       <div
         ref={modalRef}
         className={cn(
-          "w-full max-w-lg shadow-2xl max-h-[90vh] flex flex-col overflow-hidden",
+          "w-full max-w-lg shadow-2xl max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden",
           isNeu
             ? "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5 rounded-3xl"
             : "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl"
         )}
       >
         {/* Modal Header */}
-        <div className={cn("flex items-center justify-between p-4 border-b", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")}>
+        <div className={cn("flex items-center justify-between p-4 border-b shrink-0", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")}>
           <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
             {person ? terms.edit_person : terms.add_person}
           </h3>

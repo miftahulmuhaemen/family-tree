@@ -21,7 +21,7 @@ interface GedcomRecord {
 }
 
 /**
- * Format internal date (YYYY-MM-DD or YYYY) into standard GEDCOM date format (e.g. 6 NOV 1964 or 1950)
+ * Format internal date (YYYY-MM-DD or YYYY) into standard GEDCOM date format (e.g. 15 MAY 1980 or 1950)
  */
 export function formatGedcomDate(dateStr?: string): string {
   if (!dateStr) return '';
@@ -48,7 +48,7 @@ export function formatGedcomDate(dateStr?: string): string {
 }
 
 /**
- * Parse GEDCOM date (e.g. '06 NOV 1964', '6 NOV 1964', '1964-11-06', '1950') into internal YYYY-MM-DD format
+ * Parse GEDCOM date (e.g. '15 MAY 1980', '1980-05-15', '1950') into internal YYYY-MM-DD format
  */
 export function parseGedcomDate(gedDate?: string): string {
   if (!gedDate) return '';

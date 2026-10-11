@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   FileText, FolderOpen, Loader2, Plus, Download,
-  Sun, Moon, Save, AlertCircle, ChevronDown
+  Sun, Moon, Save, AlertCircle, ChevronDown, ChevronLeft
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -44,6 +44,7 @@ export function SidebarHeader({
   errorMessage,
   isDarkMode,
   toggleDarkMode,
+  onCollapse,
   terms,
   isReadOnly = false
 }: SidebarHeaderProps) {
@@ -143,6 +144,22 @@ export function SidebarHeader({
     )}>
       {/* Left Anchor: filename [status] in a single dynamic unit */}
       <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
+        {onCollapse && (
+          <button
+            type="button"
+            onClick={onCollapse}
+            className={cn(
+              "p-1.5 -ml-1 rounded-md transition-colors cursor-pointer shrink-0 md:hidden",
+              isNeu
+                ? "shadow-neu-raised-sm active:shadow-neu-pressed text-zinc-700 dark:text-zinc-300 border border-white/60 dark:border-white/5"
+                : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            )}
+            title={terms.minimize || "Tutup Sidebar"}
+            aria-label="Collapse Sidebar"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+        )}
         <FileText className="w-4 h-4 shrink-0 text-zinc-600 dark:text-zinc-400" />
         {isEditingName && !isReadOnly ? (
           <input
