@@ -16,6 +16,14 @@ export function useSidebarResize(initialWidth: number = 440): UseSidebarResizeRe
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const handleResize = () => {
+      setWidth(prev => (window.innerWidth < 768 ? window.innerWidth : Math.min(prev, window.innerWidth)));
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing) return;
       const newWidth = e.clientX;

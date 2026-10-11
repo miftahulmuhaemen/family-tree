@@ -19,7 +19,12 @@ export function LandingPage() {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground font-sans overflow-x-clip selection:bg-pink-500 selection:text-white">
-      <LandingHeaderBar locale={locale} />
+      <LandingHeaderBar
+        locale={locale}
+        onToggleLocale={() => setLocale(locale === 'en' ? 'id' : 'en')}
+        isDarkMode={isDarkMode}
+        onToggleTheme={toggleDarkMode}
+      />
       <BrutalistGrid />
       <CursorFollower />
       <FourCornerNav

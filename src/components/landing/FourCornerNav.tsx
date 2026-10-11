@@ -111,7 +111,7 @@ export function FourCornerNav({
     <nav
       aria-label="Quick actions"
       style={{ right: `${rightOffset}px` }}
-      className="fixed top-[64px] z-40 flex flex-col items-end pointer-events-auto select-none"
+      className="hidden md:flex fixed top-[64px] z-40 flex-col items-end pointer-events-auto select-none"
     >
       {/* 1x3 Grid Inverted Box: LANG ID (192px x 64px) */}
       <div

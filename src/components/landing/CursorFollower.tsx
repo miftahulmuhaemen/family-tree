@@ -6,6 +6,11 @@ export function CursorFollower() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // Disable follower on touch-screen and coarse-pointer devices
+    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) {
+      return;
+    }
+
     const dot = dotRef.current;
     if (!dot) return;
 
@@ -123,7 +128,7 @@ export function CursorFollower() {
         transform: 'translate3d(-100px, -100px, 0) translate(-50%, -50%) scale(1)',
         willChange: 'transform, opacity',
       }}
-      className="fixed top-0 left-0 w-10 h-10 rounded-full bg-white mix-blend-difference pointer-events-none z-50"
+      className="hidden [@media(hover:hover)_and_(pointer:fine)]:block fixed top-0 left-0 w-10 h-10 rounded-full bg-white mix-blend-difference pointer-events-none z-50"
     />
   );
 }

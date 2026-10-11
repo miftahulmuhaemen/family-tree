@@ -116,18 +116,18 @@ export function AddRelativeModal({
   );
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
       <div
         ref={modalRef}
         className={cn(
-          "w-full max-w-md shadow-2xl overflow-hidden",
+          "w-full max-w-md shadow-2xl max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden",
           isNeu
             ? "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5 rounded-3xl"
             : "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl"
         )}
       >
         {/* Modal Header */}
-        <div className={cn("flex items-center justify-between p-4 border-b", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")}>
+        <div className={cn("flex items-center justify-between p-4 border-b shrink-0", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")}>
           <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100 truncate">{getTitle()}</h3>
           <button
             type="button"
@@ -144,7 +144,7 @@ export function AddRelativeModal({
         </div>
 
         {/* Mode Selector Tabs */}
-        <div className={cn("flex border-b p-2 gap-2", isNeu ? "border-white/40 dark:border-white/5 bg-transparent" : "border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50")}>
+        <div className={cn("flex border-b p-2 gap-2 shrink-0", isNeu ? "border-white/40 dark:border-white/5 bg-transparent" : "border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50")}>
           <button type="button" onClick={() => setMode('new')} className={tabCls(mode === 'new')}>
             {terms.create_new}
           </button>
@@ -154,45 +154,47 @@ export function AddRelativeModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          <RelativeTypeOptions
-            relativeType={relativeType}
-            relationshipStatus={relationshipStatus}
-            setRelationshipStatus={setRelationshipStatus}
-            isFoster={isFoster}
-            setIsFoster={setIsFoster}
-            isMaxBioParentsReached={isMaxBioParentsReached}
-            spousesOfTarget={spousesOfTarget}
-            secondParentId={secondParentId}
-            setSecondParentId={setSecondParentId}
-            targetPerson={targetPerson}
-            secondParent={secondParent}
-            terms={terms}
-          />
-
-          {mode === 'new' ? (
-            <NewRelativeFieldsGroup
-              name={name}
-              setName={setName}
-              gender={gender}
-              setGender={setGender}
-              birthDate={birthDate}
-              setBirthDate={setBirthDate}
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 overscroll-contain">
+            <RelativeTypeOptions
+              relativeType={relativeType}
+              relationshipStatus={relationshipStatus}
+              setRelationshipStatus={setRelationshipStatus}
+              isFoster={isFoster}
+              setIsFoster={setIsFoster}
+              isMaxBioParentsReached={isMaxBioParentsReached}
+              spousesOfTarget={spousesOfTarget}
+              secondParentId={secondParentId}
+              setSecondParentId={setSecondParentId}
+              targetPerson={targetPerson}
+              secondParent={secondParent}
               terms={terms}
             />
-          ) : (
-            <PersonSelectCombobox
-              candidates={candidatePeople}
-              selectedId={selectedPersonId}
-              onSelect={setSelectedPersonId}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              emptyLabel={terms.no_members}
-            />
-          )}
+
+            {mode === 'new' ? (
+              <NewRelativeFieldsGroup
+                name={name}
+                setName={setName}
+                gender={gender}
+                setGender={setGender}
+                birthDate={birthDate}
+                setBirthDate={setBirthDate}
+                terms={terms}
+              />
+            ) : (
+              <PersonSelectCombobox
+                candidates={candidatePeople}
+                selectedId={selectedPersonId}
+                onSelect={setSelectedPersonId}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                emptyLabel={terms.no_members}
+              />
+            )}
+          </div>
 
           {/* Actions */}
-          <div className={cn("flex items-center justify-end gap-2 pt-3 border-t", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")}>
+          <div className={cn("flex items-center justify-end gap-2 p-3 sm:p-4 border-t shrink-0 bg-inherit", isNeu ? "border-white/40 dark:border-white/5" : "border-zinc-100 dark:border-zinc-800")}>
             <button
               type="button"
               onClick={onClose}

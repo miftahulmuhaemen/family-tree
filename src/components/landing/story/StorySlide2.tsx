@@ -32,10 +32,10 @@ export function StorySlide2({ progress, locale }: StorySlideProps) {
 
     svg.replaceChildren();
 
-    // Standardized camera matching all 4 slides: S=3.44, ox=200, oy=190
-    const C = createStoryCam(45, 0.5, 3.44);
-    C.ox = 200;
-    C.oy = 190;
+    // Scaled camera to maximize canvas utilization: S=4.5, ox=202, oy=214
+    const C = createStoryCam(45, 0.5, 4.5);
+    C.ox = 202;
+    C.oy = 214;
     const P = storyProj(C), front = storyFacing(C);
 
     const gGrid = createStorySvgEl("g", {}, svg);
@@ -43,9 +43,9 @@ export function StorySlide2({ progress, locale }: StorySlideProps) {
     const gPedestals = createStorySvgEl("g", {}, svg);
     const gChars = createStorySvgEl("g", {}, svg);
 
-    for (let i = -36; i <= 36; i += 12) {
-      createStorySvgEl("path", { d: seg(P(i, -36, 0), P(i, 36, 0)), class: "lo nf", opacity: "0.2" }, gGrid);
-      createStorySvgEl("path", { d: seg(P(-36, i, 0), P(36, i, 0)), class: "lo nf", opacity: "0.2" }, gGrid);
+    for (let i = -30; i <= 30; i += 12) {
+      createStorySvgEl("path", { d: seg(P(i, -30, 0), P(i, 30, 0)), class: "lo nf", opacity: "0.2" }, gGrid);
+      createStorySvgEl("path", { d: seg(P(-30, i, 0), P(30, i, 0)), class: "lo nf", opacity: "0.2" }, gGrid);
     }
 
     const pYou = { x: -24, y: 16, z: 0 };
@@ -255,11 +255,11 @@ export function StorySlide2({ progress, locale }: StorySlideProps) {
   return (
     <div ref={containerRef} className="relative w-full aspect-[400/290] pointer-events-none select-none">
       <svg ref={svgRef} viewBox="0 0 400 290" className="w-full h-full block bg-transparent" />
-      <div ref={badgeQRef} className="question-badge" style={{ left: '47.6%', top: '59.5%' }}>?</div>
-      <div ref={lblMaternalRef} className="char-label" style={{ left: '47.6%', top: '16.8%' }}>{locale === 'id' ? 'Jalur Ibu' : 'Maternal Line'}</div>
-      <div ref={lblPaternalRef} className="char-label" style={{ left: '73.1%', top: '31.1%' }}>{locale === 'id' ? 'Jalur Ayah' : 'Paternal Line'}</div>
-      <div ref={lblYouRef} className="char-label tag-blue" style={{ left: '25.7%', top: '37.4%' }}>{locale === 'id' ? 'Anda' : 'You'}</div>
-      <div ref={lblSarahRef} className="char-label tag-pink" style={{ left: '68.2%', top: '50.0%' }}>{locale === 'id' ? 'Tante Sarah' : 'Aunt Sarah'}</div>
+      <div ref={badgeQRef} className="question-badge" style={{ left: '47.5%', top: '65.5%' }}>?</div>
+      <div ref={lblMaternalRef} className="char-label" style={{ left: '47.5%', top: '12.5%' }}>{locale === 'id' ? 'Jalur Ibu' : 'Maternal Line'}</div>
+      <div ref={lblPaternalRef} className="char-label" style={{ left: '81.5%', top: '30.5%' }}>{locale === 'id' ? 'Jalur Ayah' : 'Paternal Line'}</div>
+      <div ref={lblYouRef} className="char-label tag-blue" style={{ left: '19.0%', top: '39.0%' }}>{locale === 'id' ? 'Anda' : 'You'}</div>
+      <div ref={lblSarahRef} className="char-label tag-pink" style={{ left: '75.0%', top: '56.0%' }}>{locale === 'id' ? 'Tante Sarah' : 'Aunt Sarah'}</div>
     </div>
   );
 }

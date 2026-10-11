@@ -32,10 +32,10 @@ export function StorySlide4({ progress, locale }: StorySlideProps) {
 
     svg.replaceChildren();
 
-    // Standardized camera matching all 4 slides: S=3.44, ox=200, oy=190
-    const C = createStoryCam(45, 0.5, 3.44);
-    C.ox = 200;
-    C.oy = 190;
+    // Scaled camera to maximize canvas utilization: S=4.7, ox=208, oy=236
+    const C = createStoryCam(45, 0.5, 4.7);
+    C.ox = 208;
+    C.oy = 236;
     const P = storyProj(C), front = storyFacing(C);
 
     const gGrid = createStorySvgEl("g", {}, svg);
@@ -43,9 +43,9 @@ export function StorySlide4({ progress, locale }: StorySlideProps) {
     const gPlates = createStorySvgEl("g", {}, svg);
     const gAvatars = createStorySvgEl("g", {}, svg);
 
-    for (let i = -36; i <= 36; i += 12) {
-      createStorySvgEl("path", { d: seg(P(i, -36, 0), P(i, 36, 0)), class: "lo nf", opacity: "0.18" }, gGrid);
-      createStorySvgEl("path", { d: seg(P(-36, i, 0), P(36, i, 0)), class: "lo nf", opacity: "0.18" }, gGrid);
+    for (let i = -30; i <= 30; i += 12) {
+      createStorySvgEl("path", { d: seg(P(i, -30, 0), P(i, 30, 0)), class: "lo nf", opacity: "0.18" }, gGrid);
+      createStorySvgEl("path", { d: seg(P(-30, i, 0), P(30, i, 0)), class: "lo nf", opacity: "0.18" }, gGrid);
     }
 
     const PEOPLE = {
@@ -159,9 +159,28 @@ export function StorySlide4({ progress, locale }: StorySlideProps) {
 
     Object.values(PEOPLE).forEach((p) => {
       const av = avs[p.id as keyof typeof avs];
-      const yOff = p.id === "sarah" ? 22 : 20;
+      let xOff = 0;
+      let yOff = 20;
+
+      if (p.id === "henry") {
+        xOff = -18;
+        yOff = 34;
+      } else if (p.id === "eleanor") {
+        xOff = 22;
+        yOff = 12;
+      } else if (p.id === "david") {
+        xOff = -18;
+        yOff = 16;
+      } else if (p.id === "sarah") {
+        xOff = 20;
+        yOff = 16;
+      } else if (p.id === "you") {
+        xOff = 0;
+        yOff = 20;
+      }
+
       if (p.tagEl) {
-        p.tagEl.style.left = ((av.hx / 400) * 100) + "%";
+        p.tagEl.style.left = (((av.hx + xOff) / 400) * 100) + "%";
         p.tagEl.style.top = (((av.hy - yOff) / 290) * 100) + "%";
       }
     });
@@ -206,11 +225,11 @@ export function StorySlide4({ progress, locale }: StorySlideProps) {
   return (
     <div ref={containerRef} className="relative w-full aspect-[400/290] pointer-events-none select-none">
       <svg ref={svgRef} viewBox="0 0 400 290" className="w-full h-full block bg-transparent" />
-      <div ref={tagHenryRef} className="canvas-tag tag-blue" style={{ left: '50.0%', top: '10.5%' }}>{locale === 'id' ? 'Kakek Henry' : 'Grandpa Henry'}</div>
-      <div ref={tagEleanorRef} className="canvas-tag tag-pink" style={{ left: '71.9%', top: '10.5%' }}>{locale === 'id' ? 'Nenek Eleanor' : 'Grandma Eleanor'}</div>
-      <div ref={tagDavidRef} className="canvas-tag tag-blue" style={{ left: '33.0%', top: '23.1%' }}>{locale === 'id' ? 'Ayah (David)' : 'David (Father)'}</div>
-      <div ref={tagSarahRef} className="canvas-tag tag-pink" style={{ left: '61.0%', top: '30.7%' }}>{locale === 'id' ? 'Tante Sarah' : 'Aunt Sarah'}</div>
-      <div ref={tagYouRef} className="canvas-tag tag-blue" style={{ left: '22.0%', top: '39.9%' }}>{locale === 'id' ? 'Anda' : 'You'}</div>
+      <div ref={tagHenryRef} className="canvas-tag tag-blue" style={{ left: '47.5%', top: '6.5%' }}>{locale === 'id' ? 'Kakek Henry' : 'Grandpa Henry'}</div>
+      <div ref={tagEleanorRef} className="canvas-tag tag-pink" style={{ left: '87.5%', top: '14.1%' }}>{locale === 'id' ? 'Nenek Eleanor' : 'Grandma Eleanor'}</div>
+      <div ref={tagDavidRef} className="canvas-tag tag-blue" style={{ left: '24.2%', top: '30.0%' }}>{locale === 'id' ? 'Ayah (David)' : 'David (Father)'}</div>
+      <div ref={tagSarahRef} className="canvas-tag tag-pink" style={{ left: '72.0%', top: '40.3%' }}>{locale === 'id' ? 'Tante Sarah' : 'Aunt Sarah'}</div>
+      <div ref={tagYouRef} className="canvas-tag tag-blue" style={{ left: '13.7%', top: '51.7%' }}>{locale === 'id' ? 'Anda' : 'You'}</div>
     </div>
   );
 }

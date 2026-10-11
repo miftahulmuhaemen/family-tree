@@ -30,10 +30,10 @@ export function StorySlide3({ progress, locale }: StorySlideProps) {
 
     svg.replaceChildren();
 
-    // Standardized camera matching all 4 slides: S=3.44, ox=200, oy=190
-    const C = createStoryCam(45, 0.5, 3.44);
-    C.ox = 200;
-    C.oy = 190;
+    // Scaled camera to maximize canvas utilization: S=4.6, ox=228, oy=248
+    const C = createStoryCam(45, 0.5, 4.6);
+    C.ox = 228;
+    C.oy = 248;
     const P = storyProj(C), front = storyFacing(C);
 
     const gGrid = createStorySvgEl("g", {}, svg);
@@ -41,9 +41,9 @@ export function StorySlide3({ progress, locale }: StorySlideProps) {
     const gPedestals = createStorySvgEl("g", {}, svg);
     const gChars = createStorySvgEl("g", {}, svg);
 
-    for (let i = -36; i <= 36; i += 12) {
-      createStorySvgEl("path", { d: seg(P(i, -36, 0), P(i, 36, 0)), class: "lo nf", opacity: "0.2" }, gGrid);
-      createStorySvgEl("path", { d: seg(P(-36, i, 0), P(36, i, 0)), class: "lo nf", opacity: "0.2" }, gGrid);
+    for (let i = -30; i <= 30; i += 12) {
+      createStorySvgEl("path", { d: seg(P(i, -30, 0), P(i, 30, 0)), class: "lo nf", opacity: "0.2" }, gGrid);
+      createStorySvgEl("path", { d: seg(P(-30, i, 0), P(30, i, 0)), class: "lo nf", opacity: "0.2" }, gGrid);
     }
 
     const N_HENRY = { id: "henry", x: -8, y: -10, z: 30 };
@@ -220,10 +220,10 @@ export function StorySlide3({ progress, locale }: StorySlideProps) {
   return (
     <div ref={containerRef} className="relative w-full aspect-[400/290] pointer-events-none select-none">
       <svg ref={svgRef} viewBox="0 0 400 290" className="w-full h-full block bg-transparent" />
-      <div ref={lblHenryRef} className="node-label tag-blue" style={{ left: '51.2%', top: '2.4%' }}>{locale === 'id' ? 'Kakek Henry' : 'Grandpa Henry'}</div>
-      <div ref={lblDavidRef} className="node-label tag-blue" style={{ left: '31.8%', top: '17.8%' }}>{locale === 'id' ? 'Ayah (David)' : 'Father (David)'}</div>
-      <div ref={lblSarahRef} className="node-label tag-pink" style={{ left: '68.2%', top: '35.6%' }}>{locale === 'id' ? 'Tante Sarah' : 'Aunt Sarah'}</div>
-      <div ref={lblYouRef} className="node-label tag-blue" style={{ left: '20.8%', top: '40.8%' }}>{locale === 'id' ? 'Anda' : 'You'}</div>
+      <div ref={lblHenryRef} className="node-label tag-blue" style={{ left: '58.5%', top: '7.2%' }}>{locale === 'id' ? 'Kakek Henry' : 'Grandpa Henry'}</div>
+      <div ref={lblDavidRef} className="node-label tag-blue" style={{ left: '32.5%', top: '27.9%' }}>{locale === 'id' ? 'Ayah (David)' : 'Father (David)'}</div>
+      <div ref={lblSarahRef} className="node-label tag-pink" style={{ left: '81.5%', top: '51.7%' }}>{locale === 'id' ? 'Tante Sarah' : 'Aunt Sarah'}</div>
+      <div ref={lblYouRef} className="node-label tag-blue" style={{ left: '18.0%', top: '58.6%' }}>{locale === 'id' ? 'Anda' : 'You'}</div>
     </div>
   );
 }

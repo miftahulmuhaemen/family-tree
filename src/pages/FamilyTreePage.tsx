@@ -82,7 +82,7 @@ export function FamilyTreePage() {
               onAddPerson={isPublicPreview ? undefined : modals.openAddPerson}
             />
 
-            <div className="absolute bottom-10 sm:bottom-12 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center animate-in slide-in-from-bottom-4 fade-in duration-500 pointer-events-auto">
+            <div className="absolute bottom-6 sm:bottom-10 lg:bottom-12 left-1/2 -translate-x-1/2 z-40 max-w-[calc(100vw-1.5rem)] flex items-center justify-center animate-in slide-in-from-bottom-4 fade-in duration-500 pointer-events-auto">
               <ControlPanel
                 language={language} setLanguage={setLanguage} accent={accent} setAccent={setAccent}
                 mode={viewMode} setMode={setViewMode} canToggleMode={!drive.isReadOnly}

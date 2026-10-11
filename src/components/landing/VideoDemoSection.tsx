@@ -141,10 +141,10 @@ export function VideoDemoSection({ locale }: VideoDemoSectionProps) {
               loop
               muted
               playsInline
-              poster="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1280&auto=format&fit=crop"
+              preload="metadata"
             >
               <source
-                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                src="https://sanak-asset.muhaemen.my.id/demo.mp4"
                 type="video/mp4"
               />
             </video>

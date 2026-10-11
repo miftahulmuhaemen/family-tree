@@ -85,10 +85,10 @@ export function StorytellingSection({ locale }: StorytellingSectionProps) {
     >
       {/* Pinned Fullscreen Presentation Container */}
       <div ref={containerRef} className="h-screen w-full flex items-center justify-center overflow-hidden bg-transparent">
-        <div className="max-w-7xl w-full mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center h-full">
+        <div className="max-w-7xl w-full mx-auto px-6 py-6 sm:py-8 flex flex-col justify-center gap-6 sm:gap-8 lg:grid lg:grid-cols-12 lg:gap-16 lg:items-center h-full">
           
           {/* Left Column: Sticky Narrative Content */}
-          <div className="lg:col-span-5 flex flex-col justify-center select-none relative z-20">
+          <div className="lg:col-span-5 flex flex-col justify-center select-none relative z-20 w-full max-w-lg mx-auto lg:mx-0">
             {/* Soft light radial gradient behind text (softens background grid dots) */}
             <div
               aria-hidden="true"
@@ -99,20 +99,20 @@ export function StorytellingSection({ locale }: StorytellingSectionProps) {
               />
             </div>
 
-            <div ref={narrativeCardRef} className="flex flex-col gap-4 max-w-lg">
+            <div ref={narrativeCardRef} className="flex flex-col gap-3 sm:gap-4 max-w-lg">
               
               {/* Slide Title */}
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-foreground tracking-tight leading-tight">
                 {currentNarrative.title}
               </h2>
 
               {/* Description - All white in dark mode, dark in light mode */}
-              <p className="text-foreground text-base sm:text-lg leading-relaxed font-normal">
+              <p className="text-foreground text-sm sm:text-base lg:text-lg leading-relaxed font-normal">
                 {currentNarrative.desc}
               </p>
 
               {/* Minimal Progress Indicator */}
-              <div className="flex items-center gap-2 mt-4 pt-2">
+              <div className="flex items-center gap-2 mt-2 sm:mt-4 pt-1 sm:pt-2">
                 {[0, 1, 2, 3].map((idx) => (
                   <div
                     key={idx}
@@ -128,7 +128,7 @@ export function StorytellingSection({ locale }: StorytellingSectionProps) {
           </div>
 
           {/* Right Column: Stage (Slides 1 to 4, discrete instant snap, no cross-fade ghosting) */}
-          <div className="lg:col-span-7 flex items-center justify-center relative w-full aspect-[400/290] max-w-4xl mx-auto story-svg">
+          <div className="lg:col-span-7 flex items-center justify-center relative w-full max-w-[340px] sm:max-w-md lg:max-w-4xl aspect-[400/290] mx-auto story-svg mt-5 sm:mt-8 lg:mt-0">
             {/* Soft light radial gradient circle behind the SVG stage */}
             <div
               aria-hidden="true"

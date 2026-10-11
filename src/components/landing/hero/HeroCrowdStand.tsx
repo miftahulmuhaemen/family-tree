@@ -22,7 +22,7 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
   const bBRef = useRef<HTMLDivElement>(null);
   const actionRef = useRef<HTMLDivElement>(null);
   const lensRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
+  const invertedLayerRef = useRef<HTMLDivElement>(null);
   const cursorAnchorRef = useRef<HTMLDivElement>(null);
   const [isActionHovered, setIsActionHovered] = useState(false);
   const [hoveredRow, setHoveredRow] = useState<'studio' | 'story' | null>(null);
@@ -43,14 +43,15 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
     const rect = actionRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const y = clientY - rect.top;
-    // 512px container width, 192px 3x3 lens width -> range [0, 320]
-    const targetBoxX = Math.max(0, Math.min(320, x - 96));
+    const maxTargetX = Math.max(0, rect.width - 192);
+    const targetBoxX = Math.max(0, Math.min(maxTargetX, x - 96));
 
     if (lensRef.current) {
       lensRef.current.style.transform = `translate3d(${targetBoxX}px, 0px, 0px)`;
     }
-    if (innerRef.current) {
-      innerRef.current.style.transform = `translate3d(${-targetBoxX}px, 0px, 0px)`;
+    if (invertedLayerRef.current) {
+      const rightInset = Math.max(0, rect.width - (targetBoxX + 192));
+      invertedLayerRef.current.style.clipPath = `inset(0px ${rightInset}px 0px ${targetBoxX}px)`;
     }
     if (cursorAnchorRef.current) {
       cursorAnchorRef.current.style.transform = `translate3d(${x - targetBoxX}px, ${y}px, 0px)`;
@@ -76,6 +77,10 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
     const snapToGrid = () => {
       const el = actionRef.current;
       if (!el) return;
+      if (window.innerWidth < 768) {
+        el.style.transform = 'translateY(-16px)';
+        return;
+      }
       el.style.transform = 'translateY(-64px)';
       const rect = el.getBoundingClientRect();
       const snappedX = Math.round(rect.left / 64) * 64;
@@ -312,7 +317,7 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
   };
 
   return (
-    <section className="relative h-screen max-h-screen w-full bg-transparent flex flex-col items-center justify-between pt-2 pb-32 px-4 select-none overflow-hidden">
+    <section className="relative min-h-[calc(100vh-5rem)] md:h-screen md:max-h-screen w-full bg-transparent flex flex-col items-center justify-center md:justify-between pt-4 pb-8 md:pt-2 md:pb-32 px-4 select-none overflow-hidden">
       <style>{`
         .hero-svg path, .hero-svg polygon, .hero-svg ellipse, .hero-svg circle, .hero-svg line {
           fill: hsl(var(--background));
@@ -469,8 +474,11 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
       `}</style>
 
       {/* Main Crowd Stand Stage */}
-      <div className="flex-1 min-h-0 w-full flex items-center justify-center my-auto">
-        <div ref={stageRef} className="relative h-full max-h-[min(560px,calc(100vh-17rem))] aspect-[400/320] w-auto max-w-[960px] touch-none cursor-pointer">
+      <div className="flex-initial md:flex-1 min-h-0 w-full flex items-center justify-center my-0 md:my-auto">
+        <div
+          ref={stageRef}
+          className="relative w-full max-w-[270px] sm:max-w-[320px] md:max-w-[960px] max-h-[30vh] sm:max-h-[35vh] md:max-h-[min(560px,calc(100vh-17rem))] md:h-full aspect-[400/320] touch-none cursor-pointer mx-auto"
+        >
           {/* Soft light radial gradient circle behind the object (shifted 1 grid row down) */}
           <div
             aria-hidden="true"
@@ -494,27 +502,86 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
         </div>
       </div>
 
-      {/* Bottom Action Section: 8x3 grid space shifted 1 grid row up (-64px) */}
+      {/* Bottom Action Section: 8x3 grid space shifted 1 grid row up (-64px on desktop) */}
       <div
         id="hero-action-box"
         data-absorb-cursor="true"
         ref={actionRef}
-        className="relative z-20 w-[512px] h-[192px] mx-auto -translate-y-16 select-none shrink-0"
+        className="relative z-20 w-full max-w-[340px] sm:max-w-[420px] md:max-w-[512px] md:w-[512px] h-[140px] md:h-[192px] mx-auto mt-2 sm:mt-4 md:mt-0 md:-translate-y-16 select-none shrink-0 md:px-0 px-2"
         onMouseEnter={handleActionMouseEnter}
         onMouseMove={handleActionMouseMove}
         onMouseLeave={handleActionMouseLeave}
       >
-        {/* Dynamic Inverted 3x3 Grid Lens anchored to cursor (192px x 192px) */}
+        {/* Inverted Layer clipped strictly to the 3x3 grid lens position */}
+        <div
+          ref={invertedLayerRef}
+          aria-hidden="true"
+          style={{
+            clipPath: 'inset(0px calc(100% - 192px) 0px 0px)',
+            willChange: 'clip-path',
+          }}
+          className={`hidden md:block absolute inset-0 w-full h-full pointer-events-none z-20 transition-opacity duration-150 ${
+            isActionHovered ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {/* Inverted Container with Inverted Theme Background */}
+          <div className="w-full h-full bg-[#020817] dark:bg-[#fdf7e8] flex flex-col items-center justify-center">
+            {/* Action 1: Open Studio (Inverted) */}
+            <div className="w-full h-24 md:h-32 flex items-center justify-center select-none text-center">
+              <span
+                className={`inline-flex items-center justify-center text-4xl sm:text-5xl md:text-7xl font-black leading-none pt-2 transition-transform duration-200 ease-out text-white dark:text-black tracking-tight text-center ${
+                  isPressed === 'studio' ? 'scale-95 translate-y-0.5' : ''
+                }`}
+              >
+                {titleChars.map((char, idx) => (
+                  <span
+                    key={idx}
+                    className={hoveredRow === 'studio' ? 'animate-letter-jump' : ''}
+                    style={{
+                      display: 'inline-block',
+                      animationDelay: `${idx * 0.045}s`,
+                      willChange: hoveredRow === 'studio' ? 'transform' : 'auto',
+                    }}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </span>
+            </div>
+
+            {/* Action 2: Subtext and arrow (Inverted) */}
+            <div
+              className={`w-full h-14 md:h-16 -mt-3 md:-mt-5 flex flex-col items-center justify-center pt-1 gap-1.5 pb-1 select-none transition-all duration-200 text-white dark:text-black text-center ${
+                isPressed === 'story' ? 'scale-95 translate-y-1' : ''
+              }`}
+            >
+              <span
+                className={`text-xs sm:text-sm md:text-lg tracking-tight transition-all duration-150 text-center ${
+                  hoveredRow === 'story' ? 'font-black' : 'font-medium'
+                }`}
+              >
+                {subtext}
+              </span>
+              <div className={`flex items-center justify-center ${hoveredRow === 'story' ? 'animate-arrow-tingle' : ''}`}>
+                <svg className="w-5 h-2.5 sm:w-6 sm:h-3 md:w-8 md:h-4" viewBox="0 0 24 14" fill="currentColor">
+                  <polygon points="0,0 24,0 12,14" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Dynamic Inverted 3x3 Grid Lens Frame anchored to cursor (desktop hover only) */}
         <div
           ref={lensRef}
           aria-hidden="true"
           style={{ willChange: 'transform' }}
-          className={`absolute top-0 left-0 w-[192px] h-[192px] pointer-events-none z-20 transition-opacity duration-150 ${
+          className={`hidden md:block absolute top-0 left-0 w-[192px] h-[192px] pointer-events-none z-30 transition-opacity duration-150 ${
             isActionHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         >
-          {/* Lens Body: Inverted background & Brutalist Grid lines/dots */}
-          <div className="w-full h-full relative overflow-hidden bg-[#020817] dark:bg-[#fdf7e8] ring-1 ring-inset ring-white/20 dark:ring-black/15 shadow-sm">
+          {/* Lens Frame: Ring border & Brutalist Grid lines/dots (transparent background) */}
+          <div className="w-full h-full relative overflow-hidden ring-1 ring-inset ring-white/20 dark:ring-black/15 shadow-sm">
             <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" viewBox="0 0 192 192">
               {/* Internal 3x3 grid crosshair lines */}
               <line x1="64" y1="0" x2="64" y2="192" stroke="currentColor" strokeWidth="1" className="text-white/[0.12] dark:text-black/[0.12]" />
@@ -539,58 +606,6 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
               <circle cx="128" cy="192" r="3" className="fill-[#8b887f]" />
               <circle cx="192" cy="192" r="3" className="fill-[#8b887f]" />
             </svg>
-
-            {/* Inverted Duplicate Text Layer (Offset negatively to align perfectly with base layer) */}
-            <div
-              ref={innerRef}
-              className="absolute top-0 left-0 w-[512px] h-[192px] pointer-events-none flex flex-col"
-              style={{ willChange: 'transform' }}
-            >
-              {/* Inverted Row 1 & 2: Open Studio (Height: 128px / 2 rows) */}
-              <div className="w-full h-32 flex items-center justify-center">
-                <span
-                  className={`inline-flex items-center justify-center select-none text-5xl sm:text-6xl md:text-7xl font-black leading-none pt-2 transition-transform duration-200 ease-out text-white dark:text-black tracking-tight ${
-                    isPressed === 'studio' ? 'scale-95 translate-y-0.5' : ''
-                  }`}
-                >
-                  {titleChars.map((char, idx) => (
-                    <span
-                      key={idx}
-                      className={hoveredRow === 'studio' ? 'animate-letter-jump' : ''}
-                      style={{
-                        display: 'inline-block',
-                        animationDelay: `${idx * 0.045}s`,
-                        willChange: hoveredRow === 'studio' ? 'transform' : 'auto',
-                      }}
-                    >
-                      {char}
-                    </span>
-                  ))}
-                </span>
-              </div>
-
-              {/* Inverted Row 3: Subtext + Arrow (Height: 64px / 1 row) */}
-              <div
-                className={`w-full h-16 -mt-5 flex flex-col items-center justify-start pt-1 gap-1.5 pb-1 select-none transition-all duration-200 text-white dark:text-black ${
-                  isPressed === 'story' ? 'scale-95 translate-y-1' : ''
-                }`}
-              >
-                <span
-                  className={`text-sm sm:text-base md:text-lg tracking-tight transition-all duration-150 ${
-                    hoveredRow === 'story'
-                      ? 'font-black text-white dark:text-black'
-                      : 'font-medium text-white dark:text-black'
-                  }`}
-                >
-                  {subtext}
-                </span>
-                <div className={hoveredRow === 'story' ? 'animate-arrow-tingle' : ''}>
-                  <svg width="32" height="16" viewBox="0 0 24 14" fill="currentColor">
-                    <polygon points="0,0 24,0 12,14" />
-                  </svg>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* 4 Corner Square Handles matching Figma / Canvas selection box */}
@@ -617,8 +632,8 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
         </div>
 
         {/* Base Layer Action Click Areas */}
-        <div className="relative z-10 w-full h-full flex flex-col">
-          {/* Action 1: Open Studio (Row 1 & 2, 128px) */}
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+          {/* Action 1: Open Studio (Row 1 & 2) */}
           <button
             type="button"
             onClick={() => navigate('/app')}
@@ -627,10 +642,10 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
             onMouseDown={() => setIsPressed('studio')}
             onMouseUp={() => setIsPressed(null)}
             aria-label={titleText}
-            className="w-full h-32 flex items-center justify-center cursor-pointer select-none"
+            className="w-full h-24 md:h-32 flex items-center justify-center cursor-pointer select-none text-center"
           >
             <span
-              className={`inline-flex items-center justify-center text-5xl sm:text-6xl md:text-7xl font-black leading-none pt-2 transition-transform duration-200 ease-out text-foreground tracking-tight ${
+              className={`inline-flex items-center justify-center text-4xl sm:text-5xl md:text-7xl font-black leading-none pt-2 transition-transform duration-200 ease-out text-foreground tracking-tight text-center ${
                 isPressed === 'studio' ? 'scale-95 translate-y-0.5' : ''
               }`}
             >
@@ -650,7 +665,7 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
             </span>
           </button>
 
-          {/* Action 2: Subtext and arrow as one click container (Row 3, 64px) */}
+          {/* Action 2: Subtext and arrow as one click container (Row 3) */}
           <button
             type="button"
             onClick={scrollToStory}
@@ -659,12 +674,12 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
             onMouseDown={() => setIsPressed('story')}
             onMouseUp={() => setIsPressed(null)}
             aria-label={isId ? 'Gulir ke bagian cerita' : 'Scroll to story section'}
-            className={`w-full h-16 -mt-5 flex flex-col items-center justify-start pt-1 gap-1.5 pb-1 cursor-pointer select-none transition-all duration-200 text-foreground ${
+            className={`w-full h-14 md:h-16 -mt-3 md:-mt-5 flex flex-col items-center justify-center pt-1 gap-1.5 pb-1 cursor-pointer select-none transition-all duration-200 text-foreground text-center ${
               isPressed === 'story' ? 'scale-95 translate-y-1' : ''
             }`}
           >
             <span
-              className={`text-sm sm:text-base md:text-lg tracking-tight transition-all duration-150 ${
+              className={`text-xs sm:text-sm md:text-lg tracking-tight transition-all duration-150 text-center ${
                 hoveredRow === 'story'
                   ? 'font-black text-foreground'
                   : 'font-medium text-foreground'
@@ -672,8 +687,8 @@ export function HeroCrowdStand({ locale = 'en' }: HeroCrowdStandProps) {
             >
               {subtext}
             </span>
-            <div className={hoveredRow === 'story' ? 'animate-arrow-tingle' : ''}>
-              <svg width="32" height="16" viewBox="0 0 24 14" fill="currentColor">
+            <div className={`flex items-center justify-center ${hoveredRow === 'story' ? 'animate-arrow-tingle' : ''}`}>
+              <svg className="w-5 h-2.5 sm:w-6 sm:h-3 md:w-8 md:h-4" viewBox="0 0 24 14" fill="currentColor">
                 <polygon points="0,0 24,0 12,14" />
               </svg>
             </div>

@@ -56,18 +56,18 @@ export function DeleteConfirmModal({
   const isId = language === 'id';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         ref={modalRef}
         className={cn(
-          "w-full max-w-lg overflow-hidden transition-all select-none",
+          "w-full max-w-lg max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden transition-all select-none",
           isNeu
             ? "bg-[#e6e9ef] dark:bg-[#1c2027] shadow-neu-raised border border-white/60 dark:border-white/5 rounded-3xl"
             : "bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl"
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 pb-4">
+        <div className="flex items-center justify-between p-6 pb-4 shrink-0">
           <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
             <div className={cn(
               "p-2.5 rounded-xl flex items-center justify-center shrink-0",
@@ -92,7 +92,7 @@ export function DeleteConfirmModal({
         </div>
 
         {/* Content Body */}
-        <div className="px-6 py-2 space-y-5">
+        <div className="px-6 py-2 space-y-5 flex-1 overflow-y-auto">
           {hasDependents ? (
             <>
               <div className={cn(
@@ -140,7 +140,7 @@ export function DeleteConfirmModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-end gap-3 p-6 pt-4">
+        <div className="flex items-center justify-end gap-3 p-6 pt-4 border-t border-inherit shrink-0">
           <button
             type="button"
             onClick={onClose}

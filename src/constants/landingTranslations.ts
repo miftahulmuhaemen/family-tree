@@ -23,6 +23,9 @@ export interface LandingContent {
       title: string;
       description: string;
       assetLabel: string;
+      assetUrl?: string;
+      statusBadge?: string;
+      statusNotice?: string;
     }>;
   };
   problem: {
@@ -111,66 +114,48 @@ export const LANDING_TRANSLATIONS: Record<'en' | 'id', LandingContent> = {
         {
           id: 'gedcom-standard',
           number: '01.',
-          title: 'Universal Format Compatibility',
+          title: 'Universal Format Compatibility & Live Code Editor',
           description:
-            'Bring your existing family research without starting over, or move your tree freely between genealogy tools whenever you want. Your records remain yours and are never trapped inside a proprietary database. Supported by full compliance with the industry standard GEDCOM 5.5.1 specification (.ged).',
-          assetLabel: 'GEDCOM 5.5.1 Specification & Data Standard',
+            'Bring your existing family research without starting over, or move your tree freely between genealogy tools whenever you want. Your records remain yours and are never trapped inside a proprietary database. Supported by full compliance with the industry standard GEDCOM 5.5.1 specification (.ged), backed by an integrated Monaco editor buffer with two-way synchronized graph validation and instant syntax checks for users who want direct inspection over raw records.',
+          assetLabel: 'GEDCOM 5.5.1 Specification & Two-Way Monaco Buffer',
+          assetUrl: 'https://sanak-asset.muhaemen.my.id/editor.gif',
         },
         {
           id: 'visual-canvas',
           number: '02.',
-          title: 'Interactive Visual Canvas',
+          title: 'Interactive Visual Canvas & Kinship Path Finder',
           description:
-            'An intuitive visual space to explore and build your family lineage. Add relatives with a click, connect spouses, trace descendant lines, and navigate large multi-generational branches smoothly with pan and zoom controls. Powered by an automated tree layout engine using orthogonal generational connectors.',
-          assetLabel: 'Interactive Graph Canvas & Generational Connectors',
-        },
-        {
-          id: 'monaco-editor',
-          number: '03.',
-          title: 'Live Code and Data Editor',
-          description:
-            'For users who want direct inspection over raw records, view and edit your family data as structured text with every change reflected on your tree in real time. Backed by an integrated Monaco editor buffer with two-way synchronized graph validation and instant syntax checks.',
-          assetLabel: 'Two-Way Monaco Editor Buffer & Live Parser',
+            'An intuitive visual space to explore and build your family lineage with smooth pan and zoom controls, one-click relative connections, and automated generational tree layouts. Integrated with a multi-branch graph traversal engine that instantly resolves kinship paths between any two relatives or calculates what an individual should call everyone else from their vantage point.',
+          assetLabel: 'Interactive Graph Canvas & Kinship Traversal Matrix',
+          assetUrl: 'https://sanak-asset.muhaemen.my.id/node.gif',
         },
         {
           id: 'device-storage',
-          number: '04.',
-          title: 'Private On-Device Storage',
+          number: '03.',
+          title: 'Private Local Storage & Google Drive Sharing',
           description:
-            'Your family records stay strictly on your personal device. There is no account registration, no password to manage, and your personal data never leaves your computer or uploads to a third-party server. Built entirely on client-side execution using persistent browser storage (IndexedDB).',
-          assetLabel: 'Zero-Telemetry Local Sandbox Storage (IndexedDB)',
-        },
-        {
-          id: 'gdrive-sync',
-          number: '05.',
-          title: 'Direct Google Drive Sync and Sharing',
-          description:
-            'Save your family records directly to your personal Google Drive, and share them with relatives simply by sending them a link. Family members can open and explore the tree immediately in a clean, read-only viewer without needing to register or install software, while trusted collaborators can be granted full editing access.',
-          assetLabel: 'Google Drive REST API v3 & Shared Permission Model',
-        },
-        {
-          id: 'kinship-finder',
-          number: '06.',
-          title: 'Kinship and Perspective Relationship Finder',
-          description:
-            'Instantly understand how any two people in the family tree are related, or select any member as a reference point to see what they should call everyone else in the family. Calculated through a multi-branch graph traversal engine that resolves lineal, collateral, and affinal kinship lines from any vantage point.',
-          assetLabel: 'Multi-Generational Kinship Graph Traversal & Perspective Matrix',
+            'We never store your family records—there are no account sign-ups, no central servers, and zero data tracking. Your records stay entirely under your control: save them privately on your local drive using browser sandbox storage (IndexedDB), or sync directly to your personal Google Drive to share and explore lineages seamlessly with your loved ones.',
+          assetLabel: 'Local Sandbox Storage (IndexedDB) & Google Drive Cloud Sync',
+          assetUrl: 'https://sanak-asset.muhaemen.my.id/load.gif',
         },
         {
           id: 'rich-profiles',
-          number: '07.',
+          number: '04.',
           title: 'Rich Profiles and Direct Family Contact',
           description:
             'Preserve meaningful details beyond basic names and dates. Store burial places, home addresses, phone numbers, and tap directly to start a WhatsApp message or open navigation directions to a family home. Structured with dedicated metadata attributes for Google Maps coordinates and WhatsApp action triggers.',
           assetLabel: 'Rich Member Profile Drawer & Communication Shortcuts',
+          assetUrl: 'https://sanak-asset.muhaemen.my.id/contact_address.gif',
         },
         {
           id: 'customary-titles',
-          number: '08.',
+          number: '05.',
           title: 'Regional and Customary Kinship Titles',
           description:
             'Address your relatives with their proper traditional titles. The system automatically resolves customary address terms across Indonesian traditions, including Banjarese, Dayak, Javanese, Sundanese, Minang, and Batak customs. Driven by a localized kinship dictionary mapped to lineage seniority and family branch.',
           assetLabel: 'Cultural Kinship Dictionary & Regional Address Rules',
+          statusBadge: 'In Development',
+          statusNotice: 'This capability is currently in development and will be available in an upcoming release.',
         },
       ],
     },
@@ -306,66 +291,48 @@ export const LANDING_TRANSLATIONS: Record<'en' | 'id', LandingContent> = {
         {
           id: 'gedcom-standard',
           number: '01.',
-          title: 'Kompatibilitas Format Universal',
+          title: 'Kompatibilitas Format Universal & Editor Kode Terintegrasi',
           description:
-            'Gunakan kembali riset silsilah yang sudah Anda miliki tanpa harus memulai dari awal, atau pindahkan data keluarga Anda antaraplikasi genealogi kapan saja. Data keluarga tetap menjadi milik Anda dan tidak terkunci di format tertutup. Didukung kepatuhan penuh terhadap spesifikasi standar industri GEDCOM 5.5.1 (.ged).',
-          assetLabel: 'Spesifikasi & Standar Data GEDCOM 5.5.1',
+            'Gunakan kembali riset silsilah yang sudah Anda miliki tanpa harus memulai dari awal, atau pindahkan data keluarga Anda antaraplikasi genealogi kapan saja tanpa terkunci di format tertutup. Didukung kepatuhan penuh terhadap spesifikasi standar industri GEDCOM 5.5.1 (.ged), serta editor Monaco terintegrasi dengan sinkronisasi dua arah dan validasi sintaks instan bagi Anda yang menginginkan kendali langsung atas data mentah.',
+          assetLabel: 'Spesifikasi GEDCOM 5.5.1 & Buffer Editor Monaco Dua Arah',
+          assetUrl: 'https://sanak-asset.muhaemen.my.id/editor.gif',
         },
         {
           id: 'visual-canvas',
           number: '02.',
-          title: 'Kanvas Visual Interaktif',
+          title: 'Kanvas Visual Interaktif & Penelusuran Kekerabatan',
           description:
-            'Ruang visual intuitif untuk menjelajah dan menyusun garis silsilah keluarga Anda. Tambahkan kerabat cukup dengan satu klik, hubungkan pasangan, telusuri garis keturunan, dan jelajahi cabang keluarga besar dengan kontrol geser dan pembesaran yang halus. Ditenagai mesin penataan otomatis menggunakan garis penghubung generasi ortogonal.',
-          assetLabel: 'Kanvas Graf Interaktif & Penghubung Generasi',
-        },
-        {
-          id: 'monaco-editor',
-          number: '03.',
-          title: 'Editor Kode dan Data Terintegrasi',
-          description:
-            'Bagi Anda yang menginginkan kendali langsung atas data mentah, lihat dan sunting catatan keluarga sebagai teks terstruktur dengan setiap perubahan langsung tercermin pada pohon silsilah secara seketika. Didukung editor Monaco terintegrasi dengan sinkronisasi dua arah dan validasi sintaks instan.',
-          assetLabel: 'Buffer Editor Monaco Dua Arah & Pengurai Langsung',
+            'Ruang visual intuitif untuk menjelajah dan menyusun garis silsilah keluarga Anda dengan kontrol geser dan pembesaran yang halus, penambahan kerabat satu klik, dan penataan generasi otomatis. Terintegrasi dengan mesin penelusuran graf multiranting yang seketika menghitung jalur hubungan antara dua anggota keluarga mana pun atau menentukan panggilan kerabat dari sudut pandang siapa saja.',
+          assetLabel: 'Kanvas Graf Interaktif & Matriks Penelusuran Kekerabatan',
+          assetUrl: 'https://sanak-asset.muhaemen.my.id/node.gif',
         },
         {
           id: 'device-storage',
-          number: '04.',
-          title: 'Penyimpanan Privat di Perangkat Sendiri',
+          number: '03.',
+          title: 'Penyimpanan Privat & Berbagi Google Drive',
           description:
-            'Catatan keluarga Anda tersimpan sepenuhnya di perangkat pribadi Anda. Tanpa pendaftaran akun, tanpa kata sandi, dan data pribadi Anda tidak pernah dikirim ke peladen pihak ketiga. Berjalan murni di sisi peramban menggunakan penyimpanan lokal IndexedDB.',
-          assetLabel: 'Penyimpanan Sandbox Lokal Tanpa Telemetri (IndexedDB)',
-        },
-        {
-          id: 'gdrive-sync',
-          number: '05.',
-          title: 'Sinkronisasi dan Berbagi Google Drive Langsung',
-          description:
-            'Simpan catatan keluarga langsung ke Google Drive pribadi Anda, dan bagikan kepada sanak saudara cukup dengan mengirimkan sebuah tautan. Anggota keluarga dapat langsung membuka silsilah dalam tampilan baca yang rapi tanpa perlu mendaftar atau memasang aplikasi, sementara kerabat tepercaya dapat diberi akses penyuntingan.',
-          assetLabel: 'Google Drive REST API v3 & Model Izin Berbagi',
-        },
-        {
-          id: 'kinship-finder',
-          number: '06.',
-          title: 'Pencari Hubungan dan Sudut Pandang Kekerabatan',
-          description:
-            'Ketahui seketika hubungan antara dua anggota keluarga mana pun, atau pilih salah satu anggota sebagai titik acuan untuk melihat panggilan yang tepat kepada seluruh kerabat lainnya. Dihitung melalui mesin penelusuran graf multiranting yang menyelaraskan garis keturunan langsung, menyamping, dan perkawinan dari berbagai sudut pandang.',
-          assetLabel: 'Mesin Penelusuran Graf Kekerabatan & Matriks Sudut Pandang',
+            'Kami tidak pernah menyimpan data keluarga Anda—tanpa pembuatan akun, tanpa peladen terpusat, dan tanpa pelacakan data. Catatan silsilah sepenuhnya berada di bawah kendali Anda: simpan secara privat di perangkat lokal Anda lewat penyimpanan sandbox peramban (IndexedDB), atau sinkronkan langsung ke Google Drive pribadi Anda untuk berbagi dan menjelajahi silsilah bersama keluarga tercinta.',
+          assetLabel: 'Penyimpanan Sandbox Lokal (IndexedDB) & Sinkronisasi Google Drive',
+          assetUrl: 'https://sanak-asset.muhaemen.my.id/load.gif',
         },
         {
           id: 'rich-profiles',
-          number: '07.',
+          number: '04.',
           title: 'Profil Lengkap dan Komunikasi Keluarga Langsung',
           description:
             'Simpan informasi bermakna melebihi sekadar nama dan tanggal. Catat lokasi pemakaman, alamat tempat tinggal, nomor telepon, dan ketuk langsung untuk mengirim pesan WhatsApp atau membuka petunjuk arah Google Maps ke rumah keluarga. Terstruktur dengan atribut metadata koordinat peta dan pintasan aksi WhatsApp.',
           assetLabel: 'Laci Profil Anggota Lengkap & Pintasan Komunikasi',
+          assetUrl: 'https://sanak-asset.muhaemen.my.id/contact_address.gif',
         },
         {
           id: 'customary-titles',
-          number: '08.',
+          number: '05.',
           title: 'Sapaan Kekerabatan Adat dan Daerah',
           description:
             'Sapa sanak keluarga dengan panggilan adat yang tepat. Sistem secara otomatis menentukan panggilan kekerabatan tradisional di berbagai adat Nusantara, seperti Banjar, Dayak, Jawa, Sunda, Minang, dan Batak. Didasarkan pada kamus kekerabatan terstruktur yang memetakan urutan senioritas dan cabang keluarga.',
           assetLabel: 'Kamus Kekerabatan Adat & Aturan Panggilan Daerah',
+          statusBadge: 'Tahap Pengembangan',
+          statusNotice: 'Kemampuan ini sedang dalam tahap perancangan dan pengembangan untuk rilis mendatang.',
         },
       ],
     },

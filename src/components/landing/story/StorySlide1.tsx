@@ -16,12 +16,16 @@ export function StorySlide1({ progress, locale }: StorySlideProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const bubbleElderRef = useRef<HTMLDivElement>(null);
   const bubbleYouRef = useRef<HTMLDivElement>(null);
+  const mobileElderRef = useRef<HTMLDivElement>(null);
+  const mobileYouRef = useRef<HTMLDivElement>(null);
   const poseFnRef = useRef<((t: number) => void) | null>(null);
 
   useEffect(() => {
     const svg = svgRef.current;
     const bubbleElder = bubbleElderRef.current;
     const bubbleYou = bubbleYouRef.current;
+    const mobileElder = mobileElderRef.current;
+    const mobileYou = mobileYouRef.current;
     if (!svg) return;
 
     svg.replaceChildren();
@@ -234,14 +238,26 @@ export function StorySlide1({ progress, locale }: StorySlideProps) {
       claspSolid.sil.classList.toggle("hi", t > 0.55);
 
       if (bubbleElder) {
-        bubbleElder.style.left = (((gHx + 8) / 400) * 100) + "%";
-        bubbleElder.style.top = (((gHy - 24) / 290) * 100) + "%";
+        bubbleElder.style.left = (((gHx + 12) / 400) * 100) + "%";
+        bubbleElder.style.top = (((gHy + 4) / 290) * 100) + "%";
         bubbleElder.classList.toggle("show", t > 0.25);
       }
       if (bubbleYou) {
         bubbleYou.style.left = (((bHx - 8) / 400) * 100) + "%";
         bubbleYou.style.top = (((bHy - 4) / 290) * 100) + "%";
         bubbleYou.classList.toggle("show", t > 0.55);
+      }
+      if (mobileElder) {
+        mobileElder.classList.toggle("opacity-100", t > 0.25);
+        mobileElder.classList.toggle("opacity-0", t <= 0.25);
+        mobileElder.classList.toggle("translate-y-0", t > 0.25);
+        mobileElder.classList.toggle("translate-y-2", t <= 0.25);
+      }
+      if (mobileYou) {
+        mobileYou.classList.toggle("opacity-100", t > 0.55);
+        mobileYou.classList.toggle("opacity-0", t <= 0.55);
+        mobileYou.classList.toggle("translate-y-0", t > 0.55);
+        mobileYou.classList.toggle("translate-y-2", t <= 0.55);
       }
     };
 
@@ -258,10 +274,11 @@ export function StorySlide1({ progress, locale }: StorySlideProps) {
     <div ref={containerRef} className="relative w-full aspect-[400/290] pointer-events-none select-none">
       <svg ref={svgRef} viewBox="0 0 400 290" className="w-full h-full block bg-transparent" />
 
+      {/* Desktop Convo: Floating bubbles inside the isometric room */}
       <div
         ref={bubbleElderRef}
-        className="story-chat-wrap story-elder story-hl-f"
-        style={{ left: '70%', top: '20%' }}
+        className="hidden lg:flex story-chat-wrap story-elder story-hl-f"
+        style={{ left: '65%', top: '40%' }}
       >
         <span className="story-chat-name">{locale === 'id' ? 'Tante Sarah' : 'Aunt Sarah'}</span>
         <div className="story-chat-box">
@@ -273,7 +290,7 @@ export function StorySlide1({ progress, locale }: StorySlideProps) {
 
       <div
         ref={bubbleYouRef}
-        className="story-chat-wrap story-you story-hl-m"
+        className="hidden lg:flex story-chat-wrap story-you story-hl-m"
         style={{ left: '30%', top: '30%' }}
       >
         <span className="story-chat-name">{locale === 'id' ? 'Anda' : 'You'}</span>
@@ -281,6 +298,45 @@ export function StorySlide1({ progress, locale }: StorySlideProps) {
           {locale === 'id'
             ? 'Maaf... tante siapa ya?'
             : "Um... I'm so sorry, who are you again?"}
+        </div>
+      </div>
+
+      {/* Mobile Convo: Positioned under the SVG, stacked full-width horizontal bars */}
+      <div className="story-mobile-convo absolute top-[102%] left-0 w-full flex flex-col gap-2 mt-2 pointer-events-auto">
+        <div
+          ref={mobileElderRef}
+          className="flex flex-col items-start transition-all duration-300 story-hl-f opacity-0 translate-y-2 w-full"
+        >
+          <div className="story-chat-box w-full text-[11px] sm:text-xs !max-w-none px-3 py-2 leading-snug">
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="story-chat-name text-[9px] sm:text-[10px] my-0">
+                {locale === 'id' ? 'Tante Sarah' : 'Aunt Sarah'}
+              </span>
+            </div>
+            <p className="text-foreground font-medium m-0">
+              {locale === 'id'
+                ? 'Wah, sudah besar sekali! Mirip sekali dengan Henry!'
+                : "Look how big you've grown! You look just like Henry!"}
+            </p>
+          </div>
+        </div>
+
+        <div
+          ref={mobileYouRef}
+          className="flex flex-col items-start transition-all duration-300 story-hl-m opacity-0 translate-y-2 w-full"
+        >
+          <div className="story-chat-box w-full text-[11px] sm:text-xs !max-w-none px-3 py-2 leading-snug">
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="story-chat-name text-[9px] sm:text-[10px] my-0">
+                {locale === 'id' ? 'Anda' : 'You'}
+              </span>
+            </div>
+            <p className="text-foreground font-medium m-0">
+              {locale === 'id'
+                ? 'Maaf... tante siapa ya?'
+                : "Um... I'm so sorry, who are you again?"}
+            </p>
+          </div>
         </div>
       </div>
     </div>

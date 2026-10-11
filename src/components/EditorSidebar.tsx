@@ -84,17 +84,19 @@ export function EditorSidebar(props: EditorSidebarProps) {
   useGSAP(() => {
     const el = sidebarRef.current;
     if (!el) return;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const targetWidth = isCollapsed ? 0 : (isMobile ? Math.min(width, window.innerWidth) : width);
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      gsap.set(el, { width: isCollapsed ? 0 : width });
+      gsap.set(el, { width: targetWidth });
       return;
     }
     if (isResizing) {
-      gsap.set(el, { width: isCollapsed ? 0 : width });
+      gsap.set(el, { width: targetWidth });
       return;
     }
-    gsap.to(el, { width: isCollapsed ? 0 : width, duration: 0.3, ease: "power3.inOut" });
-  }, { dependencies: [isCollapsed] });
+    gsap.to(el, { width: targetWidth, duration: 0.3, ease: "power3.inOut" });
+  }, { dependencies: [isCollapsed, width] });
 
   useEffect(() => {
     if (isResizing && sidebarRef.current && !isCollapsed) {
@@ -142,7 +144,7 @@ export function EditorSidebar(props: EditorSidebarProps) {
         onClick={() => setIsCollapsed(false)}
         className={cn(
           "fixed top-0 left-0 h-full z-40 flex items-center justify-center cursor-pointer group select-none",
-          "w-6 sm:w-7 hover:w-8 sm:hover:w-9 transition-all duration-200 ease-out",
+          "w-7 sm:w-7 hover:w-8 sm:hover:w-9 transition-all duration-200 ease-out",
           isCollapsed ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full pointer-events-none",
           isNeu
             ? "bg-[#e6e9ef] dark:bg-[#1c2027] border-r border-white/60 dark:border-white/5 shadow-neu-raised-sm hover:brightness-105"
@@ -164,7 +166,7 @@ export function EditorSidebar(props: EditorSidebarProps) {
       <div
         ref={sidebarRef}
         className={cn(
-          "h-full flex flex-row overflow-hidden shrink-0",
+          "h-full flex flex-row overflow-hidden shrink-0 max-w-full max-w-[100vw]",
           "max-md:fixed max-md:top-0 max-md:left-0 max-md:z-[70] md:relative md:z-30",
           isCollapsed ? "max-md:-translate-x-full pointer-events-none" : "max-md:translate-x-0 pointer-events-auto",
           isDarkMode && "dark"
@@ -259,7 +261,7 @@ export function EditorSidebar(props: EditorSidebarProps) {
         {/* Divider line between sidebar and shrinking button */}
         <div
           className={cn(
-            "w-1.5 -mx-[3px] relative z-20 h-full shrink-0 cursor-col-resize select-none transition-colors",
+            "hidden md:block w-1.5 -mx-[3px] relative z-20 h-full shrink-0 cursor-col-resize select-none transition-colors",
             "hover:bg-zinc-400/40 dark:hover:bg-zinc-600/40 active:bg-zinc-500/60"
           )}
           onMouseDown={(e) => {
@@ -275,7 +277,7 @@ export function EditorSidebar(props: EditorSidebarProps) {
           type="button"
           onClick={() => setIsCollapsed(true)}
           className={cn(
-            "w-6 sm:w-7 hover:w-8 h-full shrink-0 flex items-center justify-center select-none group transition-all duration-200 cursor-pointer",
+            "w-7 sm:w-7 hover:w-8 h-full shrink-0 flex items-center justify-center select-none group transition-all duration-200 cursor-pointer",
             isNeu
               ? "bg-[#e6e9ef] dark:bg-[#1c2027] border-r border-white/60 dark:border-white/5 shadow-neu-raised-sm hover:brightness-105"
               : "bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border-r border-zinc-200 dark:border-zinc-800 shadow-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"

@@ -26,8 +26,7 @@ export function FeaturesAccordionSection({ t }: FeaturesAccordionSectionProps) {
 
   // Snap-scroll: translate listTrack so focused point stays at the top
   useEffect(() => {
-    if (typeof window === 'undefined' || window.innerWidth < 1024) {
-      setTrackOffset(0);
+    if (typeof window === 'undefined') {
       return;
     }
 
@@ -55,6 +54,7 @@ export function FeaturesAccordionSection({ t }: FeaturesAccordionSectionProps) {
 
       const mm = gsap.matchMedia();
 
+      // Desktop: Side-by-side with textBlock drag-down
       mm.add('(min-width: 1024px)', () => {
         const getMaxDistance = () => {
           const lh = leftCol.offsetHeight || 560;
@@ -115,6 +115,33 @@ export function FeaturesAccordionSection({ t }: FeaturesAccordionSectionProps) {
         };
       });
 
+      // Mobile: Pinned container stepping through items 0 to 10 on scroll
+      mm.add('(max-width: 1023px)', () => {
+        const scrollDistance = Math.max(1600, Math.round(features.length * 180));
+
+        const tween = ScrollTrigger.create({
+          trigger: container,
+          pin: true,
+          start: 'top 72px',
+          end: `+=${scrollDistance}`,
+          scrub: 0.15,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            const p = Math.max(0, Math.min(1, self.progress));
+            const nextIdx = Math.min(
+              features.length - 1,
+              Math.floor(p * features.length)
+            );
+            setActiveIdx(nextIdx);
+          },
+        });
+
+        return () => {
+          tween.kill();
+        };
+      });
+
       return () => {
         mm.revert();
       };
@@ -130,9 +157,9 @@ export function FeaturesAccordionSection({ t }: FeaturesAccordionSectionProps) {
     <section ref={sectionRef} id="features" className="relative z-10 w-full">
       <div
         ref={containerRef}
-        className="max-w-7xl mx-auto px-6 md:px-16 py-16 md:py-24 w-full"
+        className="max-w-7xl mx-auto px-6 md:px-16 py-8 md:py-24 w-full"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           {/* Left Column: Focused Point Stays on Top (No inner scrollbar) */}
           <div className="order-2 lg:order-1 lg:col-span-7 relative">
             {/* Soft light radial gradient behind accordion (softens background grid dots) */}
@@ -147,7 +174,7 @@ export function FeaturesAccordionSection({ t }: FeaturesAccordionSectionProps) {
 
             <div
               ref={leftColRef}
-              className="border-t border-border overflow-hidden relative z-10 lg:h-[560px]"
+              className="border-t border-border overflow-hidden relative z-10 h-[480px] sm:h-[520px] lg:h-[560px]"
             >
               <div
                 style={{
@@ -168,6 +195,9 @@ export function FeaturesAccordionSection({ t }: FeaturesAccordionSectionProps) {
                       title={item.title}
                       description={item.description}
                       assetLabel={item.assetLabel}
+                      assetUrl={item.assetUrl}
+                      statusBadge={item.statusBadge}
+                      statusNotice={item.statusNotice}
                       isOpen={activeIdx === idx}
                       onToggle={() => handleToggle(idx)}
                     />
@@ -178,7 +208,7 @@ export function FeaturesAccordionSection({ t }: FeaturesAccordionSectionProps) {
           </div>
 
           {/* Right Column: Editorial Text (Sticky at top, drags down after last point) */}
-          <div className="order-1 lg:order-2 lg:col-span-5 relative lg:h-[560px]">
+          <div className="order-1 lg:order-2 lg:col-span-5 relative mb-2 sm:mb-4 lg:mb-0 lg:h-[560px]">
             <div
               ref={textBlockRef}
               className="flex flex-col items-start will-change-transform relative z-10"
@@ -193,10 +223,10 @@ export function FeaturesAccordionSection({ t }: FeaturesAccordionSectionProps) {
                 />
               </div>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-[1.05] mb-5">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-black dark:text-white leading-[1.05] mb-3 sm:mb-5">
                 {t.featuresList.title}
               </h2>
-              <p className="font-sans text-base sm:text-lg leading-relaxed font-normal text-black dark:text-white max-w-md">
+              <p className="font-sans text-sm sm:text-base lg:text-lg leading-relaxed font-normal text-black dark:text-white max-w-md">
                 {t.featuresList.description}
               </p>
             </div>

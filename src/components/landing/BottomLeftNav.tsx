@@ -60,7 +60,7 @@ export function BottomLeftNav() {
     <nav
       aria-label="External links"
       style={{ left: `${leftOffset}px`, bottom: `${bottomOffset}px` }}
-      className="fixed z-40 flex flex-col items-start pointer-events-auto select-none"
+      className="hidden md:flex fixed z-40 flex-col items-start pointer-events-auto select-none"
     >
       {/* 1x2 Grid Inverted Box: Github (128px x 64px) */}
       <a
