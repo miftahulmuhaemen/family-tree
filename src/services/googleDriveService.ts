@@ -109,7 +109,7 @@ export class GoogleDriveService {
     if (existingFileId) {
       // Overwrite existing file via PATCH
       const response = await fetch(
-        `https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=media`,
+        `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(existingFileId)}?uploadType=media`,
         {
           method: 'PATCH',
           headers: {
@@ -174,7 +174,8 @@ export class GoogleDriveService {
   }
 
   async loadFile(fileId: string): Promise<string> {
-    let url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+    const safeFileId = encodeURIComponent(fileId);
+    let url = `https://www.googleapis.com/drive/v3/files/${safeFileId}?alt=media`;
     const headers: Record<string, string> = {};
 
     if (this.accessToken) {
@@ -188,7 +189,7 @@ export class GoogleDriveService {
     // If unauthorized and unauthenticated, prompt sign-in
     if (!response.ok && (response.status === 401 || response.status === 403) && !this.accessToken) {
       const token = await this.requestAccessToken();
-      response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+      response = await fetch(`https://www.googleapis.com/drive/v3/files/${safeFileId}?alt=media`, {
         headers: { Authorization: `Bearer ${token}` }
       });
     }
@@ -205,7 +206,7 @@ export class GoogleDriveService {
     const token = await this.requestAccessToken();
 
     const response = await fetch(
-      `https://www.googleapis.com/drive/v3/files/${fileId}/permissions`,
+      `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}/permissions`,
       {
         method: 'POST',
         headers: {
