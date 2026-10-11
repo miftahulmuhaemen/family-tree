@@ -11,14 +11,6 @@
 
 Interactive family tree management and visualization platform built with React and Vite. It focuses on intuitive family lineage management and exploration, with optional GEDCOM support for interoperability with external genealogy tools.
 
-## Demo Walkthrough
-
-https://sanak-asset.muhaemen.my.id/demo.mp4
-
-<video src="https://sanak-asset.muhaemen.my.id/demo.mp4" controls width="100%">
-  <p>Your browser does not support the video tag. Watch the demo directly: <a href="https://sanak-asset.muhaemen.my.id/demo.mp4">https://sanak-asset.muhaemen.my.id/demo.mp4</a></p>
-</video>
-
 ## Core Capabilities
 
 ### 1. Universal Format Compatibility & Live Code Editor
@@ -44,10 +36,6 @@ Client-side sandbox storage in browser IndexedDB with zero telemetry, paired wit
 
 ### 4. Rich Profiles & Direct Family Contact
 Extended record fields for burial grounds, residential addresses, contact details, Google Maps navigation coordinates, and WhatsApp communication shortcuts.
-
-<p align="center">
-  <img src="https://sanak-asset.muhaemen.my.id/contact_address.gif" alt="Rich Profiles & Direct Family Contact" width="100%" />
-</p>
 
 ### 5. Regional & Customary Kinship Titles *(In Development)*
 Localized kinship dictionary automatically resolving traditional address terms across Indonesian traditions (Banjar, Dayak, Javanese, Sundanese, Minang, and Batak).
