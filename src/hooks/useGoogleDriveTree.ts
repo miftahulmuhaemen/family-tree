@@ -208,9 +208,13 @@ export function useGoogleDriveTree({
       });
     } catch (e: any) {
       console.error("Failed to open Google Drive picker:", e);
-      alert(`Gagal membuka Google Drive: ${e.message}`);
+      notify({
+        title: "Gagal membuka Google Drive",
+        message: `${e.message || 'Terjadi kesalahan'}. Jika dialog terblokir, pastikan ad blocker atau Brave Shields dinonaktifkan.`,
+        type: "error"
+      });
     }
-  }, [handleLoadDriveId]);
+  }, [handleLoadDriveId, notify]);
 
   const handleShareDriveFile = useCallback(async (role: 'reader' | 'writer' = 'reader') => {
     let currentTargetId = fileId;

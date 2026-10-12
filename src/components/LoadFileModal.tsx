@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Cloud, Upload, Sparkles, X } from 'lucide-react';
+import { Cloud, Upload, Sparkles, X, Info } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { cn } from '@/lib/utils';
@@ -119,6 +119,17 @@ export function LoadFileModal({
 
         {/* Source Selection Options */}
         <div className="p-4 space-y-3 flex-1 overflow-y-auto">
+          {/* Ad Blocker / Brave Shields Notice */}
+          <div className={cn(
+            "flex items-start gap-2.5 p-3 rounded-lg text-xs leading-relaxed transition-all",
+            isNeu
+              ? "shadow-neu-pressed-sm bg-[#e6e9ef] dark:bg-[#181b20] text-zinc-600 dark:text-zinc-400 border border-white/60 dark:border-white/5"
+              : "bg-amber-500/10 dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20"
+          )}>
+            <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+            <span>{terms.drive_adblock_hint}</span>
+          </div>
+
           {/* Option 1: Google Drive */}
           <button
             type="button"
