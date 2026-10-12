@@ -103,7 +103,7 @@ export class GoogleDriveService {
     });
   }
 
-  async saveFile(name: string, content: string, existingFileId?: string): Promise<DriveFileResult> {
+  async saveFile(name: string, content: string, existingFileId?: string, makePublic: boolean = true): Promise<DriveFileResult> {
     const token = await this.requestAccessToken();
 
     if (existingFileId) {
@@ -166,11 +166,21 @@ export class GoogleDriveService {
     }
 
     const data = await response.json();
-    return {
+    const result: DriveFileResult = {
       id: data.id,
       name: data.name,
       mimeType: data.mimeType
     };
+
+    if (makePublic) {
+      try {
+        await this.setPublicPermission(data.id, 'reader');
+      } catch (permError) {
+        console.warn('Failed to set public permission on newly created file:', permError);
+      }
+    }
+
+    return result;
   }
 
   async loadFile(fileId: string): Promise<string> {
