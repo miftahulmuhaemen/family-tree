@@ -264,7 +264,10 @@ export class GoogleDriveService {
       .setIncludeFolders(true)
       .setMimeTypes('text/plain,application/octet-stream,application/x-gedcom');
 
-    const picker = new google.picker.PickerBuilder()
+    const projectNumber = this.clientId ? this.clientId.split('-')[0] : undefined;
+    const origin = typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.host}` : '';
+
+    let builder = new google.picker.PickerBuilder()
       .addView(docsView)
       .setOAuthToken(token)
       .setDeveloperKey(this.apiKey)
@@ -275,9 +278,16 @@ export class GoogleDriveService {
             onSelect(doc.id, doc.name || 'family.ged');
           }
         }
-      })
-      .build();
+      });
 
+    if (origin) {
+      builder = builder.setOrigin(origin);
+    }
+    if (projectNumber) {
+      builder = builder.setAppId(projectNumber);
+    }
+
+    const picker = builder.build();
     picker.setVisible(true);
   }
 }
